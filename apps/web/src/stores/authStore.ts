@@ -4,6 +4,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+// API URL - production dùng Workers trực tiếp, dev dùng proxy
+const API_BASE = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? 'https://arduino-workers.stu725114073.workers.dev'
+    : '';
+
 // User type từ API
 export interface User {
     id: string;
@@ -46,7 +51,7 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true });
 
                 try {
-                    const res = await fetch('/api/auth/login', {
+                    const res = await fetch(`${API_BASE}/api/auth/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ username, password }),
@@ -81,7 +86,7 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true });
 
                 try {
-                    const res = await fetch('/api/auth/register', {
+                    const res = await fetch(`${API_BASE}/api/auth/register`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ username, password }),
@@ -114,7 +119,7 @@ export const useAuthStore = create<AuthState>()(
             // Đăng xuất
             logout: async () => {
                 try {
-                    await fetch('/api/auth/logout', {
+                    await fetch(`${API_BASE}/api/auth/logout`, {
                         method: 'POST',
                         credentials: 'include',
                     });
@@ -130,7 +135,7 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true });
 
                 try {
-                    const res = await fetch('/api/auth/me', {
+                    const res = await fetch(`${API_BASE}/api/auth/me`, {
                         credentials: 'include',
                     });
 
