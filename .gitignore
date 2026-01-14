@@ -1,0 +1,45 @@
+# Arduino Web - Learning Hub
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+.wrangler/
+.vercel/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.dev.vars
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Test
+coverage/
+
+# Temp
+.tmp/
+temp/

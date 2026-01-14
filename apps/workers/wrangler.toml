@@ -1,0 +1,26 @@
+name = "arduino-workers"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "arduino-db"
+database_id = "a2d393f3-7754-494d-b1f3-20430b50513e"
+
+# KV Namespace for rate limiting
+[[kv_namespaces]]
+binding = "AI_RATE_LIMIT"
+id = "6333501076fe458cb7ad246c47e4b33b"
+
+# Environment variables (secrets - set via wrangler secret)
+# OPENROUTER_API_KEY = "sk-..."
+
+[vars]
+ENVIRONMENT = "development"
+
+# Dev server config
+[dev]
+port = 8787
+local_protocol = "http"
