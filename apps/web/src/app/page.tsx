@@ -205,7 +205,7 @@ export default function HomePage() {
                             <span className="font-semibold">Arduino Learning Hub</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                            © 2024 Khoa Kỹ thuật & Công nghệ - ĐH Sư phạm Hà Nội.
+                            © T1/2026 Khoa Kỹ thuật & Công nghệ - ĐH Sư phạm Hà Nội.
                             Phát triển bởi Nguyễn Hoàng Long.
                         </p>
                     </div>
