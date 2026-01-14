@@ -4,7 +4,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, and, desc } from 'drizzle-orm';
 import { quizzes, questions, quizAttempts, weeks } from '../db/schema';
 import { requireAuth } from '../middleware/auth';
 import { generateId } from '../services/crypto';
@@ -196,14 +196,15 @@ quizzesRoutes.post('/quizzes/:id/submit', requireAuth(), async (c) => {
 
 /**
  * GET /api/quizzes/:id/attempts
- * Lịch sử làm quiz của user
+ * Lịch sử làm quiz của user hiện tại
  */
 quizzesRoutes.get('/quizzes/:id/attempts', requireAuth(), async (c) => {
     const db = drizzle(c.env.DB);
     const user = c.get('user') as AuthUser;
     const quizId = c.req.param('id');
 
-    const attempts = await db.select({
+    // Chỉ lấy attempts của user hiện tại
+    const userAttempts = await db.select({
         id: quizAttempts.id,
         score: quizAttempts.score,
         maxScore: quizAttempts.maxScore,
@@ -211,11 +212,14 @@ quizzesRoutes.get('/quizzes/:id/attempts', requireAuth(), async (c) => {
         submittedAt: quizAttempts.submittedAt,
     })
         .from(quizAttempts)
-        .where(eq(quizAttempts.quizId, quizId))
+        .where(
+            and(
+                eq(quizAttempts.quizId, quizId),
+                eq(quizAttempts.userId, user.id)
+            )
+        )
+        .orderBy(desc(quizAttempts.submittedAt))
         .all();
-
-    // Chỉ trả attempts của user hiện tại
-    const userAttempts = attempts.filter(() => true); // Filter by userId in real query
 
     return c.json({ attempts: userAttempts });
 });

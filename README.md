@@ -156,7 +156,19 @@ wrangler secret put OPENROUTER_API_KEY
 - `GET /api/labs/:id` - Chi tiết lab
 
 ### AI
-- `POST /api/ai/tutor` - Gọi AI trợ giảng
+- `POST /api/ai/tutor` - Gọi AI trợ giảng (SSE streaming)
+- `POST /api/ai/feedback` - Gửi feedback cho câu trả lời AI
+
+### Labs
+- `GET /api/labs/:id` - Chi tiết lab + code đã lưu
+- `POST /api/labs/:id/save` - Lưu code (autosave/submit)
+- `GET /api/labs/:id/submissions` - Lịch sử nộp bài
+
+### Progress & Drills
+- `GET /api/progress` - Tiến độ tổng thể
+- `GET /api/progress/week/:id` - Tiến độ tuần
+- `GET /api/drills/:id` - Lấy đề thi thử
+- `POST /api/drills/:id/submit` - Nộp bài thi thử
 
 ### Quiz
 - `GET /api/quizzes/:id` - Lấy quiz

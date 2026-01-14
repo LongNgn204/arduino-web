@@ -1,21 +1,22 @@
 'use client';
 
-// Trang chi tiết bài lab
+// Trang chi tiết bài lab - với server sync
 // Code editor (Monaco) + Tab Simulator (Wokwi embed)
+// Autosave tới server và localStorage
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import {
     ChevronLeft, Clock, Loader2, Bot, Play, Code2,
-    RotateCcw, Save, CheckCircle2
+    RotateCcw, Save, CheckCircle2, Cloud, CloudOff, Send
 } from 'lucide-react';
 import { remark } from 'remark';
 import html from 'remark-html';
 import AIPopup from '@/components/ai/AIPopup';
 
-// Lazy load Monaco Editor (heavy component)
+// Lazy load Monaco Editor
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
     ssr: false,
     loading: () => (
@@ -45,6 +46,7 @@ interface Week {
 
 export default function LabPage() {
     const params = useParams();
+    const router = useRouter();
     const labId = params.id as string;
 
     const [lab, setLab] = useState<Lab | null>(null);
@@ -56,23 +58,39 @@ export default function LabPage() {
     const [code, setCode] = useState('');
     const [showAI, setShowAI] = useState(false);
 
-    // LocalStorage key cho autosave
+    // Server sync state
+    const [savedCode, setSavedCode] = useState<string | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [lastSaved, setLastSaved] = useState<Date | null>(null);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // LocalStorage key
     const storageKey = `lab-code-${labId}`;
 
+    // Fetch lab và saved code từ server
     useEffect(() => {
         async function fetchLab() {
             try {
                 const res = await fetch(`/api/labs/${labId}`, { credentials: 'include' });
+                if (res.status === 401) {
+                    router.push('/login');
+                    return;
+                }
                 const data = await res.json();
                 setLab(data.lab);
                 setWeek(data.week);
+                setSavedCode(data.savedCode);
+                setIsSubmitted(data.isSubmitted);
 
-                // Load saved code hoặc starter code
-                const savedCode = localStorage.getItem(storageKey);
-                const initialCode = savedCode || data.lab?.starterCode || '';
+                // Priority: savedCode từ server > localStorage > starterCode
+                const localCode = localStorage.getItem(storageKey);
+                const serverCode = data.savedCode;
+                const initialCode = serverCode || localCode || data.lab?.starterCode || '';
                 setCode(initialCode);
 
-                // Render instructions markdown
+                // Render instructions
                 if (data.lab?.instructions) {
                     const result = await remark().use(html).process(data.lab.instructions);
                     setInstructionsHtml(result.toString());
@@ -87,20 +105,79 @@ export default function LabPage() {
         if (labId) {
             fetchLab();
         }
-    }, [labId, storageKey]);
+    }, [labId, router, storageKey]);
 
-    // Autosave code to localStorage
-    useEffect(() => {
-        if (code && labId) {
-            localStorage.setItem(storageKey, code);
+    // Autosave to server (debounced)
+    const saveToServer = useCallback(async (codeToSave: string, submit = false) => {
+        if (!labId || isSaving) return;
+
+        setIsSaving(true);
+        try {
+            const res = await fetch(`/api/labs/${labId}/save`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ code: codeToSave, submit }),
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setLastSaved(new Date());
+                setSavedCode(codeToSave);
+                if (submit) setIsSubmitted(data.isSubmitted);
+            }
+        } catch (error) {
+            console.error('Failed to save:', error);
+        } finally {
+            setIsSaving(false);
+            setSubmitting(false);
         }
-    }, [code, storageKey, labId]);
+    }, [labId, isSaving]);
+
+    // Autosave với debounce
+    useEffect(() => {
+        if (!code || !labId || code === savedCode) return;
+
+        // Save to localStorage immediately
+        localStorage.setItem(storageKey, code);
+
+        // Debounce server save
+        if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current);
+        }
+
+        saveTimeoutRef.current = setTimeout(() => {
+            saveToServer(code);
+        }, 3000); // 3 seconds debounce
+
+        return () => {
+            if (saveTimeoutRef.current) {
+                clearTimeout(saveTimeoutRef.current);
+            }
+        };
+    }, [code, labId, savedCode, storageKey, saveToServer]);
 
     const handleResetCode = () => {
         if (confirm('Khôi phục về code ban đầu? Code hiện tại sẽ bị xóa.')) {
-            setCode(lab?.starterCode || '');
+            const starterCode = lab?.starterCode || '';
+            setCode(starterCode);
             localStorage.removeItem(storageKey);
+            saveToServer(starterCode);
         }
+    };
+
+    const handleSubmit = async () => {
+        if (!code.trim()) {
+            alert('Vui lòng nhập code');
+            return;
+        }
+
+        if (!confirm('Bạn có chắc muốn nộp bài? Code sẽ được chấm điểm.')) {
+            return;
+        }
+
+        setSubmitting(true);
+        await saveToServer(code, true);
     };
 
     if (loading) {
@@ -145,6 +222,19 @@ export default function LabPage() {
                                     {lab.duration} phút
                                 </span>
                             )}
+
+                            {!isSubmitted && (
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={submitting}
+                                    className="flex items-center gap-1.5 bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm 
+                           hover:bg-green-700 disabled:opacity-50 transition-colors"
+                                >
+                                    {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                                    Nộp bài
+                                </button>
+                            )}
+
                             <button
                                 onClick={() => setShowAI(true)}
                                 className="btn-arduino text-sm flex items-center gap-1.5"
@@ -156,6 +246,14 @@ export default function LabPage() {
                     </div>
                 </div>
             </header>
+
+            {/* Submitted banner */}
+            {isSubmitted && (
+                <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-6 py-2 flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5" />
+                    <span>Bài lab đã được nộp thành công!</span>
+                </div>
+            )}
 
             {/* Main content - split view */}
             <div className="flex-1 flex flex-col lg:flex-row">
@@ -234,8 +332,27 @@ export default function LabPage() {
                                 {/* Editor toolbar */}
                                 <div className="flex items-center justify-between px-3 py-2 bg-gray-800 text-gray-300 text-sm">
                                     <span className="flex items-center gap-1.5">
-                                        <Save className="h-4 w-4" />
-                                        Tự động lưu
+                                        {isSaving ? (
+                                            <>
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                                Đang lưu...
+                                            </>
+                                        ) : lastSaved ? (
+                                            <>
+                                                <Cloud className="h-4 w-4 text-green-400" />
+                                                Đã lưu lúc {lastSaved.toLocaleTimeString('vi-VN')}
+                                            </>
+                                        ) : savedCode === null ? (
+                                            <>
+                                                <CloudOff className="h-4 w-4" />
+                                                Chưa đồng bộ
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Save className="h-4 w-4" />
+                                                Tự động lưu
+                                            </>
+                                        )}
                                     </span>
                                     <button
                                         onClick={handleResetCode}
@@ -260,6 +377,7 @@ export default function LabPage() {
                                             lineNumbers: 'on',
                                             scrollBeyondLastLine: false,
                                             automaticLayout: true,
+                                            readOnly: isSubmitted,
                                         }}
                                     />
                                 </div>

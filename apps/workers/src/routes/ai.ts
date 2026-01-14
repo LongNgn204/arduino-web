@@ -1,5 +1,6 @@
-// AI Tutor routes
-// POST /api/ai/tutor - SSE streaming với OpenRouter
+// AI Tutor routes - với SSE Streaming
+// POST /api/ai/tutor - streaming response
+// POST /api/ai/feedback - đánh giá AI response
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -19,11 +20,18 @@ const tutorRequestSchema = z.object({
     selectedText: z.string().optional(),
     currentCode: z.string().optional(),
     errorLog: z.string().optional(),
+    stream: z.boolean().optional().default(true), // Mặc định bật streaming
+});
+
+const feedbackSchema = z.object({
+    chatLogId: z.string(),
+    helpful: z.boolean(),
+    reason: z.string().optional(),
 });
 
 // Rate limit: 10 requests per 10 minutes
 const RATE_LIMIT = 10;
-const RATE_WINDOW = 10 * 60; // 10 phút in seconds
+const RATE_WINDOW = 10 * 60;
 
 // OpenRouter config
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -69,7 +77,7 @@ const aiRoutes = new Hono<{ Bindings: Env }>();
 
 /**
  * POST /api/ai/tutor
- * AI trợ giảng với 3 chế độ, SSE streaming
+ * AI trợ giảng với SSE streaming
  */
 aiRoutes.post('/tutor', requireAuth(), async (c) => {
     const db = drizzle(c.env.DB);
@@ -104,7 +112,7 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
         }, 400);
     }
 
-    const { mode, lessonId, labId, userQuestion, selectedText, currentCode, errorLog } = result.data;
+    const { mode, lessonId, labId, userQuestion, selectedText, currentCode, errorLog, stream } = result.data;
 
     // Build context
     let contextParts: string[] = [];
@@ -130,9 +138,118 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
     }
 
     const startTime = Date.now();
+    const chatLogId = generateId();
 
+    // Update rate limit trước
+    await c.env.AI_RATE_LIMIT.put(rateLimitKey, String(count + 1), {
+        expirationTtl: RATE_WINDOW,
+    });
+
+    // Nếu streaming được bật
+    if (stream) {
+        try {
+            const response = await fetch(OPENROUTER_URL, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${c.env.OPENROUTER_API_KEY}`,
+                    'Content-Type': 'application/json',
+                    'HTTP-Referer': 'https://arduino-web.pages.dev',
+                    'X-Title': 'Arduino Learning Hub',
+                },
+                body: JSON.stringify({
+                    model: MODEL,
+                    messages,
+                    stream: true,
+                    max_tokens: 2048,
+                }),
+            });
+
+            if (!response.ok || !response.body) {
+                console.error('[ai] OpenRouter error:', response.status);
+                return c.json({
+                    error: { code: 'AI_ERROR', message: 'Lỗi kết nối AI, vui lòng thử lại' }
+                }, 502);
+            }
+
+            // Biến lưu full response để log vào DB sau
+            let fullResponse = '';
+
+            // Transform stream
+            const transformStream = new TransformStream({
+                async transform(chunk, controller) {
+                    const text = new TextDecoder().decode(chunk);
+                    const lines = text.split('\n').filter(line => line.trim() !== '');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = line.slice(6);
+                            if (data === '[DONE]') {
+                                // Stream kết thúc - gửi metadata
+                                const latencyMs = Date.now() - startTime;
+                                controller.enqueue(new TextEncoder().encode(
+                                    `data: ${JSON.stringify({
+                                        done: true,
+                                        chatLogId,
+                                        remainingQuota: RATE_LIMIT - count - 1,
+                                        latencyMs
+                                    })}\n\n`
+                                ));
+
+                                // Log to DB (không block)
+                                db.insert(aiChatLogs).values({
+                                    id: chatLogId,
+                                    userId: user.id,
+                                    mode,
+                                    lessonId: lessonId || null,
+                                    labId: labId || null,
+                                    userQuestion,
+                                    aiResponse: fullResponse,
+                                    contextData: contextParts.length > 0 ? JSON.stringify({ selectedText, currentCode, errorLog }) : null,
+                                    tokensUsed: 0, // Không có trong streaming
+                                    latencyMs,
+                                }).run().catch(err => console.error('[ai] Log error:', err));
+
+                                continue;
+                            }
+
+                            try {
+                                const parsed = JSON.parse(data);
+                                const content = parsed.choices?.[0]?.delta?.content || '';
+                                if (content) {
+                                    fullResponse += content;
+                                    controller.enqueue(new TextEncoder().encode(
+                                        `data: ${JSON.stringify({ content })}\n\n`
+                                    ));
+                                }
+                            } catch {
+                                // Ignore parse errors
+                            }
+                        }
+                    }
+                },
+            });
+
+            const streamedResponse = response.body.pipeThrough(transformStream);
+
+            return new Response(streamedResponse, {
+                headers: {
+                    'Content-Type': 'text/event-stream',
+                    'Cache-Control': 'no-cache',
+                    'Connection': 'keep-alive',
+                    'Access-Control-Allow-Origin': '*',
+                },
+            });
+
+        } catch (error) {
+            console.error('[ai] Streaming error:', error);
+            return c.json({
+                error: { code: 'AI_ERROR', message: 'Lỗi xử lý AI, vui lòng thử lại' }
+            }, 500);
+        }
+    }
+
+    // Non-streaming fallback
     try {
-        // Call OpenRouter
         const response = await fetch(OPENROUTER_URL, {
             method: 'POST',
             headers: {
@@ -144,7 +261,7 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
             body: JSON.stringify({
                 model: MODEL,
                 messages,
-                stream: false, // Non-streaming for simplicity first
+                stream: false,
                 max_tokens: 2048,
             }),
         });
@@ -164,14 +281,9 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
         const tokensUsed = data.usage?.total_tokens || 0;
         const latencyMs = Date.now() - startTime;
 
-        // Update rate limit
-        await c.env.AI_RATE_LIMIT.put(rateLimitKey, String(count + 1), {
-            expirationTtl: RATE_WINDOW,
-        });
-
-        // Log to DB (không block response)
+        // Log to DB
         db.insert(aiChatLogs).values({
-            id: generateId(),
+            id: chatLogId,
             userId: user.id,
             mode,
             lessonId: lessonId || null,
@@ -187,6 +299,7 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
 
         return c.json({
             response: aiResponse,
+            chatLogId,
             mode,
             tokensUsed,
             remainingQuota: RATE_LIMIT - count - 1,
@@ -198,6 +311,37 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
             error: { code: 'AI_ERROR', message: 'Lỗi xử lý AI, vui lòng thử lại' }
         }, 500);
     }
+});
+
+/**
+ * POST /api/ai/feedback
+ * Đánh giá câu trả lời AI (helpful/not helpful)
+ */
+aiRoutes.post('/feedback', requireAuth(), async (c) => {
+    const db = drizzle(c.env.DB);
+    const user = c.get('user') as AuthUser;
+
+    let body: unknown;
+    try {
+        body = await c.req.json();
+    } catch {
+        return c.json({ error: { code: 'INVALID_JSON', message: 'Body không hợp lệ' } }, 400);
+    }
+
+    const result = feedbackSchema.safeParse(body);
+    if (!result.success) {
+        return c.json({
+            error: { code: 'VALIDATION_ERROR', message: result.error.errors[0].message }
+        }, 400);
+    }
+
+    const { chatLogId, helpful, reason } = result.data;
+
+    // Cập nhật feedback vào ai_chat_logs (cần thêm column feedback)
+    // Tạm thời log console
+    console.log('[ai] Feedback received', { chatLogId, helpful, reason, userId: user.id });
+
+    return c.json({ success: true, message: 'Cảm ơn bạn đã đánh giá!' });
 });
 
 export default aiRoutes;
