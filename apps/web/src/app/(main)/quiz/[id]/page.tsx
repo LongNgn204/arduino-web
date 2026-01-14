@@ -1,5 +1,7 @@
 'use client';
 
+export const runtime = 'edge';
+
 // Trang làm quiz
 // Hiển thị câu hỏi, chấm điểm, hiển thị giải thích
 
@@ -171,8 +173,8 @@ export default function QuizPage() {
                 <main className="container mx-auto px-6 py-8 max-w-3xl">
                     {/* Score card */}
                     <div className={`rounded-2xl p-8 text-center mb-8 ${result.passed
-                            ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20'
-                            : 'bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20'
+                        ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20'
+                        : 'bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20'
                         }`}>
                         <Trophy className={`h-16 w-16 mx-auto mb-4 ${result.passed ? 'text-green-500' : 'text-red-500'}`} />
                         <h2 className="text-3xl font-bold mb-2">
@@ -207,8 +209,8 @@ export default function QuizPage() {
                                 >
                                     <div className="flex items-start gap-3 mb-4">
                                         <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${qResult?.correct
-                                                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                                                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                            : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                                             }`}>
                                             {idx + 1}
                                         </span>
@@ -239,10 +241,10 @@ export default function QuizPage() {
                                                 <div
                                                     key={optIdx}
                                                     className={`flex items-center gap-2 p-2 rounded-lg text-sm ${isCorrect
-                                                            ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300'
-                                                            : isUserAnswer
-                                                                ? 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
-                                                                : ''
+                                                        ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300'
+                                                        : isUserAnswer
+                                                            ? 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                                                            : ''
                                                         }`}
                                                 >
                                                     {isCorrect && <CheckCircle2 className="h-4 w-4" />}
@@ -331,8 +333,8 @@ export default function QuizPage() {
                                             key={optIdx}
                                             onClick={() => handleSelectAnswer(q.id, optIdx, isMultiple)}
                                             className={`w-full text-left flex items-center gap-3 p-3 rounded-lg border transition-colors ${isSelected
-                                                    ? 'border-arduino-teal bg-arduino-teal/10'
-                                                    : 'border-border hover:border-muted-foreground'
+                                                ? 'border-arduino-teal bg-arduino-teal/10'
+                                                : 'border-border hover:border-muted-foreground'
                                                 }`}
                                         >
                                             <span className={`w-5 h-5 rounded-${isMultiple ? 'md' : 'full'} border-2 flex items-center justify-center ${isSelected ? 'border-arduino-teal bg-arduino-teal' : 'border-muted-foreground'

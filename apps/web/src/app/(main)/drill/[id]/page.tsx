@@ -1,5 +1,7 @@
 'use client';
 
+export const runtime = 'edge';
+
 // Exam Drill page với đồng hồ đếm ngược
 // Textarea code, wiring description, submit với AI grader
 
@@ -335,7 +337,7 @@ export default function DrillPage() {
                             </button>
                         ) : (
                             <div className={`flex items-center gap-3 p-4 rounded-lg ${result?.success ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
-                                    : 'bg-destructive/10 text-destructive'
+                                : 'bg-destructive/10 text-destructive'
                                 }`}>
                                 <CheckCircle2 className="h-6 w-6" />
                                 <p>{result?.message}</p>

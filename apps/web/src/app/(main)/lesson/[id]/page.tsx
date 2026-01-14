@@ -1,5 +1,7 @@
 'use client';
 
+export const runtime = 'edge';
+
 // Trang chi tiết bài giảng
 // Render Markdown content với AI popup
 

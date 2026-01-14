@@ -1,5 +1,7 @@
 'use client';
 
+export const runtime = 'edge';
+
 // Trang chi tiết tuần học
 // Hiển thị lessons, labs, quizzes của tuần
 

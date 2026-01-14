@@ -1,5 +1,7 @@
 'use client';
 
+export const runtime = 'edge';
+
 // Trang chi tiết bài lab - với server sync
 // Code editor (Monaco) + Tab Simulator (Wokwi embed)
 // Autosave tới server và localStorage
@@ -304,8 +306,8 @@ export default function LabPage() {
                         <button
                             onClick={() => setActiveTab('code')}
                             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${activeTab === 'code'
-                                    ? 'text-arduino-teal border-b-2 border-arduino-teal'
-                                    : 'text-muted-foreground hover:text-foreground'
+                                ? 'text-arduino-teal border-b-2 border-arduino-teal'
+                                : 'text-muted-foreground hover:text-foreground'
                                 }`}
                         >
                             <Code2 className="h-4 w-4" />
@@ -315,8 +317,8 @@ export default function LabPage() {
                             <button
                                 onClick={() => setActiveTab('simulator')}
                                 className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors ${activeTab === 'simulator'
-                                        ? 'text-green-600 border-b-2 border-green-600'
-                                        : 'text-muted-foreground hover:text-foreground'
+                                    ? 'text-green-600 border-b-2 border-green-600'
+                                    : 'text-muted-foreground hover:text-foreground'
                                     }`}
                             >
                                 <Play className="h-4 w-4" />
