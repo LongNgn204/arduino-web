@@ -6,13 +6,22 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import type { Env } from './types';
 
-// Import routes
+// ==========================================
+// IMPORT ROUTES (organized at top)
+// ==========================================
 import authRoutes from './routes/auth';
 import coursesRoutes from './routes/courses';
 import aiRoutes from './routes/ai';
 import quizzesRoutes from './routes/quizzes';
 import labsRoutes from './routes/labs';
 import progressRoutes from './routes/progress';
+import drillsRoutes from './routes/drills';
+import leaderboardRoutes from './routes/leaderboard';
+import certificateRoutes from './routes/certificate';
+import adminRoutes from './routes/admin';
+
+// Import middleware
+import { rateLimitMiddleware } from './middleware/rateLimit';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -28,6 +37,11 @@ app.use('*', cors({
         'http://localhost:5173',
         'http://localhost:5174',
         'http://localhost:5175',
+        'http://localhost:5500',
+        'http://127.0.0.1:5500',
+        'http://localhost:8080',
+        'http://127.0.0.1:8080',
+        'null', // for file:// protocol
         'https://arduino-web.pages.dev',
         'https://hocarduinohnue.pages.dev'
     ],
@@ -61,7 +75,8 @@ app.route('/api', coursesRoutes);
 // Labs routes: /api/labs/*
 app.route('/api', labsRoutes);
 
-// AI routes: /api/ai/*
+// AI routes: /api/ai/* - với rate limiting
+app.use('/api/ai/*', rateLimitMiddleware);
 app.route('/api/ai', aiRoutes);
 
 // Quizzes routes: /api/quizzes/*
@@ -71,12 +86,16 @@ app.route('/api', quizzesRoutes);
 app.route('/api', progressRoutes);
 
 // Drills routes: /api/drills/*
-import drillsRoutes from './routes/drills';
-import leaderboardRoutes from './routes/leaderboard';
-import certificateRoutes from './routes/certificate';
 app.route('/api', drillsRoutes);
+
+// Leaderboard routes: /api/leaderboard/*
 app.route('/api', leaderboardRoutes);
+
+// Certificate routes: /api/certificate/*
 app.route('/api', certificateRoutes);
+
+// Admin routes: /api/admin/*
+app.route('/api/admin', adminRoutes);
 
 // ==========================================
 // ERROR HANDLING

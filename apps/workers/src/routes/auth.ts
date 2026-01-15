@@ -4,7 +4,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
-import { eq, and, gt } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { users, sessions } from '../db/schema';
 import { hashPassword, verifyPassword, generateSessionToken, generateId } from '../services/crypto';
 import type { Env } from '../types';
@@ -84,6 +84,7 @@ auth.post('/register', async (c) => {
 
     // Tạo session
     const sessionToken = generateSessionToken();
+    // QUAN TRỌNG: Lưu expiresAt dạng Date - Drizzle sẽ tự convert sang Unix timestamp
     const expiresAt = new Date(Date.now() + SESSION_DURATION);
 
     await db.insert(sessions).values({
@@ -91,6 +92,8 @@ auth.post('/register', async (c) => {
         userId,
         expiresAt,
     });
+
+    console.log('[auth] Session created, expires:', expiresAt.toISOString());
 
     // Set cookie
     c.header('Set-Cookie',
@@ -169,6 +172,8 @@ auth.post('/login', async (c) => {
         expiresAt,
     });
 
+    console.log('[auth] Login session created, expires:', expiresAt.toISOString());
+
     // Set cookie
     c.header('Set-Cookie',
         `${COOKIE_NAME}=${sessionToken}; ` +
@@ -242,19 +247,24 @@ auth.get('/me', async (c) => {
         return c.json({ user: null });
     }
 
-    // Tìm session còn hiệu lực
+    // Tìm session theo ID
     const session = await db.select()
         .from(sessions)
-        .where(
-            and(
-                eq(sessions.id, sessionToken),
-                gt(sessions.expiresAt, new Date())
-            )
-        )
+        .where(eq(sessions.id, sessionToken))
         .get();
 
     if (!session) {
-        // Session không tồn tại hoặc hết hạn
+        console.log('[auth] Session not found');
+        return c.json({ user: null });
+    }
+
+    // Kiểm tra hết hạn - so sánh với current time
+    // session.expiresAt là Date object từ Drizzle (đã convert từ Unix timestamp)
+    const now = new Date();
+    if (session.expiresAt < now) {
+        console.log('[auth] Session expired:', session.expiresAt, 'now:', now);
+        // Xóa session hết hạn
+        await db.delete(sessions).where(eq(sessions.id, sessionToken));
         return c.json({ user: null });
     }
 
