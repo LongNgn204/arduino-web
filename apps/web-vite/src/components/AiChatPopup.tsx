@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
     MessageSquare,
     X,
@@ -34,6 +34,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showModeSelect, setShowModeSelect] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const modeConfig = {
         tutor: {
@@ -56,6 +57,11 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
         }
     };
 
+    // Scroll to bottom when messages change
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
 
@@ -75,71 +81,52 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                     labId,
                     userQuestion: userMessage,
                     currentCode,
+                    stream: false, // Use non-streaming for reliability
                 }),
             });
 
+            // Handle error responses
             if (!res.ok) {
-                throw new Error('AI request failed');
-            }
-
-            // Handle streaming response
-            const reader = res.body?.getReader();
-            const decoder = new TextDecoder();
-            let assistantMessage = '';
-            let buffer = ''; // Buffer for incomplete lines
-
-            setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-
-            if (reader) {
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    // Append new chunk to buffer
-                    buffer += decoder.decode(value, { stream: true });
-
-                    // Split by double newline (SSE separator)
-                    const parts = buffer.split('\n\n');
-
-                    // Keep the last part in buffer if incomplete
-                    buffer = parts.pop() || '';
-
-                    for (const part of parts) {
-                        const lines = part.split('\n');
-                        for (const line of lines) {
-                            if (line.startsWith('data: ')) {
-                                const data = line.slice(6).trim();
-                                if (data === '[DONE]' || data === '') continue;
-
-                                try {
-                                    const parsed = JSON.parse(data);
-                                    // Handle both formats: 
-                                    // 1. Backend simplified: {content: "..."}
-                                    // 2. OpenRouter pass-through: {choices: [{delta: {content: "..."}}]}
-                                    const content = parsed.content || parsed.choices?.[0]?.delta?.content || '';
-                                    if (content) {
-                                        assistantMessage += content;
-
-                                        setMessages(prev => {
-                                            const updated = [...prev];
-                                            updated[updated.length - 1] = { role: 'assistant', content: assistantMessage };
-                                            return updated;
-                                        });
-                                    }
-                                } catch {
-                                    // Ignore parse errors (incomplete JSON)
-                                }
-                            }
-                        }
-                    }
+                const errorText = await res.text();
+                try {
+                    const errorData = JSON.parse(errorText);
+                    throw new Error(errorData.error?.message || `Lỗi ${res.status}`);
+                } catch {
+                    throw new Error(`Lỗi kết nối (${res.status})`);
                 }
             }
+
+            // Add loading assistant message
+            setMessages(prev => [...prev, { role: 'assistant', content: '⏳ Đang suy nghĩ...' }]);
+
+            // Parse JSON response (non-streaming mode)
+            const data = await res.json();
+            const aiResponse = data.response || '';
+
+            // Update with AI response
+            if (aiResponse) {
+                setMessages(prev => {
+                    const updated = [...prev];
+                    updated[updated.length - 1] = { role: 'assistant', content: aiResponse };
+                    return updated;
+                });
+            } else {
+                setMessages(prev => {
+                    const updated = [...prev];
+                    updated[updated.length - 1] = {
+                        role: 'assistant',
+                        content: '⚠️ Không nhận được phản hồi từ AI. Vui lòng thử lại.'
+                    };
+                    return updated;
+                });
+            }
+
         } catch (error) {
             console.error('AI error:', error);
             const errorMsg = error instanceof Error ? error.message : 'Lỗi không xác định';
             setMessages(prev => [
                 ...prev,
-                { role: 'assistant', content: `❌ Lỗi: ${errorMsg}\n\nVui lòng thử lại sau hoặc liên hệ admin nếu lỗi tiếp tục.` }
+                { role: 'assistant', content: `❌ Lỗi: ${errorMsg}\n\nVui lòng thử lại sau.` }
             ]);
         } finally {
             setIsLoading(false);
@@ -245,13 +232,14 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                 </div>
                             ))
                         )}
-                        {isLoading && messages[messages.length - 1]?.role === 'user' && (
+                        {isLoading && messages[messages.length - 1]?.role !== 'assistant' && (
                             <div className="flex justify-start">
                                 <div className="bg-slate-800 text-slate-400 px-4 py-2 rounded-2xl rounded-bl-sm">
                                     <Loader2 className="w-5 h-5 animate-spin" />
                                 </div>
                             </div>
                         )}
+                        <div ref={messagesEndRef} />
                     </div>
 
                     {/* Input */}
