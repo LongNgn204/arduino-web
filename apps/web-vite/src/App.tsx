@@ -9,6 +9,7 @@ import WeekDetailPage from './pages/WeekDetailPage';
 import LessonPage from './pages/LessonPage';
 import LabPage from './pages/LabPage';
 import QuizPage from './pages/QuizPage';
+import { ExamDrillPage } from './pages/ExamDrillPage';
 import UpdatePopup from './components/UpdatePopup';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/lessons/:lessonId" element={<LessonPage />} />
         <Route path="/labs/:labId" element={<LabPage />} />
         <Route path="/quizzes/:quizId" element={<QuizPage />} />
+        <Route path="/drills/:drillId" element={<ExamDrillPage />} />
       </Routes>
     </BrowserRouter>
   );
