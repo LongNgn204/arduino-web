@@ -38,6 +38,13 @@ export default function DashboardPage() {
     const navigate = useNavigate();
     const [courses, setCourses] = useState<Course[]>([]);
     const [loading, setLoading] = useState(true);
+    const [progress, setProgress] = useState({
+        overall: 0,
+        lessons: { completed: 0, total: 1, percentage: 0 },
+        labs: { completed: 0, total: 1, percentage: 0 },
+        quizzes: { completed: 0, total: 1, percentage: 0 },
+        avgQuizScore: null as number | null,
+    });
 
     // Redirect if not authenticated
     useEffect(() => {
@@ -46,22 +53,32 @@ export default function DashboardPage() {
         }
     }, [isAuthenticated, navigate]);
 
-    // Fetch courses
+    // Fetch courses and progress
     useEffect(() => {
-        async function fetchCourses() {
+        async function fetchData() {
             try {
-                const res = await fetch(`${API_BASE}/api/courses`, {
+                // Fetch courses
+                const coursesRes = await fetch(`${API_BASE}/api/courses`, {
                     credentials: 'include',
                 });
-                const data = await res.json();
-                setCourses(data.courses || []);
+                const coursesData = await coursesRes.json();
+                setCourses(coursesData.courses || []);
+
+                // Fetch progress
+                const progressRes = await fetch(`${API_BASE}/api/progress`, {
+                    credentials: 'include',
+                });
+                if (progressRes.ok) {
+                    const progressData = await progressRes.json();
+                    setProgress(progressData.progress || progress);
+                }
             } catch (error) {
-                console.error('Failed to fetch courses:', error);
+                console.error('Failed to fetch data:', error);
             } finally {
                 setLoading(false);
             }
         }
-        fetchCourses();
+        fetchData();
     }, []);
 
     const handleLogout = async () => {
@@ -69,16 +86,7 @@ export default function DashboardPage() {
         navigate('/login');
     };
 
-    // Mock progress data (will be replaced with real API)
-    const progress = {
-        completedLessons: 3,
-        totalLessons: 36,
-        completedLabs: 1,
-        totalLabs: 24,
-        quizAverage: 85,
-    };
 
-    const progressPercent = Math.round((progress.completedLessons / progress.totalLessons) * 100);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -131,25 +139,25 @@ export default function DashboardPage() {
                     <StatCard
                         icon={<BookOpen className="w-6 h-6" />}
                         label="Bài học"
-                        value={`${progress.completedLessons}/${progress.totalLessons}`}
+                        value={`${progress.lessons.completed}/${progress.lessons.total}`}
                         color="from-teal-500 to-cyan-500"
                     />
                     <StatCard
                         icon={<Zap className="w-6 h-6" />}
                         label="Bài thực hành"
-                        value={`${progress.completedLabs}/${progress.totalLabs}`}
+                        value={`${progress.labs.completed}/${progress.labs.total}`}
                         color="from-amber-500 to-orange-500"
                     />
                     <StatCard
                         icon={<Trophy className="w-6 h-6" />}
                         label="Điểm Quiz TB"
-                        value={`${progress.quizAverage}%`}
+                        value={`${progress.avgQuizScore ?? '--'}%`}
                         color="from-purple-500 to-pink-500"
                     />
                     <StatCard
                         icon={<Target className="w-6 h-6" />}
                         label="Tiến độ"
-                        value={`${progressPercent}%`}
+                        value={`${progress.overall}%`}
                         color="from-green-500 to-emerald-500"
                     />
                 </div>
@@ -172,7 +180,7 @@ export default function DashboardPage() {
                     ) : (
                         <div className="space-y-6">
                             {courses.map((course) => (
-                                <CourseCard key={course.id} course={course} progress={progressPercent} />
+                                <CourseCard key={course.id} course={course} progress={progress.overall} />
                             ))}
                         </div>
                     )}

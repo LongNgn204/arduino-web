@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import WeekDetailPage from './pages/WeekDetailPage';
 import LessonPage from './pages/LessonPage';
 import LabPage from './pages/LabPage';
+import QuizPage from './pages/QuizPage';
 import UpdatePopup from './components/UpdatePopup';
 
 function App() {
@@ -24,11 +25,13 @@ function App() {
         <Route path="/weeks/:weekId" element={<WeekDetailPage />} />
         <Route path="/lessons/:lessonId" element={<LessonPage />} />
         <Route path="/labs/:labId" element={<LabPage />} />
+        <Route path="/quizzes/:quizId" element={<QuizPage />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
 
 

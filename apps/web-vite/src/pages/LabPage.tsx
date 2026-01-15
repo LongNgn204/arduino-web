@@ -12,6 +12,7 @@ import {
     MessageSquare,
     CheckCircle2
 } from 'lucide-react';
+import AiChatPopup from '../components/AiChatPopup';
 
 const API_BASE = import.meta.env.PROD
     ? 'https://arduino-workers.stu725114073.workers.dev'
@@ -75,15 +76,45 @@ export default function LabPage() {
     }, [labId]);
 
     const handleSave = async () => {
+        if (!lab) return;
         setIsSaving(true);
-        // TODO: Save to API
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setIsSaving(false);
+        try {
+            const res = await fetch(`${API_BASE}/api/labs/${lab.id}/save`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ code, submit: false }),
+            });
+            if (res.ok) {
+                console.log('Code saved successfully');
+            }
+        } catch (error) {
+            console.error('Failed to save code:', error);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleSubmit = async () => {
-        // TODO: Submit for grading
-        alert('Tính năng nộp bài đang được phát triển!');
+        if (!lab) return;
+        setIsSaving(true);
+        try {
+            const res = await fetch(`${API_BASE}/api/labs/${lab.id}/save`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ code, submit: true }),
+            });
+            if (res.ok) {
+                const data = await res.json();
+                alert(data.message || 'Nộp bài thành công!');
+            }
+        } catch (error) {
+            console.error('Failed to submit:', error);
+            alert('Có lỗi xảy ra, vui lòng thử lại!');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     if (loading) {
@@ -287,6 +318,9 @@ export default function LabPage() {
                     </div>
                 )}
             </main>
+
+            {/* AI Tutor Popup with code context */}
+            <AiChatPopup labId={lab.id} currentCode={code} />
         </div>
     );
 }

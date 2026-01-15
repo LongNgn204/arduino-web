@@ -9,6 +9,7 @@ import {
     CheckCircle2,
     BookOpen
 } from 'lucide-react';
+import AiChatPopup from '../components/AiChatPopup';
 
 const API_BASE = import.meta.env.PROD
     ? 'https://arduino-workers.stu725114073.workers.dev'
@@ -63,9 +64,24 @@ export default function LessonPage() {
         fetchLesson();
     }, [lessonId]);
 
-    const handleMarkComplete = () => {
-        setCompleted(true);
-        // TODO: Save progress to API
+    const handleMarkComplete = async () => {
+        if (!lesson || completed) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/progress/mark`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    lessonId: lesson.id,
+                    status: 'completed',
+                }),
+            });
+            if (res.ok) {
+                setCompleted(true);
+            }
+        } catch (error) {
+            console.error('Failed to mark complete:', error);
+        }
     };
 
     if (loading) {
@@ -168,6 +184,9 @@ export default function LessonPage() {
                     </div>
                 </div>
             </main>
+
+            {/* AI Tutor Popup */}
+            <AiChatPopup lessonId={lesson.id} />
         </div>
     );
 }
@@ -177,7 +196,7 @@ function MarkdownRenderer({ content }: { content: string }) {
     // Basic markdown parsing (can be enhanced with a proper library like react-markdown)
     const renderContent = () => {
         const lines = content.split('\n');
-        const elements: JSX.Element[] = [];
+        const elements: React.ReactNode[] = [];
         let inCodeBlock = false;
         let codeContent = '';
         let codeLanguage = '';

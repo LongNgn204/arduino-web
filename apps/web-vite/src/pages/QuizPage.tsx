@@ -7,8 +7,7 @@ import {
     CheckCircle2,
     XCircle,
     ChevronRight,
-    Trophy,
-    AlertCircle
+    Trophy
 } from 'lucide-react';
 
 const API_BASE = import.meta.env.PROD
@@ -97,31 +96,44 @@ export default function QuizPage() {
         setAnswers(prev => ({ ...prev, [questionId]: answerIndex }));
     };
 
-    const handleSubmit = () => {
-        if (!quiz) return;
+    const [submitting, setSubmitting] = useState(false);
+    const [results, setResults] = useState<Array<{
+        questionId: string;
+        correct: boolean;
+        explanation: string | null;
+    }>>([]);
 
-        let earned = 0;
-        let total = 0;
+    const handleSubmit = async () => {
+        if (!quiz || submitting) return;
+        setSubmitting(true);
 
-        quiz.questions.forEach(q => {
-            total += q.points;
-            const userAnswer = answers[q.id];
-            const correctAnswer = JSON.parse(q.correctAnswer);
+        try {
+            const res = await fetch(`${API_BASE}/api/quizzes/${quizId}/submit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ answers }),
+            });
 
-            if (q.type === 'single' || q.type === 'truefalse') {
-                if (userAnswer === correctAnswer) {
-                    earned += q.points;
-                }
+            if (!res.ok) {
+                console.error('Failed to submit quiz');
+                setSubmitting(false);
+                return;
             }
-        });
 
-        const percentage = Math.round((earned / total) * 100);
-        setScore({
-            earned,
-            total,
-            passed: percentage >= (quiz.passingScore || 60)
-        });
-        setSubmitted(true);
+            const data = await res.json();
+            setScore({
+                earned: data.score,
+                total: data.maxScore,
+                passed: data.passed,
+            });
+            setResults(data.results || []);
+            setSubmitted(true);
+        } catch (error) {
+            console.error('Quiz submit error:', error);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const formatTime = (seconds: number) => {
@@ -161,10 +173,7 @@ export default function QuizPage() {
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
                 <div className="max-w-md w-full text-center">
-                    <div className={`
-            w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center
-            ${score.passed ? 'bg-green-500/20' : 'bg-red-500/20'}
-          `}>
+                    <div className={`w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center ${score.passed ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
                         {score.passed ? (
                             <Trophy className="w-12 h-12 text-green-400" />
                         ) : (
@@ -183,18 +192,14 @@ export default function QuizPage() {
 
                     <div className="bg-slate-800/50 rounded-2xl p-6 mb-6 border border-slate-700">
                         <div className="text-5xl font-bold text-white mb-2">{percentage}%</div>
-                        <p className="text-slate-400">
-                            {score.earned}/{score.total} điểm
-                        </p>
+                        <p className="text-slate-400">{score.earned}/{score.total} điểm</p>
                         <div className="mt-4 h-3 bg-slate-700 rounded-full overflow-hidden">
                             <div
                                 className={`h-full rounded-full ${score.passed ? 'bg-green-500' : 'bg-red-500'}`}
                                 style={{ width: `${percentage}%` }}
                             />
                         </div>
-                        <p className="text-sm text-slate-500 mt-2">
-                            Điểm chuẩn: {quiz.passingScore}%
-                        </p>
+                        <p className="text-sm text-slate-500 mt-2">Điểm chuẩn: {quiz.passingScore}%</p>
                     </div>
 
                     <div className="flex gap-3">
@@ -237,17 +242,12 @@ export default function QuizPage() {
                             </Link>
                             <div>
                                 <h1 className="text-sm font-semibold text-white">{quiz.title}</h1>
-                                <p className="text-xs text-slate-400">
-                                    Câu {currentIndex + 1}/{quiz.questions.length}
-                                </p>
+                                <p className="text-xs text-slate-400">Câu {currentIndex + 1}/{quiz.questions.length}</p>
                             </div>
                         </div>
 
                         {timeLeft !== null && (
-                            <div className={`
-                flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-mono
-                ${timeLeft < 60 ? 'bg-red-500/20 text-red-400' : 'bg-slate-800 text-slate-300'}
-              `}>
+                            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-mono ${timeLeft < 60 ? 'bg-red-500/20 text-red-400' : 'bg-slate-800 text-slate-300'}`}>
                                 <Clock className="w-4 h-4" />
                                 {formatTime(timeLeft)}
                             </div>
@@ -256,10 +256,7 @@ export default function QuizPage() {
 
                     {/* Progress Bar */}
                     <div className="h-1 bg-slate-800 -mx-4">
-                        <div
-                            className="h-full bg-purple-500 transition-all duration-300"
-                            style={{ width: `${progress}%` }}
-                        />
+                        <div className="h-full bg-purple-500 transition-all duration-300" style={{ width: `${progress}%` }} />
                     </div>
                 </div>
             </header>
@@ -290,19 +287,13 @@ export default function QuizPage() {
                                 <button
                                     key={index}
                                     onClick={() => handleAnswer(currentQuestion.id, index)}
-                                    className={`
-                    w-full text-left p-4 rounded-xl border-2 transition-all
-                    ${isSelected
-                                            ? 'border-purple-500 bg-purple-500/10 text-white'
-                                            : 'border-slate-700 bg-slate-800/50 text-slate-300 hover:border-slate-600'
-                                        }
-                  `}
+                                    className={`w-full text-left p-4 rounded-xl border-2 transition-all ${isSelected
+                                        ? 'border-purple-500 bg-purple-500/10 text-white'
+                                        : 'border-slate-700 bg-slate-800/50 text-slate-300 hover:border-slate-600'
+                                        }`}
                                 >
                                     <div className="flex items-center gap-3">
-                                        <span className={`
-                      w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium
-                      ${isSelected ? 'bg-purple-500 text-white' : 'bg-slate-700 text-slate-400'}
-                    `}>
+                                        <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-medium ${isSelected ? 'bg-purple-500 text-white' : 'bg-slate-700 text-slate-400'}`}>
                                             {String.fromCharCode(65 + index)}
                                         </span>
                                         <span>{option}</span>
@@ -350,15 +341,12 @@ export default function QuizPage() {
                             <button
                                 key={q.id}
                                 onClick={() => setCurrentIndex(i)}
-                                className={`
-                  w-9 h-9 rounded-lg text-sm font-medium transition-all
-                  ${i === currentIndex
-                                        ? 'bg-purple-500 text-white'
-                                        : answers[q.id] !== undefined
-                                            ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                                            : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
-                                    }
-                `}
+                                className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${i === currentIndex
+                                    ? 'bg-purple-500 text-white'
+                                    : answers[q.id] !== undefined
+                                        ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                                        : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
+                                    }`}
                             >
                                 {i + 1}
                             </button>
