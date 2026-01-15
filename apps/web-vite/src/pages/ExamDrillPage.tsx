@@ -17,7 +17,9 @@ interface ExamDrill {
 }
 
 export function ExamDrillPage() {
-    const { id } = useParams();
+    const { drillId } = useParams();
+    const id = drillId;
+
     const navigate = useNavigate();
 
     const [drill, setDrill] = useState<ExamDrill | null>(null);

@@ -57,6 +57,8 @@ export default function DashboardPage() {
     // Fetch courses and progress
     useEffect(() => {
         async function fetchData() {
+            if (!isAuthenticated) return;
+
             try {
                 // Fetch courses
                 const coursesRes = await fetch(`${API_BASE}/api/courses`, {
