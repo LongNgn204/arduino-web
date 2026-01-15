@@ -274,7 +274,7 @@ export default function LabPage() {
                             )}
 
                             {/* Rubric */}
-                            {lab.rubric && (
+                            {lab.rubric && lab.rubric.criteria && (
                                 <section className="bg-gradient-to-br from-purple-500/10 to-transparent rounded-2xl p-6 border border-purple-500/20">
                                     <h3 className="font-bold text-white mb-5 flex items-center gap-2">
                                         <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
@@ -282,7 +282,7 @@ export default function LabPage() {
                                         </div>
                                         Tiêu chí chấm điểm
                                         <span className="ml-auto text-sm font-normal text-purple-400">
-                                            Tổng: {lab.rubric.total} điểm
+                                            Tổng: {lab.rubric.total || 0} điểm
                                         </span>
                                     </h3>
                                     <div className="space-y-3">

@@ -150,11 +150,11 @@ export default function QuizPage() {
         );
     }
 
-    if (!quiz) {
+    if (!quiz || !quiz.questions || quiz.questions.length === 0) {
         return (
             <div className="min-h-screen bg-slate-900 flex items-center justify-center">
                 <div className="text-center">
-                    <p className="text-slate-400 mb-4">Không tìm thấy bài quiz.</p>
+                    <p className="text-slate-400 mb-4">Không tìm thấy bài quiz hoặc chưa có câu hỏi.</p>
                     <Link to="/dashboard" className="text-teal-400 hover:underline">
                         ← Quay lại Dashboard
                     </Link>

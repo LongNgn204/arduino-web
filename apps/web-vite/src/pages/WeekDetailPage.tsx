@@ -141,15 +141,15 @@ export default function WeekDetailPage() {
                             <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400">
                                 <span className="flex items-center gap-1.5">
                                     <BookOpen className="w-4 h-4 text-teal-400" />
-                                    {week.lessons.length} bài giảng
+                                    {(week.lessons || []).length} bài giảng
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <Beaker className="w-4 h-4 text-amber-400" />
-                                    {week.labs.length} thực hành
+                                    {(week.labs || []).length} thực hành
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <Target className="w-4 h-4 text-purple-400" />
-                                    {week.objectives.length} mục tiêu
+                                    {(week.objectives || []).length} mục tiêu
                                 </span>
                             </div>
                         </div>
@@ -172,7 +172,7 @@ export default function WeekDetailPage() {
                             active={activeTab === 'lessons'}
                             onClick={() => setActiveTab('lessons')}
                             icon={<BookOpen className="w-4 h-4" />}
-                            count={week.lessons.length}
+                            count={(week.lessons || []).length}
                         >
                             Bài giảng
                         </TabButton>
@@ -180,7 +180,7 @@ export default function WeekDetailPage() {
                             active={activeTab === 'labs'}
                             onClick={() => setActiveTab('labs')}
                             icon={<Beaker className="w-4 h-4" />}
-                            count={week.labs.length}
+                            count={(week.labs || []).length}
                         >
                             Thực hành
                         </TabButton>
@@ -204,7 +204,7 @@ export default function WeekDetailPage() {
                         </section>
 
                         {/* Objectives */}
-                        {week.objectives.length > 0 && (
+                        {week.objectives && week.objectives.length > 0 && (
                             <section className="bg-gradient-to-br from-teal-500/10 to-transparent rounded-2xl p-6 border border-teal-500/20">
                                 <h3 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
                                     <div className="w-8 h-8 bg-teal-500/20 rounded-lg flex items-center justify-center">
@@ -226,7 +226,7 @@ export default function WeekDetailPage() {
                         )}
 
                         {/* Exam Checklist */}
-                        {week.examChecklist.length > 0 && (
+                        {week.examChecklist && week.examChecklist.length > 0 && (
                             <section className="bg-gradient-to-br from-amber-500/10 to-transparent rounded-2xl p-6 border border-amber-500/20">
                                 <h3 className="text-lg font-bold text-white mb-5 flex items-center gap-2">
                                     <div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center">
@@ -249,7 +249,7 @@ export default function WeekDetailPage() {
                         <section className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
                             <h3 className="text-lg font-bold text-white mb-4">🚀 Bắt đầu học ngay</h3>
                             <div className="flex flex-wrap gap-3">
-                                {week.lessons.length > 0 && (
+                                {week.lessons && week.lessons.length > 0 && (
                                     <Link
                                         to={`/lessons/${week.lessons[0].id}`}
                                         className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-xl font-medium hover:from-teal-400 hover:to-cyan-400 transition-all shadow-lg shadow-teal-500/30 hover:scale-105"
@@ -258,7 +258,7 @@ export default function WeekDetailPage() {
                                         Bắt đầu Bài 1
                                     </Link>
                                 )}
-                                {week.labs.length > 0 && (
+                                {week.labs && week.labs.length > 0 && (
                                     <Link
                                         to={`/labs/${week.labs[0].id}`}
                                         className="flex items-center gap-2 px-5 py-3 bg-slate-700 text-white rounded-xl font-medium hover:bg-slate-600 transition-all"
@@ -274,7 +274,7 @@ export default function WeekDetailPage() {
 
                 {activeTab === 'lessons' && (
                     <div className="space-y-4 animate-fadeIn">
-                        {week.lessons.length === 0 ? (
+                        {!week.lessons || week.lessons.length === 0 ? (
                             <div className="text-center py-16 bg-slate-800/30 rounded-2xl border border-slate-700/50">
                                 <BookOpen className="w-12 h-12 text-slate-600 mx-auto mb-4" />
                                 <p className="text-slate-400">Chưa có bài giảng nào.</p>
@@ -297,7 +297,7 @@ export default function WeekDetailPage() {
 
                 {activeTab === 'labs' && (
                     <div className="space-y-4 animate-fadeIn">
-                        {week.labs.length === 0 ? (
+                        {!week.labs || week.labs.length === 0 ? (
                             <div className="text-center py-16 bg-slate-800/30 rounded-2xl border border-slate-700/50">
                                 <Beaker className="w-12 h-12 text-slate-600 mx-auto mb-4" />
                                 <p className="text-slate-400">Chưa có bài thực hành nào.</p>
