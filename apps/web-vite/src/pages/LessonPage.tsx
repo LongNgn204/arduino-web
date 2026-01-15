@@ -11,7 +11,6 @@ import {
     Sparkles,
     Eye
 } from 'lucide-react';
-import AiChatPopup from '../components/AiChatPopup';
 
 const API_BASE = import.meta.env.PROD
     ? 'https://arduino-workers.stu725114073.workers.dev'
@@ -267,9 +266,6 @@ export default function LessonPage() {
                     </div>
                 </div>
             </main>
-
-            {/* AI Tutor Popup */}
-            <AiChatPopup lessonId={lesson.id} />
         </div>
     );
 }

@@ -86,6 +86,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
             const reader = res.body?.getReader();
             const decoder = new TextDecoder();
             let assistantMessage = '';
+            let buffer = ''; // Buffer for incomplete lines
 
             setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
@@ -94,26 +95,40 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                     const { done, value } = await reader.read();
                     if (done) break;
 
-                    const chunk = decoder.decode(value, { stream: true });
-                    const lines = chunk.split('\n');
+                    // Append new chunk to buffer
+                    buffer += decoder.decode(value, { stream: true });
 
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            const data = line.slice(6);
-                            if (data === '[DONE]') continue;
+                    // Split by double newline (SSE separator)
+                    const parts = buffer.split('\n\n');
 
-                            try {
-                                const parsed = JSON.parse(data);
-                                const content = parsed.choices?.[0]?.delta?.content || '';
-                                assistantMessage += content;
+                    // Keep the last part in buffer if incomplete
+                    buffer = parts.pop() || '';
 
-                                setMessages(prev => {
-                                    const updated = [...prev];
-                                    updated[updated.length - 1] = { role: 'assistant', content: assistantMessage };
-                                    return updated;
-                                });
-                            } catch {
-                                // Ignore parse errors
+                    for (const part of parts) {
+                        const lines = part.split('\n');
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const data = line.slice(6).trim();
+                                if (data === '[DONE]' || data === '') continue;
+
+                                try {
+                                    const parsed = JSON.parse(data);
+                                    // Handle both formats: 
+                                    // 1. Backend simplified: {content: "..."}
+                                    // 2. OpenRouter pass-through: {choices: [{delta: {content: "..."}}]}
+                                    const content = parsed.content || parsed.choices?.[0]?.delta?.content || '';
+                                    if (content) {
+                                        assistantMessage += content;
+
+                                        setMessages(prev => {
+                                            const updated = [...prev];
+                                            updated[updated.length - 1] = { role: 'assistant', content: assistantMessage };
+                                            return updated;
+                                        });
+                                    }
+                                } catch {
+                                    // Ignore parse errors (incomplete JSON)
+                                }
                             }
                         }
                     }
@@ -121,9 +136,10 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
             }
         } catch (error) {
             console.error('AI error:', error);
+            const errorMsg = error instanceof Error ? error.message : 'Lỗi không xác định';
             setMessages(prev => [
                 ...prev,
-                { role: 'assistant', content: 'Xin lỗi, đã xảy ra lỗi. Vui lòng thử lại.' }
+                { role: 'assistant', content: `❌ Lỗi: ${errorMsg}\n\nVui lòng thử lại sau hoặc liên hệ admin nếu lỗi tiếp tục.` }
             ]);
         } finally {
             setIsLoading(false);
@@ -220,8 +236,8 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                 >
                                     <div
                                         className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm ${msg.role === 'user'
-                                                ? 'bg-teal-500 text-white rounded-br-sm'
-                                                : 'bg-slate-800 text-slate-300 rounded-bl-sm'
+                                            ? 'bg-teal-500 text-white rounded-br-sm'
+                                            : 'bg-slate-800 text-slate-300 rounded-bl-sm'
                                             }`}
                                     >
                                         <pre className="whitespace-pre-wrap font-sans">{msg.content}</pre>

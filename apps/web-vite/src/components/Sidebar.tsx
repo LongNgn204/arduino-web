@@ -13,7 +13,8 @@ import {
     Cpu,
     Menu,
     X,
-    Terminal
+    Terminal,
+    ClipboardCheck
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -42,6 +43,7 @@ export default function Sidebar({ children }: SidebarProps) {
         { type: 'divider' },
         { icon: Terminal, label: 'Web IDE', href: '/ide', color: 'green' },
         { icon: Zap, label: 'Exam Drill', href: '/drills/drill-01', color: 'cyan' },
+        { icon: ClipboardCheck, label: 'Quiz Tuần 1', href: '/quizzes/quiz-01', color: 'orange' },
         { icon: Trophy, label: 'Bảng xếp hạng', href: '/leaderboard', color: 'yellow' },
         { icon: Award, label: 'Chứng nhận', href: '/certificate', color: 'purple' },
     ];
@@ -116,7 +118,11 @@ export default function Sidebar({ children }: SidebarProps) {
                                 ? 'text-yellow-400'
                                 : item.color === 'purple'
                                     ? 'text-purple-400'
-                                    : 'text-teal-400';
+                                    : item.color === 'orange'
+                                        ? 'text-orange-400'
+                                        : item.color === 'green'
+                                            ? 'text-green-400'
+                                            : 'text-teal-400';
 
                         return (
                             <Link
