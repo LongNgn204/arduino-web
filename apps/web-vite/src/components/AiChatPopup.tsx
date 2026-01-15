@@ -11,7 +11,6 @@ import {
     Trash2,
     Maximize2,
     Minimize2,
-    GripHorizontal,
     Scaling
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -55,7 +54,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
     const [isResizing, setIsResizing] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
     const dragRef = useRef<{ startX: number; startY: number; startLeft: number; startTop: number }>({ startX: 0, startY: 0, startLeft: 0, startTop: 0 });
     const resizeRef = useRef<{ startX: number; startY: number; startWidth: number; startHeight: number }>({ startX: 0, startY: 0, startWidth: 0, startHeight: 0 });
 
@@ -249,13 +248,6 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
         }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-        }
-    };
-
     const clearChat = () => {
         if (window.confirm('Bạn có chắc chắn muốn xóa lịch sử chat không?')) {
             setMessages([]);
@@ -397,8 +389,8 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                 >
                                     <div
                                         className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-md ${msg.role === 'user'
-                                                ? 'bg-teal-600 text-white rounded-tr-none'
-                                                : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-tl-none'
+                                            ? 'bg-teal-600 text-white rounded-tr-none'
+                                            : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-tl-none'
                                             }`}
                                     >
                                         {msg.role === 'assistant' ? (
