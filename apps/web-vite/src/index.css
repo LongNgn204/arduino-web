@@ -33,7 +33,7 @@
 
 @layer base {
   body {
-    @apply bg-arduino-base text-arduino-text-secondary font-sans antialiased;
+    @apply bg-arduino-base text-gray-600 font-sans antialiased;
   }
 
   h1,
@@ -42,7 +42,7 @@
   h4,
   h5,
   h6 {
-    @apply font-sans font-bold text-arduino-text-primary;
+    @apply font-sans font-bold text-gray-800;
   }
 }
 
@@ -98,11 +98,11 @@
 
 /* Card Styles */
 .card-base {
-  @apply bg-white rounded-2xl shadow-card border border-gray-100 transition-all duration-300;
+  @apply bg-white rounded-2xl shadow-lg border border-gray-100 transition-all duration-300;
 }
 
 .card-hover {
-  @apply hover:shadow-hover hover:-translate-y-1;
+  @apply hover:shadow-xl hover:-translate-y-1;
 }
 
 /* Button Styles */
@@ -115,12 +115,12 @@
 }
 
 .btn-ghost {
-  @apply text-arduino-text-secondary hover:text-arduino-teal hover:bg-gray-100/50 py-2 px-4 rounded-lg transition-all;
+  @apply text-gray-600 hover:text-arduino-teal hover:bg-gray-100/50 py-2 px-4 rounded-lg transition-all;
 }
 
 /* Input Styles */
 .input-field {
-  @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-arduino-text-primary focus:outline-none focus:ring-2 focus:ring-arduino-teal/20 focus:border-arduino-teal/50 transition-all;
+  @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-arduino-teal/20 focus:border-arduino-teal/50 transition-all;
 }
 
 /* Badge Styles */

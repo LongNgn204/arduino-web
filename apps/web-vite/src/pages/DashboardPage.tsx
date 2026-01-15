@@ -125,10 +125,10 @@ export default function DashboardPage() {
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-0 py-8">
                 {/* Welcome Section */}
                 <div className="mb-8 animate-slide-up">
-                    <h1 className="text-3xl font-bold text-arduino-text-primary mb-2">
-                        Chào mừng trở lại, {user?.name || 'bạn'}! 👋
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                        Chào mừng trở lại, {user?.displayName || user?.username || 'bạn'}! 👋
                     </h1>
-                    <p className="text-arduino-text-secondary">
+                    <p className="text-gray-600">
                         Tiếp tục hành trình chinh phục Arduino của bạn.
                     </p>
                 </div>

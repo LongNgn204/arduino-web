@@ -9,7 +9,6 @@ import {
     CheckCircle2,
     BookOpen,
     Sparkles,
-    Sparkles,
     Eye,
     Bookmark
 } from 'lucide-react';
@@ -140,7 +139,7 @@ export default function LessonPage() {
             <div className="min-h-screen bg-arduino-base flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-arduino-teal border-t-transparent rounded-full animate-spin" />
-                    <p className="text-arduino-text-secondary animate-pulse">Đang tải bài học...</p>
+                    <p className="text-gray-500 animate-pulse">Đang tải bài học...</p>
                 </div>
             </div>
         );
@@ -153,7 +152,7 @@ export default function LessonPage() {
                     <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <BookOpen className="w-8 h-8 text-red-400" />
                     </div>
-                    <p className="text-arduino-text-secondary mb-4">Không tìm thấy bài giảng.</p>
+                    <p className="text-gray-500 mb-4">Không tìm thấy bài giảng.</p>
                     <Link to="/dashboard" className="text-arduino-teal hover:underline font-medium">
                         ← Quay lại Dashboard
                     </Link>

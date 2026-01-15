@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
-import { Bookmark, ArrowRight, BookOpen, Cpu, Loader2, Trash2 } from 'lucide-react';
+import { Bookmark, BookOpen, Cpu, Loader2, Trash2 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 
 const API_BASE = import.meta.env.PROD
