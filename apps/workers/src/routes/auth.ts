@@ -98,7 +98,7 @@ auth.post('/register', async (c) => {
         `Path=/; ` +
         `HttpOnly; ` +
         `Secure; ` +
-        `SameSite=Lax; ` +
+        `SameSite=None; ` +
         `Expires=${expiresAt.toUTCString()}`
     );
 
@@ -175,7 +175,7 @@ auth.post('/login', async (c) => {
         `Path=/; ` +
         `HttpOnly; ` +
         `Secure; ` +
-        `SameSite=Lax; ` +
+        `SameSite=None; ` +
         `Expires=${expiresAt.toUTCString()}`
     );
 
@@ -217,7 +217,7 @@ auth.post('/logout', async (c) => {
         `Path=/; ` +
         `HttpOnly; ` +
         `Secure; ` +
-        `SameSite=Lax; ` +
+        `SameSite=None; ` +
         `Expires=Thu, 01 Jan 1970 00:00:00 GMT`
     );
 

@@ -259,3 +259,20 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter
 INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-12-02', 'week-12', 2, 'Bài 12.2', '- Tiêu đề: `Hệ thống bật / tắt 2 Led – WebServer cấu hình không đồng bộ`  
 - LED1/LED2; nút `BAT/TAT` theo trạng thái.', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
 
+-- EXAM DRILLS
+INSERT INTO exam_drills (id, week_id, title, description, content, sample_solution, simulator_url, difficulty, passing_score, time_limit, is_published, created_at) VALUES 
+('drill-01', 'week-01', 'Kiểm tra LED cơ bản', 'Kiểm tra khả năng điều khiển LED của bạn!', 
+'## Đề bài
+
+Viết chương trình điều khiển 5 LED (D2-D6):
+
+1. **Phase 1**: Bật tất cả LED trong 2 giây
+2. **Phase 2**: Chạy LED từ trái sang phải (mỗi LED sáng 500ms)
+3. **Phase 3**: Nháy tất cả LED 3 lần, chu kỳ 1s
+
+**Yêu cầu**:
+- Code sạch, có comment
+- Sử dụng hàm riêng cho mỗi hiệu ứng
+- Chạy vòng lặp vô hạn',
+'// Sample solution code', 'https://wokwi.com/projects/new/arduino-uno', 'easy', 60, 30, 1, unixepoch());
+
