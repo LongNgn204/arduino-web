@@ -11,6 +11,12 @@ import { generateId } from '../services/crypto';
 import type { Env, AuthUser } from '../types';
 
 // Validation schema
+const attachmentSchema = z.object({
+    type: z.enum(['image', 'text']),
+    content: z.string(), // Base64 for image, raw text for text
+    name: z.string().optional(),
+});
+
 const tutorRequestSchema = z.object({
     mode: z.enum(['tutor', 'socratic', 'grader']),
     lessonId: z.string().optional(),
@@ -20,6 +26,7 @@ const tutorRequestSchema = z.object({
     selectedText: z.string().optional(),
     currentCode: z.string().optional(),
     errorLog: z.string().optional(),
+    attachments: z.array(attachmentSchema).optional(),
     stream: z.boolean().optional().default(true), // Mặc định bật streaming
 });
 
@@ -35,8 +42,9 @@ const RATE_WINDOW = 10 * 60;
 
 // OpenRouter config
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-// Model: xiaomi/mimo-v2-flash:free
-const MODEL = 'xiaomi/mimo-v2-flash:free';
+// Models
+const MODEL_DEFAULT = 'xiaomi/mimo-v2-flash:free';
+const MODEL_VISION = 'google/gemini-2.0-flash-exp:free'; // Free model with Vision & Large Context
 
 // System prompts tối ưu cho AI trợ giảng Arduino
 const SYSTEM_PROMPTS: Record<string, string> = {
@@ -265,23 +273,72 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
         }, 400);
     }
 
-    const { mode, lessonId, labId, userQuestion, selectedText, currentCode, errorLog, stream } = result.data;
+    const { mode, lessonId, labId, userQuestion, selectedText, currentCode, errorLog, stream, attachments } = result.data;
+
+    // Detect Attachments & Model Switching
+    let selectedModel = MODEL_DEFAULT;
+    let hasImages = false;
 
     // Build context
     let contextParts: string[] = [];
+
+    // Process attachments
+    const textAttachments: string[] = [];
+    const imageAttachments: { url: string }[] = [];
+
+    if (attachments && attachments.length > 0) {
+        for (const file of attachments) {
+            if (file.type === 'text') {
+                textAttachments.push(`--- File: ${file.name || 'untitled'} ---\n${file.content}\n--- End File ---`);
+            } else if (file.type === 'image') {
+                imageAttachments.push({ url: file.content }); // Content is Base64 Data URL
+                hasImages = true;
+            }
+        }
+    }
+
+    if (hasImages) {
+        selectedModel = MODEL_VISION;
+        console.log('[ai] Switching to Vision Model:', selectedModel);
+    }
+
     if (selectedText) contextParts.push(`Đoạn text được chọn:\n${selectedText}`);
     if (currentCode) contextParts.push(`Code hiện tại:\n\`\`\`cpp\n${currentCode}\n\`\`\``);
     if (errorLog) contextParts.push(`Error log:\n${errorLog}`);
+    if (textAttachments.length > 0) contextParts.push(...textAttachments);
 
     const contextString = contextParts.length > 0
-        ? `\n\nNgữ cảnh:\n${contextParts.join('\n\n')}`
+        ? `\n\nNgữ cảnh đính kèm:\n${contextParts.join('\n\n')}`
         : '';
 
     // Build messages
-    const messages = [
-        { role: 'system', content: SYSTEM_PROMPTS[mode] },
-        { role: 'user', content: userQuestion + contextString },
-    ];
+    let messages: any[] = [];
+
+    // System Prompt
+    messages.push({ role: 'system', content: SYSTEM_PROMPTS[mode] });
+
+    // User Message
+    if (hasImages) {
+        // Multi-modal format
+        const content: any[] = [
+            { type: 'text', text: userQuestion + contextString }
+        ];
+
+        // Add images to content array
+        for (const img of imageAttachments) {
+            content.push({
+                type: 'image_url',
+                image_url: {
+                    url: img.url
+                }
+            });
+        }
+
+        messages.push({ role: 'user', content });
+    } else {
+        // Standard text format
+        messages.push({ role: 'user', content: userQuestion + contextString });
+    }
 
     // Check API key
     if (!c.env.OPENROUTER_API_KEY) {
@@ -310,17 +367,23 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
                     'X-Title': 'Arduino Learning Hub',
                 },
                 body: JSON.stringify({
-                    model: MODEL,
+                    model: selectedModel,
                     messages,
                     stream: true,
-                    max_tokens: 2048,
+                    max_tokens: 4096, // Increased tokens for vision models
                 }),
             });
 
             if (!response.ok || !response.body) {
                 console.error('[ai] OpenRouter error:', response.status);
+                let errorMsg = 'Lỗi kết nối AI';
+                try {
+                    const errData = await response.json() as any;
+                    if (errData.error?.message) errorMsg = errData.error.message;
+                } catch { }
+
                 return c.json({
-                    error: { code: 'AI_ERROR', message: 'Lỗi kết nối AI, vui lòng thử lại' }
+                    error: { code: 'AI_ERROR', message: errorMsg }
                 }, 502);
             }
 
@@ -357,7 +420,12 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
                                     labId: labId || null,
                                     userQuestion,
                                     aiResponse: fullResponse,
-                                    contextData: contextParts.length > 0 ? JSON.stringify({ selectedText, currentCode, errorLog }) : null,
+                                    contextData: JSON.stringify({
+                                        selectedText,
+                                        currentCode,
+                                        errorLog,
+                                        hasAttachments: !!attachments
+                                    }),
                                     tokensUsed: 0, // Không có trong streaming
                                     latencyMs,
                                 }).run().catch(err => console.error('[ai] Log error:', err));
@@ -412,10 +480,10 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
                 'X-Title': 'Arduino Learning Hub',
             },
             body: JSON.stringify({
-                model: MODEL,
+                model: selectedModel,
                 messages,
                 stream: false,
-                max_tokens: 2048,
+                max_tokens: 4096,
             }),
         });
 
@@ -443,7 +511,12 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
             labId: labId || null,
             userQuestion,
             aiResponse,
-            contextData: contextParts.length > 0 ? JSON.stringify({ selectedText, currentCode, errorLog }) : null,
+            contextData: JSON.stringify({
+                selectedText,
+                currentCode,
+                errorLog,
+                hasAttachments: !!attachments
+            }),
             tokensUsed,
             latencyMs,
         }).run().catch(err => console.error('[ai] Log error:', err));

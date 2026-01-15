@@ -11,7 +11,10 @@ import {
     Trash2,
     Maximize2,
     Minimize2,
-    Scaling
+    Scaling,
+    Paperclip,
+    Image as ImageIcon,
+    FileText
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
@@ -31,6 +34,12 @@ interface Message {
     timestamp?: Date;
 }
 
+interface Attachment {
+    type: 'image' | 'text';
+    content: string; // Base64 or text content
+    name: string;
+}
+
 interface AiChatPopupProps {
     lessonId?: string;
     labId?: string;
@@ -45,6 +54,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
     const [isLoading, setIsLoading] = useState(false);
     const [showModeSelect, setShowModeSelect] = useState(false);
     const [remainingQuota, setRemainingQuota] = useState<number | null>(null);
+    const [attachments, setAttachments] = useState<Attachment[]>([]);
 
     // UI State for Resize/Drag
     const [isMaximized, setIsMaximized] = useState(false);
@@ -189,12 +199,63 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
         };
     }, [isDragging, isResizing]);
 
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const files = Array.from(e.target.files);
+            const newAttachments: Attachment[] = [];
+
+            for (const file of files) {
+                // Limit size (e.g. 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert(`File ${file.name} quá lớn (max 2MB)`);
+                    continue;
+                }
+
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    await new Promise<void>((resolve) => {
+                        reader.onload = () => {
+                            newAttachments.push({
+                                type: 'image',
+                                content: reader.result as string,
+                                name: file.name
+                            });
+                            resolve();
+                        };
+                    });
+                } else if (file.type === 'text/plain' || file.name.endsWith('.cpp') || file.name.endsWith('.ino') || file.name.endsWith('.h') || file.name.endsWith('.c') || file.name.endsWith('.txt') || file.name.endsWith('.json') || file.name.endsWith('.md')) { // Basic code/text check
+                    const text = await file.text();
+                    newAttachments.push({
+                        type: 'text',
+                        content: text,
+                        name: file.name
+                    });
+                } else {
+                    alert(`Format file chưa hỗ trợ: ${file.name}`);
+                }
+            }
+
+            setAttachments(prev => [...prev, ...newAttachments]);
+            // Reset input
+            e.target.value = '';
+        }
+    };
+
+    const removeAttachment = (index: number) => {
+        setAttachments(prev => prev.filter((_, i) => i !== index));
+    };
+
 
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
 
         const userMessage = input.trim();
+        const currentAttachments = [...attachments];
+
         setInput('');
+        setAttachments([]); // Clear attachments after send
+
         setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
         setIsLoading(true);
 
@@ -209,6 +270,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                     labId,
                     userQuestion: userMessage,
                     currentCode,
+                    attachments: currentAttachments.length > 0 ? currentAttachments : undefined,
                     stream: false
                 }),
             });
@@ -447,7 +509,42 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                 <span>Còn {remainingQuota} câu hỏi.</span>
                             </div>
                         )}
+
+                        {/* Attachments Preview */}
+                        {attachments.length > 0 && (
+                            <div className="flex gap-2 overflow-x-auto py-2 px-1">
+                                {attachments.map((file, idx) => (
+                                    <div key={idx} className="relative group flex-shrink-0">
+                                        <div className="w-16 h-16 rounded-lg border border-slate-600 bg-slate-700/50 flex items-center justify-center overflow-hidden">
+                                            {file.type === 'image' ? (
+                                                <img src={file.content} alt={file.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <FileText className="w-8 h-8 text-slate-400" />
+                                            )}
+                                        </div>
+                                        <button
+                                            onClick={() => removeAttachment(idx)}
+                                            className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 shadow-md hover:bg-red-600 transition-colors"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                        <p className="text-[10px] text-slate-400 truncate w-16 text-center mt-1">{file.name}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
                         <div className="relative flex items-end gap-2">
+                            <label className="p-2 text-slate-400 hover:text-teal-400 cursor-pointer transition-colors rounded-lg hover:bg-slate-700/50">
+                                <Paperclip className="w-5 h-5" />
+                                <input
+                                    type="file"
+                                    multiple
+                                    className="hidden"
+                                    onChange={handleFileSelect}
+                                    accept="image/*,.txt,.cpp,.ino,.h,.c,.json,.md"
+                                />
+                            </label>
                             <textarea
                                 ref={inputRef}
                                 value={input}
