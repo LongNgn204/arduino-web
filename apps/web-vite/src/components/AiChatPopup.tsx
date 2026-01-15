@@ -8,10 +8,17 @@ import {
     ClipboardCheck,
     Loader2,
     ChevronDown,
-    RefreshCw,
-    Trash2
+    Trash2,
+    Maximize2,
+    Minimize2,
+    GripHorizontal,
+    Scaling
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 const API_BASE = import.meta.env.PROD
     ? 'https://arduino-workers.stu725114073.workers.dev'
@@ -39,13 +46,31 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
     const [isLoading, setIsLoading] = useState(false);
     const [showModeSelect, setShowModeSelect] = useState(false);
     const [remainingQuota, setRemainingQuota] = useState<number | null>(null);
+
+    // UI State for Resize/Drag
+    const [isMaximized, setIsMaximized] = useState(false);
+    const [position, setPosition] = useState({ x: 0, y: 0 }); // Will init in useEffect
+    const [size, setSize] = useState({ width: 450, height: 600 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [isResizing, setIsResizing] = useState(false);
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const dragRef = useRef<{ startX: number; startY: number; startLeft: number; startTop: number }>({ startX: 0, startY: 0, startLeft: 0, startTop: 0 });
+    const resizeRef = useRef<{ startX: number; startY: number; startWidth: number; startHeight: number }>({ startX: 0, startY: 0, startWidth: 0, startHeight: 0 });
+
+    // Initialize position on client side only to avoid huge jumps
+    useEffect(() => {
+        setPosition({
+            x: window.innerWidth - 480,
+            y: window.innerHeight - 650
+        });
+    }, []);
 
     const modeConfig = {
         tutor: {
             label: 'Tutor',
-            description: 'Giải thích kiến thức, fix lỗi code',
+            description: 'Bách khoa toàn thư & Trợ giảng',
             icon: <Sparkles className="w-4 h-4" />,
             color: 'teal',
             bgColor: 'bg-teal-500/20',
@@ -54,7 +79,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
         },
         socratic: {
             label: 'Socratic',
-            description: 'Đặt câu hỏi gợi mở tư duy',
+            description: 'Gợi mở tư duy & Vấn đáp',
             icon: <GraduationCap className="w-4 h-4" />,
             color: 'purple',
             bgColor: 'bg-purple-500/20',
@@ -63,7 +88,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
         },
         grader: {
             label: 'Grader',
-            description: 'Chấm điểm code lab',
+            description: 'Chấm điểm & Review code',
             icon: <ClipboardCheck className="w-4 h-4" />,
             color: 'amber',
             bgColor: 'bg-amber-500/20',
@@ -76,22 +101,22 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
 
     const quickSuggestions = {
         tutor: [
-            "Hàm setup() dùng để làm gì?",
-            "Làm sao để LED nhấp nháy?",
-            "Giải thích code hiện tại giúp tôi",
-            "Tại sao cần dùng trở kéo?"
+            "Định luật Ohm là gì?",
+            "Viết code điều khiển servo",
+            "Công thức tính điện trở LED?",
+            "Giải thích code hiện tại"
         ],
         socratic: [
-            "Gợi ý cho tôi về bài lab này",
-            "Tôi đang gặp lỗi, hãy giúp tôi tư duy",
-            "Thử thách tôi một câu hỏi khó",
-            "Khái niệm này áp dụng thực tế thế nào?"
+            "Tại sao LED cần điện trở?",
+            "Làm sao để code chạy nhanh hơn?",
+            "Gợi ý hướng giải quyết bài này",
+            "Hệ thống nhúng là gì?"
         ],
         grader: [
-            "Chấm điểm code của tôi",
-            "Code này có tối ưu không?",
-            "Tìm lỗi tiềm ẩn trong code",
-            "Gợi ý cải thiện code style"
+            "Review code của tôi",
+            "Tìm lỗi logic tiềm ẩn",
+            "Tối ưu hóa bộ nhớ",
+            "Kiểm tra chuẩn style guide"
         ]
     };
 
@@ -103,11 +128,68 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
         scrollToBottom();
     }, [messages, isOpen]);
 
+    // Drag handlers
+    const handleDragStart = (e: React.MouseEvent) => {
+        if (isMaximized) return;
+        setIsDragging(true);
+        dragRef.current = {
+            startX: e.clientX,
+            startY: e.clientY,
+            startLeft: position.x,
+            startTop: position.y
+        };
+    };
+
+    // Resize handlers
+    const handleResizeStart = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (isMaximized) return;
+        setIsResizing(true);
+        resizeRef.current = {
+            startX: e.clientX,
+            startY: e.clientY,
+            startWidth: size.width,
+            startHeight: size.height
+        };
+    };
+
+    // Global mouse move/up handlers
     useEffect(() => {
-        if (isOpen && inputRef.current) {
-            inputRef.current.focus();
+        const handleMouseMove = (e: MouseEvent) => {
+            if (isDragging) {
+                const dx = e.clientX - dragRef.current.startX;
+                const dy = e.clientY - dragRef.current.startY;
+                setPosition({
+                    x: dragRef.current.startLeft + dx,
+                    y: dragRef.current.startTop + dy
+                });
+            }
+            if (isResizing) {
+                const dx = e.clientX - resizeRef.current.startX;
+                const dy = e.clientY - resizeRef.current.startY;
+                setSize({
+                    width: Math.max(300, resizeRef.current.startWidth + dx),
+                    height: Math.max(400, resizeRef.current.startHeight + dy)
+                });
+            }
+        };
+
+        const handleMouseUp = () => {
+            setIsDragging(false);
+            setIsResizing(false);
+        };
+
+        if (isDragging || isResizing) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
         }
-    }, [isOpen]);
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isDragging, isResizing]);
+
 
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
@@ -128,20 +210,18 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                     labId,
                     userQuestion: userMessage,
                     currentCode,
-                    stream: false // Use non-streaming for stability
+                    stream: false
                 }),
             });
 
             if (!res.ok) {
-                // Try to parse error message from backend
                 let errorMessage = `Lỗi ${res.status}`;
                 try {
                     const errorData = await res.json();
                     if (errorData.error?.message) {
                         errorMessage = errorData.error.message;
                     }
-                } catch (e) {
-                    // If json parse fails, stick to status code or reading text
+                } catch {
                     const text = await res.text();
                     if (text) errorMessage = text.slice(0, 100);
                 }
@@ -184,11 +264,11 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
 
     return (
         <>
-            {/* Floating Button */}
+            {/* Floating Button - Only show when closed */}
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 text-white shadow-lg shadow-teal-500/30 flex items-center justify-center hover:scale-110 transition-transform group"
+                    className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 text-white shadow-lg shadow-teal-500/30 flex items-center justify-center hover:scale-110 transition-transform group animate-bounce-subtle"
                 >
                     <MessageSquare className="w-6 h-6" />
                     <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full text-xs flex items-center justify-center font-bold animate-pulse">
@@ -199,35 +279,58 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
 
             {/* Chat Window */}
             {isOpen && (
-                <div className="fixed bottom-6 right-6 z-50 w-[420px] max-w-[calc(100vw-32px)] h-[600px] max-h-[calc(100vh-100px)] bg-slate-900 rounded-2xl border border-slate-700 shadow-2xl flex flex-col overflow-hidden">
-                    {/* Header */}
-                    <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-800/50">
+                <div
+                    style={{
+                        position: 'fixed',
+                        left: isMaximized ? 0 : position.x,
+                        top: isMaximized ? 0 : position.y,
+                        width: isMaximized ? '100vw' : size.width,
+                        height: isMaximized ? '100vh' : size.height,
+                        zIndex: 100,
+                    }}
+                    className={`bg-slate-900 border border-slate-700 shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${isMaximized ? 'rounded-none' : 'rounded-2xl'}`}
+                >
+                    {/* Header - Draggable */}
+                    <div
+                        onMouseDown={handleDragStart}
+                        className={`flex items-center justify-between p-3 border-b border-slate-700 bg-slate-800/80 backdrop-blur select-none cursor-move ${isDragging ? 'cursor-grabbing' : ''}`}
+                    >
                         <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-xl ${currentModeConfig.bgColor} ${currentModeConfig.textColor} flex items-center justify-center`}>
+                            <div className={`w-9 h-9 rounded-xl ${currentModeConfig.bgColor} ${currentModeConfig.textColor} flex items-center justify-center`}>
                                 {currentModeConfig.icon}
                             </div>
                             <div>
                                 <button
+                                    onMouseDown={(e) => e.stopPropagation()}
                                     onClick={() => setShowModeSelect(!showModeSelect)}
-                                    className="flex items-center gap-1 font-medium text-white hover:text-teal-400 transition-colors"
+                                    className="flex items-center gap-1 font-bold text-white hover:text-teal-400 transition-colors"
                                 >
-                                    AI {currentModeConfig.label}
+                                    {currentModeConfig.label}
                                     <ChevronDown className={`w-4 h-4 transition-transform ${showModeSelect ? 'rotate-180' : ''}`} />
                                 </button>
-                                <p className="text-xs text-slate-500">Mimo Flash • {currentModeConfig.description}</p>
+                                <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
+                                    AI Assistant
+                                </p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1" onMouseDown={(e) => e.stopPropagation()}>
                             <button
                                 onClick={clearChat}
-                                className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors"
-                                title="Xóa lịch sử chat"
+                                className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-colors"
+                                title="Xóa lịch sử"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
                             <button
+                                onClick={() => setIsMaximized(!isMaximized)}
+                                className="p-2 text-slate-400 hover:text-teal-400 hover:bg-slate-700 rounded-lg transition-colors"
+                                title={isMaximized ? "Thu nhỏ" : "Phóng to"}
+                            >
+                                {isMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                            </button>
+                            <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+                                className="p-2 text-slate-400 hover:text-white hover:bg-red-500/20 rounded-lg transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -236,7 +339,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
 
                     {/* Mode Selector Dropdown */}
                     {showModeSelect && (
-                        <div className="absolute top-[72px] left-4 right-4 bg-slate-800 rounded-xl border border-slate-700 shadow-xl z-20 p-2 space-y-1">
+                        <div className="absolute top-[60px] left-4 right-4 bg-slate-800 rounded-xl border border-slate-700 shadow-xl z-20 p-2 space-y-1">
                             {(Object.keys(modeConfig) as AiMode[]).map((m) => (
                                 <button
                                     key={m}
@@ -255,29 +358,31 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                         </p>
                                         <p className="text-xs text-slate-500">{modeConfig[m].description}</p>
                                     </div>
-                                    {mode === m && <CheckCircle className="w-4 h-4 text-teal-500 ml-auto" />}
                                 </button>
                             ))}
                         </div>
                     )}
 
                     {/* Messages Area */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900/50">
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900/50 scroll-smooth custom-scrollbar">
                         {messages.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center h-full text-slate-500 space-y-4">
-                                <div className={`w-16 h-16 rounded-2xl ${currentModeConfig.bgColor} ${currentModeConfig.textColor} flex items-center justify-center mb-2`}>
+                            <div className="flex flex-col items-center justify-center h-full text-slate-500 space-y-6">
+                                <div className={`w-20 h-20 rounded-3xl ${currentModeConfig.bgColor} ${currentModeConfig.textColor} flex items-center justify-center shadow-lg`}>
                                     {currentModeConfig.icon}
                                 </div>
-                                <p className="text-center text-sm">
-                                    Chào bạn! Tôi là trợ lý ảo hỗ trợ học tập.<br />
-                                    Hãy chọn một gợi ý bên dưới hoặc đặt câu hỏi:
-                                </p>
-                                <div className="flex flex-wrap gap-2 justify-center max-w-[90%]">
+                                <div className="text-center space-y-2 px-4">
+                                    <h3 className="text-lg font-bold text-white">Xin chào! 👋</h3>
+                                    <p className="text-sm">Tôi là AI Assistant toàn năng.<br />Hỏi tôi về Arduino, Toán học, hay bất cứ điều gì!</p>
+                                    <div className="text-xs bg-slate-800 px-2 py-1 rounded inline-block text-slate-400 mt-2">
+                                        ✨ Hỗ trợ công thức Toán LaTeX ($E=mc^2$)
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 gap-2 w-full max-w-[80%]">
                                     {quickSuggestions[mode].map((suggestion, idx) => (
                                         <button
                                             key={idx}
                                             onClick={() => setInput(suggestion)}
-                                            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-full border border-slate-700 transition-colors"
+                                            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 hover:border-teal-500/50 text-slate-300 text-xs rounded-xl border border-slate-700 transition-all text-left truncate"
                                         >
                                             {suggestion}
                                         </button>
@@ -291,14 +396,38 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div
-                                        className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === 'user'
+                                        className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-md ${msg.role === 'user'
                                                 ? 'bg-teal-600 text-white rounded-tr-none'
                                                 : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-tl-none'
                                             }`}
                                     >
                                         {msg.role === 'assistant' ? (
-                                            <div className="prose prose-invert prose-sm max-w-none">
-                                                <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                            <div className="prose prose-invert prose-sm max-w-none break-words">
+                                                <ReactMarkdown
+                                                    remarkPlugins={[remarkMath, remarkGfm]}
+                                                    rehypePlugins={[rehypeKatex]}
+                                                    components={{
+                                                        code: ({ node, inline, className, children, ...props }: any) => {
+                                                            const match = /language-(\w+)/.exec(className || '')
+                                                            return !inline ? (
+                                                                <div className="relative group my-2">
+                                                                    <div className="absolute top-2 right-2 px-2 py-1 text-xs text-slate-500 bg-slate-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                        {match ? match[1] : 'code'}
+                                                                    </div>
+                                                                    <code className={`${className} block p-3 bg-black/30 rounded-lg overflow-x-auto`} {...props}>
+                                                                        {children}
+                                                                    </code>
+                                                                </div>
+                                                            ) : (
+                                                                <code className={`${className} bg-black/20 px-1 py-0.5 rounded text-amber-200`} {...props}>
+                                                                    {children}
+                                                                </code>
+                                                            )
+                                                        }
+                                                    }}
+                                                >
+                                                    {msg.content}
+                                                </ReactMarkdown>
                                             </div>
                                         ) : (
                                             msg.content
@@ -311,7 +440,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                             <div className="flex justify-start">
                                 <div className="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2">
                                     <Loader2 className="w-4 h-4 animate-spin text-teal-400" />
-                                    <span className="text-xs text-slate-400">Đang suy nghĩ...</span>
+                                    <span className="text-xs text-slate-400 animate-pulse">Đang phân tích...</span>
                                 </div>
                             </div>
                         )}
@@ -319,52 +448,51 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                     </div>
 
                     {/* Footer Input */}
-                    <div className="p-4 bg-slate-800 border-t border-slate-700 space-y-2">
+                    <div className="p-4 bg-slate-800/80 backdrop-blur border-t border-slate-700 space-y-2">
                         {remainingQuota !== null && remainingQuota < 10 && (
-                            <div className="flex items-center gap-2 text-xs text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-lg">
-                                <AlertTriangle className="w-3 h-3" />
-                                <span>Bạn còn {remainingQuota} lượt hỏi trong phiên này.</span>
+                            <div className="flex items-center gap-2 text-xs text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
+                                <span className="font-bold">⚠️</span>
+                                <span>Còn {remainingQuota} câu hỏi.</span>
                             </div>
                         )}
-                        <div className="relative">
-                            <input
+                        <div className="relative flex items-end gap-2">
+                            <textarea
                                 ref={inputRef}
-                                type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                placeholder="Đặt câu hỏi cho AI..."
-                                className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl pl-4 pr-12 py-3 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 placeholder-slate-500"
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                        e.preventDefault();
+                                        handleSend();
+                                    }
+                                }}
+                                placeholder="Nhập câu hỏi..."
+                                className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl pl-4 pr-12 py-3 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 placeholder-slate-500 resize-none max-h-32 min-h-[46px]"
+                                rows={1}
                                 disabled={isLoading}
+                                style={{ lineHeight: '1.5' }}
                             />
                             <button
                                 onClick={handleSend}
                                 disabled={!input.trim() || isLoading}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-teal-500 hover:bg-teal-400 text-white rounded-lg disabled:opacity-50 disabled:hover:bg-teal-500 transition-colors"
+                                className="absolute right-2 bottom-2 p-2 bg-teal-500 hover:bg-teal-400 text-white rounded-lg disabled:opacity-50 disabled:hover:bg-teal-500 transition-all shadow-lg shadow-teal-500/20"
                             >
                                 <Send className="w-4 h-4" />
                             </button>
                         </div>
                     </div>
+
+                    {/* Resize Handle */}
+                    {!isMaximized && (
+                        <div
+                            onMouseDown={handleResizeStart}
+                            className="absolute bottom-0 right-0 w-6 h-6 cursor-nwse-resize flex items-end justify-end p-0.5 text-slate-600 hover:text-teal-400 opacity-50 hover:opacity-100 transition-opacity"
+                        >
+                            <Scaling className="w-4 h-4" />
+                        </div>
+                    )}
                 </div>
             )}
         </>
     );
-}
-
-// Icons components helpers
-function CheckCircle({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
-        </svg>
-    )
-}
-
-function AlertTriangle({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><path d="M12 9v4" /><path d="M12 17h.01" />
-        </svg>
-    )
 }

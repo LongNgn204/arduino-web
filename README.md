@@ -1,50 +1,48 @@
 # Arduino Learning Hub - HNUE FET 🚀
 
-Nền tảng học tập "Lập trình hệ thống nhúng & IoT" dành cho sinh viên Khoa Kỹ thuật & Công nghệ - ĐH Sư phạm Hà Nội.
+Nền tảng học tập "Lập trình hệ thống nhúng & IoT" thế hệ mới dành cho sinh viên Khoa Kỹ thuật & Công nghệ - ĐH Sư phạm Hà Nội.
 
-![Landing Page](file:///C:/Users/Administrator/.gemini/antigravity/brain/f0b3c8f6-0391-42ec-b59a-2680c028fa54/landing_page_demo_1768443358930.webp)
+![AI Assistant](https://placehold.co/1200x600/1e293b/teal?text=AI+Assistant+Encyclopedia)
 
 ## ✨ Tính Năng Nổi Bật
 
-- **Premium UI/UX**: Giao diện hiện đại, Dark Mode, Animations mượt mà (Glassmorphism, Glow effects).
-- **12 Tuần Giáo Trình**: Lộ trình học tập chi tiết từ cơ bản đến nâng cao.
-- **AI Trợ Giảng Thông Minh**: 3 chế độ (Tutor, Socratic, Grader) hỗ trợ học tập 24/7.
-- **Simulator Online**: Tích hợp Wokwi để chạy code Arduino ngay trên trình duyệt.
-- **Hệ Thống Đánh Giá**: Quiz trắc nghiệm và Labs thực hành tự động chấm điểm.
+### 🎓 Hệ Thống Học Tập Toàn Diện
+- **12 Tuần Giáo Trình**: Lộ trình bài bản từ cơ bản đến nâng cao.
+- **Simulator Online**: Tích hợp Wokwi Simulator chạy code ngay trên trình duyệt.
+- **Web IDE Thông Minh**: Code editor với Syntax Highlighting, Auto-save.
+
+### 🤖 AI Agent "Bách Khoa Toàn Thư" (Mới 🌟)
+Trợ lý AI mạnh mẽ được nâng cấp toàn diện:
+- **Kiến thức vô hạn**: Trả lời mọi câu hỏi từ Arduino đến Toán học, Khoa học, Xã hội.
+- **Hỗ trợ LaTeX**: Hiển thị công thức Toán học đẹp mắt (ví dụ: $x = \frac{-b \pm \sqrt{\Delta}}{2a}$).
+- **Giao diện linh hoạt**: Cửa sổ chat có thể **Kéo thả (Drag)**, **Thay đổi kích thước (Resize)** và **Phóng to toàn màn hình**.
+- **Auto-Fix Agent**: Tự động tìm và sửa lỗi code trong IDE chỉ với 1 cú click.
+
+### 🏆 Gamification
+- **Leaderboard**: Bảng xếp hạng sinh viên xuất sắc.
+- **Challenges**: Thử thách hàng tuần.
 
 ## 🛠️ Công Nghệ (Tech Stack)
 
-Project được xây dựng hoàn toàn trên nền tảng **Cloudflare** và **Vite**.
+Project sử dụng công nghệ Modern Web mới nhất:
 
-- **Frontend**: 
-  - [Vite](https://vitejs.dev/) + React + TypeScript
-  - TailwindCSS v4 + PostCSS
-  - Zustand (State Management)
-  - Lucide React (Icons)
-  - React Router DOM
-- **Backend (Cloudflare Workers)**:
-  - Hono Framework
-  - Cloudflare D1 (SQLite Database)
-  - Cloudflare KV (Redis-like storage)
-  - Cloudflare AI Gateway (OpenRouter integration)
+### Frontend
+- **Framework**: [Vite](https://vitejs.dev/) + React 19 + TypeScript
+- **Styling**: TailwindCSS v4 + PostCSS + Animations
+- **AI UI**: React Markdown + Katex (LaTeX Support)
+- **State**: Zustand
 
-## 📂 Cấu Trúc Thư Mục
-
-```
-arduino-web/
-├── apps/
-│   ├── web-vite/      # ✅ Frontend chính (Vite + React)
-│   ├── workers/       # 🔧 Backend API (Cloudflare Workers)
-│   └── web/           # 🗑️ Legacy Next.js (Cần xóa)
-├── DEPLOY.md          # 📖 Hướng dẫn deploy chi tiết
-└── package.json       # 📦 Workspace configurations
-```
+### Backend (Serverless)
+- **Runtime**: Cloudflare Workers
+- **Framework**: Hono
+- **Database**: Cloudflare D1 (SQLite) + Drizzle ORM
+- **AI Integration**: OpenRouter API
 
 ## 🚀 Cài Đặt và Chạy Local
 
 ### Yêu cầu
-- Node.js 18+
-- npm (hoặc pnpm)
+- Node.js 20+
+- npm
 
 ### Các bước
 1. **Clone project:**
@@ -75,11 +73,9 @@ arduino-web/
 ## 🌍 Deployment
 
 Xem hướng dẫn chi tiết tại file [DEPLOY.md](./DEPLOY.md).
-
-Project được deploy dễ dàng lên **Cloudflare Pages** (Frontend) và **Cloudflare Workers** (Backend).
+Backend chạy trên Cloudflare Workers (Global Edge Network).
 
 ## 📝 Credits
-
 - **Chủ dự án**: Nguyễn Hoàng Long
 - **Đơn vị**: Khoa Kỹ thuật & Công nghệ - HNUE
-- **Phiên bản**: 2.0.0 (Vite Migration)
+- **Phiên bản**: 2.1.0 (AI Agent Update)
