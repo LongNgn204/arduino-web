@@ -35,55 +35,64 @@ const RATE_WINDOW = 10 * 60;
 
 // OpenRouter config
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
+// Model: xiaomi/mimo-v2-flash:free
 const MODEL = 'xiaomi/mimo-v2-flash:free';
 
 // System prompts tối ưu cho AI trợ giảng Arduino
 const SYSTEM_PROMPTS: Record<string, string> = {
-    tutor: `Bạn là **AI Trợ giảng Arduino** chuyên nghiệp, thân thiện và kiên nhẫn. Nhiệm vụ của bạn là giúp sinh viên học lập trình Arduino một cách hiệu quả.
+    tutor: `Bạn là **AI Trợ giảng Arduino** thông minh, thân thiện và chuyên nghiệp.
 
-## KIẾN THỨC CỐT LÕI:
-- **Arduino Uno**: Vi điều khiển ATmega328P, 14 chân Digital I/O (D0-D13), 6 chân Analog (A0-A5), điện áp 5V
-- **Hàm cơ bản**: pinMode(), digitalWrite(), digitalRead(), analogWrite() (PWM), analogRead(), delay(), millis()
-- **Serial**: Serial.begin(), Serial.print(), Serial.println(), Serial.read()
+## TỰ ĐỘNG NHẬN DIỆN CÂU HỎI:
+Phân tích câu hỏi và trả lời phù hợp:
+
+| Loại câu hỏi | Cách trả lời |
+|--------------|--------------|
+| Chào hỏi (xin chào, hi, hello) | Chào lại thân thiện, giới thiệu bản thân, hỏi có cần giúp gì |
+| Hỏi về khái niệm (là gì, nghĩa là gì) | Giải thích đơn giản + ví dụ code + lưu ý |
+| Hỏi cách làm (làm sao, làm thế nào) | Hướng dẫn từng bước + code mẫu hoàn chỉnh |
+| Debug code (lỗi, không chạy, sai) | Phân tích lỗi + code sửa + giải thích tại sao lỗi |
+| So sánh (khác gì, so sánh) | Bảng so sánh + ưu/nhược điểm |
+| Hỏi về phần cứng (chân, pin, LED) | Sơ đồ kết nối + thông số kỹ thuật |
+
+## KIẾN THỨC ARDUINO:
+- **Board**: Arduino Uno (ATmega328P, 5V, 14 Digital, 6 Analog, 16MHz)
+- **Hàm cơ bản**: pinMode(), digitalWrite(), digitalRead(), analogWrite(), analogRead(), delay(), millis()
+- **Serial**: Serial.begin(9600), Serial.print(), Serial.println(), Serial.read()
 - **Giao thức**: UART, I2C (Wire.h), SPI, 1-Wire
-- **Cảm biến**: DHT11/22 (nhiệt độ/độ ẩm), HC-SR04 (siêu âm), PIR (chuyển động), LDR (ánh sáng)
-- **Hiển thị**: LED, 7-segment, LCD 16x2 (I2C), LED matrix
+- **Cảm biến**: DHT11/22, HC-SR04, PIR, LDR, Potentiometer
+- **Hiển thị**: LED, 7-segment, LCD 16x2, OLED
 
-## CÁCH TRẢ LỜI:
-Luôn trả lời theo format sau:
+## FORMAT TRẢ LỜI:
 
+**Với câu chào hỏi:**
+Chào [bạn/em]! 👋 Tôi là AI Trợ giảng Arduino, sẵn sàng giúp bạn:
+- 📚 Giải thích kiến thức
+- 💻 Viết và debug code
+- 🔧 Hướng dẫn kết nối phần cứng
+
+Bạn cần giúp gì hôm nay?
+
+**Với câu hỏi kiến thức:**
 ### 📝 Giải thích
-[Giải thích ngắn gọn 2-4 câu, dễ hiểu, bằng tiếng Việt]
+[2-4 câu ngắn gọn, dễ hiểu]
 
 ### 💻 Code mẫu
 \`\`\`cpp
-// Code Arduino với comment tiếng Việt
-void setup() {
-  pinMode(13, OUTPUT);  // Cấu hình chân 13 là OUTPUT
-}
-
-void loop() {
-  digitalWrite(13, HIGH);  // Bật LED
-  delay(1000);             // Chờ 1 giây
-  digitalWrite(13, LOW);   // Tắt LED
-  delay(1000);             // Chờ 1 giây
-}
+// Code với comment tiếng Việt
 \`\`\`
 
-### ⚠️ Lưu ý quan trọng
-- [Điểm cần chú ý 1]
-- [Lỗi thường gặp và cách khắc phục]
+### ⚠️ Lưu ý
+- [Điểm quan trọng]
 
-### 🎯 Thử thách nhỏ
-[Một bài tập đơn giản để sinh viên tự làm]
+### 🎯 Thử thách
+[Bài tập nhỏ để thực hành]
 
-## QUY TẮC BẮT BUỘC:
-1. Luôn trả lời bằng **tiếng Việt** 
-2. Code phải **chạy được** trên Arduino Uno
+## QUY TẮC:
+1. Trả lời bằng **tiếng Việt**
+2. Code phải chạy được trên Arduino Uno
 3. Comment code bằng tiếng Việt
-4. Giải thích đơn giản, dễ hiểu
-5. Nếu câu hỏi không rõ, hỏi lại để làm rõ
-6. Khuyến khích sinh viên tự thử nghiệm`,
+4. Thân thiện, kiên nhẫn
+5. Nếu không hiểu câu hỏi, hỏi lại`,
 
     socratic: `Bạn là **Giảng viên Arduino** sử dụng phương pháp Socratic. Thay vì cho đáp án trực tiếp, bạn dẫn dắt sinh viên tự khám phá câu trả lời thông qua các câu hỏi gợi mở.
 
@@ -180,6 +189,46 @@ Viết chương trình làm LED sáng 2 giây, tắt 0.5 giây, lặp lại!
 3. Gợi ý mang tính xây dựng, không chỉ trích
 4. Nếu không có code để chấm, yêu cầu sinh viên gửi code
 5. Trả lời bằng tiếng Việt`,
+
+    // AI Agent - Auto-fix code
+    agent: `Bạn là **AI Agent Arduino** chuyên phân tích và sửa lỗi code tự động.
+
+## NHIỆM VỤ:
+Phân tích code Arduino và trả về JSON với code đã sửa.
+
+## INPUT:
+- Code Arduino cần sửa
+- Mô tả lỗi hoặc yêu cầu (nếu có)
+
+## OUTPUT FORMAT (BẮT BUỘC):
+Trả về CHÍNH XÁC định dạng JSON sau, KHÔNG có text khác:
+
+\`\`\`json
+{
+  "success": true,
+  "fixedCode": "// Code đã sửa hoàn chỉnh...",
+  "changes": [
+    {"line": 5, "type": "fix", "description": "Sửa lỗi cú pháp"},
+    {"line": 10, "type": "improve", "description": "Thêm comment"}
+  ],
+  "summary": "Đã sửa 2 lỗi: ...",
+  "tips": ["Tip 1", "Tip 2"]
+}
+\`\`\`
+
+## QUY TẮC:
+1. LUÔN trả về JSON hợp lệ
+2. fixedCode phải là code hoàn chỉnh, chạy được
+3. Giữ nguyên logic đúng, chỉ sửa phần lỗi
+4. Comment bằng tiếng Việt
+5. Nếu code đã đúng: success=true, fixedCode=code gốc, changes=[]
+
+## VÍ DỤ LỖI THƯỜNG GẶP:
+- Thiếu dấu chấm phẩy ;
+- Sai tên hàm (pinmode -> pinMode)
+- Thiếu pinMode() trong setup()
+- Sai kiểu dữ liệu
+- Logic sai trong điều kiện`,
 };
 
 const aiRoutes = new Hono<{ Bindings: Env }>();
@@ -451,6 +500,134 @@ aiRoutes.post('/feedback', requireAuth(), async (c) => {
     console.log('[ai] Feedback received', { chatLogId, helpful, reason, userId: user.id });
 
     return c.json({ success: true, message: 'Cảm ơn bạn đã đánh giá!' });
+});
+
+/**
+ * POST /api/ai/agent
+ * AI Agent tự động sửa code Arduino
+ */
+const agentRequestSchema = z.object({
+    code: z.string().min(1, 'Code là bắt buộc'),
+    errorMessage: z.string().optional(),
+    labId: z.string().optional(),
+});
+
+aiRoutes.post('/agent', requireAuth(), async (c) => {
+    const user = c.get('user') as AuthUser;
+
+    // Rate limiting (share với tutor)
+    const rateLimitKey = `ai:${user.id}`;
+    const currentCount = await c.env.AI_RATE_LIMIT.get(rateLimitKey);
+    const count = currentCount ? parseInt(currentCount, 10) : 0;
+
+    if (count >= RATE_LIMIT) {
+        return c.json({
+            error: { code: 'RATE_LIMITED', message: 'Đã hết lượt. Vui lòng chờ 10 phút.' }
+        }, 429);
+    }
+
+    let body: unknown;
+    try {
+        body = await c.req.json();
+    } catch {
+        return c.json({ error: { code: 'INVALID_JSON', message: 'Body không hợp lệ' } }, 400);
+    }
+
+    const result = agentRequestSchema.safeParse(body);
+    if (!result.success) {
+        return c.json({
+            error: { code: 'VALIDATION_ERROR', message: result.error.errors[0].message }
+        }, 400);
+    }
+
+    const { code, errorMessage } = result.data;
+
+    if (!c.env.OPENROUTER_API_KEY) {
+        return c.json({
+            error: { code: 'CONFIG_ERROR', message: 'API key chưa được cấu hình' }
+        }, 500);
+    }
+
+    // Update rate limit
+    await c.env.AI_RATE_LIMIT.put(rateLimitKey, String(count + 1), {
+        expirationTtl: RATE_WINDOW,
+    });
+
+    const userPrompt = errorMessage
+        ? `Code Arduino:\n\`\`\`cpp\n${code}\n\`\`\`\n\nLỗi: ${errorMessage}\n\nHãy sửa code và trả về JSON.`
+        : `Code Arduino:\n\`\`\`cpp\n${code}\n\`\`\`\n\nPhân tích và sửa lỗi nếu có, trả về JSON.`;
+
+    try {
+        const response = await fetch(OPENROUTER_URL, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${c.env.OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': 'https://arduino-web.pages.dev',
+                'X-Title': 'Arduino Learning Hub - Agent',
+            },
+            body: JSON.stringify({
+                model: MODEL,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPTS.agent },
+                    { role: 'user', content: userPrompt },
+                ],
+                stream: false,
+                max_tokens: 2048,
+            }),
+        });
+
+        if (!response.ok) {
+            console.error('[agent] OpenRouter error:', response.status);
+            return c.json({
+                error: { code: 'AI_ERROR', message: 'Lỗi kết nối AI' }
+            }, 502);
+        }
+
+        const data = await response.json() as {
+            choices: Array<{ message: { content: string } }>;
+        };
+
+        const aiResponse = data.choices?.[0]?.message?.content || '';
+
+        // Try to extract JSON from response
+        let agentResult;
+        try {
+            // Find JSON in response (may be wrapped in code block)
+            const jsonMatch = aiResponse.match(/```json\s*([\s\S]*?)\s*```/) ||
+                aiResponse.match(/\{[\s\S]*"success"[\s\S]*\}/);
+
+            if (jsonMatch) {
+                const jsonStr = jsonMatch[1] || jsonMatch[0];
+                agentResult = JSON.parse(jsonStr);
+            } else {
+                // Try parsing entire response as JSON
+                agentResult = JSON.parse(aiResponse);
+            }
+        } catch {
+            // If JSON parse fails, return as summary
+            agentResult = {
+                success: false,
+                fixedCode: code,
+                changes: [],
+                summary: aiResponse.slice(0, 500),
+                tips: ['AI không thể phân tích code này. Vui lòng kiểm tra lại cú pháp.']
+            };
+        }
+
+        console.log('[agent] Code fix completed', { userId: user.id, changesCount: agentResult.changes?.length || 0 });
+
+        return c.json({
+            ...agentResult,
+            remainingQuota: RATE_LIMIT - count - 1,
+        });
+
+    } catch (error) {
+        console.error('[agent] Error:', error);
+        return c.json({
+            error: { code: 'AI_ERROR', message: 'Lỗi xử lý AI' }
+        }, 500);
+    }
 });
 
 export default aiRoutes;

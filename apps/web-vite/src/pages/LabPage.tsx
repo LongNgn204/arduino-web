@@ -13,9 +13,11 @@ import {
     CheckCircle2,
     Zap,
     AlertCircle,
-    Maximize2
+    Maximize2,
+    Wand2,
+    Loader2,
+    Sparkles
 } from 'lucide-react';
-import AiChatPopup from '../components/AiChatPopup';
 
 const API_BASE = import.meta.env.PROD
     ? 'https://arduino-workers.stu725114073.workers.dev'
@@ -52,6 +54,16 @@ export default function LabPage() {
     const [activeTab, setActiveTab] = useState<'instructions' | 'code' | 'simulator'>('instructions');
     const [isSaving, setIsSaving] = useState(false);
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
+
+    // AI Agent state
+    const [isFixing, setIsFixing] = useState(false);
+    const [agentResult, setAgentResult] = useState<{
+        success: boolean;
+        changes: Array<{ line: number; type: string; description: string }>;
+        summary: string;
+        tips: string[];
+    } | null>(null);
+    const [showAgentResult, setShowAgentResult] = useState(false);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -121,6 +133,68 @@ export default function LabPage() {
             alert('Có lỗi xảy ra, vui lòng thử lại!');
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    // AI Agent - Auto fix code
+    const handleAutoFix = async () => {
+        if (!code.trim() || isFixing) return;
+
+        setIsFixing(true);
+        setAgentResult(null);
+        setShowAgentResult(false);
+
+        try {
+            const res = await fetch(`${API_BASE}/api/ai/agent`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    code,
+                    labId: lab?.id,
+                }),
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error?.message || 'Lỗi kết nối');
+            }
+
+            const data = await res.json();
+
+            if (data.success && data.fixedCode) {
+                // Apply fixed code
+                setCode(data.fixedCode);
+                setAgentResult({
+                    success: true,
+                    changes: data.changes || [],
+                    summary: data.summary || 'Đã sửa code thành công!',
+                    tips: data.tips || [],
+                });
+            } else {
+                setAgentResult({
+                    success: false,
+                    changes: [],
+                    summary: data.summary || 'Không tìm thấy lỗi cần sửa.',
+                    tips: data.tips || [],
+                });
+            }
+            setShowAgentResult(true);
+
+            // Auto-hide after 8 seconds
+            setTimeout(() => setShowAgentResult(false), 8000);
+
+        } catch (error) {
+            console.error('Agent error:', error);
+            setAgentResult({
+                success: false,
+                changes: [],
+                summary: error instanceof Error ? error.message : 'Lỗi không xác định',
+                tips: ['Vui lòng thử lại sau.'],
+            });
+            setShowAgentResult(true);
+        } finally {
+            setIsFixing(false);
         }
     };
 
@@ -325,10 +399,67 @@ export default function LabPage() {
                                 <span className="text-sm text-slate-300 font-medium">main.ino</span>
                                 <span className="text-xs text-slate-500 px-2 py-0.5 bg-slate-700 rounded">Arduino C++</span>
                             </div>
-                            <button className="p-1.5 hover:bg-slate-700 rounded text-slate-400 hover:text-white transition-colors">
-                                <Maximize2 className="w-4 h-4" />
-                            </button>
+                            <div className="flex items-center gap-2">
+                                {/* AI Agent Button */}
+                                <button
+                                    onClick={handleAutoFix}
+                                    disabled={isFixing || !code.trim()}
+                                    className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium rounded-lg hover:from-purple-400 hover:to-pink-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-purple-500/20"
+                                >
+                                    {isFixing ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            Đang sửa...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Wand2 className="w-4 h-4" />
+                                            AI Sửa Code
+                                        </>
+                                    )}
+                                </button>
+                                <button className="p-1.5 hover:bg-slate-700 rounded text-slate-400 hover:text-white transition-colors">
+                                    <Maximize2 className="w-4 h-4" />
+                                </button>
+                            </div>
                         </div>
+
+                        {/* AI Agent Result Panel */}
+                        {showAgentResult && agentResult && (
+                            <div className={`shrink-0 px-4 py-3 border-b ${agentResult.success ? 'bg-green-500/10 border-green-500/30' : 'bg-amber-500/10 border-amber-500/30'}`}>
+                                <div className="flex items-start gap-3">
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${agentResult.success ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                                        <Sparkles className="w-4 h-4" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className={`font-medium ${agentResult.success ? 'text-green-400' : 'text-amber-400'}`}>
+                                            {agentResult.success ? '✨ Đã sửa code!' : '⚠️ Kết quả'}
+                                        </p>
+                                        <p className="text-sm text-slate-300 mt-1">{agentResult.summary}</p>
+                                        {agentResult.changes.length > 0 && (
+                                            <div className="mt-2 space-y-1">
+                                                {agentResult.changes.slice(0, 3).map((change, i) => (
+                                                    <p key={i} className="text-xs text-slate-400">
+                                                        • Dòng {change.line}: {change.description}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {agentResult.tips.length > 0 && (
+                                            <div className="mt-2 text-xs text-slate-500">
+                                                💡 {agentResult.tips[0]}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={() => setShowAgentResult(false)}
+                                        className="text-slate-500 hover:text-white"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Code Editor */}
                         <div className="flex-1 relative">
@@ -357,9 +488,6 @@ export default function LabPage() {
                     </div>
                 )}
             </main>
-
-            {/* AI Tutor Popup with code context */}
-            <AiChatPopup labId={lab.id} currentCode={code} />
         </div>
     );
 }
