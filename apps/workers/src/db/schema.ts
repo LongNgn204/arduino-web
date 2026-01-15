@@ -121,15 +121,44 @@ export const questions = sqliteTable('questions', {
     id: text('id').primaryKey(),
     quizId: text('quiz_id').notNull().references(() => quizzes.id, { onDelete: 'cascade' }),
     orderIndex: integer('order_index').notNull(),
-    type: text('type', { enum: ['single', 'multiple', 'truefalse'] }).notNull().default('single'),
+    type: text('type', { enum: ['single', 'multiple', 'truefalse', 'fill_in_blank'] }).notNull().default('single'),
     content: text('content').notNull(), // Markdown - nội dung câu hỏi
-    options: text('options').notNull(), // JSON array - các lựa chọn
-    correctAnswer: text('correct_answer').notNull(), // JSON - đáp án đúng (index hoặc array index)
+    options: text('options').notNull(), // JSON array - các lựa chọn (hoặc null nếu điền từ)
+    correctAnswer: text('correct_answer').notNull(), // JSON - đáp án đúng (index hoặc text)
     explanation: text('explanation'), // Giải thích đáp án
     points: integer('points').notNull().default(1),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 }, (table) => ({
     quizOrderIdx: index('questions_quiz_order_idx').on(table.quizId, table.orderIndex),
+}));
+
+// ==========================================
+// PROJECTS LIBRARY
+// ==========================================
+
+// Bảng projects - thư viện dự án IoT
+export const projects = sqliteTable('projects', {
+    id: text('id').primaryKey(),
+    title: text('title').notNull(),
+    description: text('description').notNull(),
+    content: text('content').notNull(), // Markdown hướng dẫn chi tiết
+    difficulty: text('difficulty', { enum: ['easy', 'medium', 'hard'] }).notNull().default('medium'),
+    imageUrl: text('image_url'), // Ảnh thumbnail
+    simulatorUrl: text('simulator_url'), // Wokwi embed URL
+    tags: text('tags'), // JSON array tags e.g. ["IoT", "ESP32", "Led"]
+    isPublished: integer('is_published', { mode: 'boolean' }).notNull().default(false),
+    createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+});
+
+// Bảng saved_items - lưu bài học/dự án
+export const savedItems = sqliteTable('saved_items', {
+    id: text('id').primaryKey(),
+    userId: text('user_id').notNull(), // User who saved (from Auth0/App)
+    itemType: text('item_type', { enum: ['lesson', 'project'] }).notNull(),
+    itemId: text('item_id').notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+}, (table) => ({
+    userItemIdx: uniqueIndex('saved_items_user_item_idx').on(table.userId, table.itemType, table.itemId),
 }));
 
 // ==========================================
@@ -248,6 +277,7 @@ export type Course = typeof courses.$inferSelect;
 export type Week = typeof weeks.$inferSelect;
 export type Lesson = typeof lessons.$inferSelect;
 export type Lab = typeof labs.$inferSelect;
+export type Project = typeof projects.$inferSelect;
 export type Quiz = typeof quizzes.$inferSelect;
 export type Question = typeof questions.$inferSelect;
 export type QuizAttempt = typeof quizAttempts.$inferSelect;

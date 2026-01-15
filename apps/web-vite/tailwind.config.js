@@ -7,26 +7,36 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Arduino brand colors
+                // ArduinoHub New Brand Colors (Pastel/Light Theme)
                 arduino: {
-                    teal: '#00979D',
-                    dark: '#005C5F',
-                    light: '#62AEB2',
+                    base: '#F5F7FA', // Off-white background
+                    surface: '#FFFFFF', // White surface
+                    teal: '#00979D', // Primary Brand Color (unchanged)
+                    mint: '#D1E8E2', // Pastel Mint (Accent)
+                    coral: '#FFB7B2', // Pastel Coral (Accent)
+                    yellow: '#FFDAC1', // Pastel Yellow (Accent)
+                    light: '#F0FDFA', // Very light teal/white for text on dark bg
+                    text: {
+                        primary: '#2D3748', // Dark Gray for headings
+                        secondary: '#718096', // Medium Gray for body
+                        muted: '#A0AEC0', // Light Gray for disabled/placeholders
+                    }
                 },
             },
             fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif'],
+                sans: ['Poppins', 'Quicksand', 'Inter', 'system-ui', 'sans-serif'], // New rounded fonts
                 mono: ['JetBrains Mono', 'Consolas', 'monospace'],
             },
             animation: {
                 'fade-in': 'fadeIn 0.3s ease-in-out',
                 'slide-up': 'slideUp 0.3s ease-out',
                 'float': 'float 6s ease-in-out infinite',
-                'glow': 'glow 2s ease-in-out infinite alternate',
-                'shimmer': 'shimmer 2s linear infinite',
-                'gradient-shift': 'gradientShift 15s ease infinite',
-                'scale-in': 'scaleIn 0.2s ease-out',
-                'shake': 'shake 0.5s ease-in-out',
+                'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
+            },
+            boxShadow: {
+                'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
+                'card': '0 10px 30px rgba(0, 0, 0, 0.04)',
+                'hover': '0 20px 40px rgba(0, 0, 0, 0.08)',
             },
             keyframes: {
                 fadeIn: {

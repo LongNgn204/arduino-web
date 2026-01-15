@@ -18,6 +18,8 @@ import progressRoutes from './routes/progress';
 import drillsRoutes from './routes/drills';
 import leaderboardRoutes from './routes/leaderboard';
 import certificateRoutes from './routes/certificate';
+import projectsRoutes from './routes/projects';
+import personalizationRoutes from './routes/personalization';
 import adminRoutes from './routes/admin';
 
 // Import middleware
@@ -110,6 +112,12 @@ app.route('/api', leaderboardRoutes);
 
 // Certificate routes: /api/certificate/*
 app.route('/api', certificateRoutes);
+
+// Projects routes: /api/projects/*
+app.route('/api', projectsRoutes);
+
+// Personalization routes: /api/saved, /api/save
+app.route('/api', personalizationRoutes);
 
 // Admin routes: /api/admin/*
 app.route('/api/admin', adminRoutes);

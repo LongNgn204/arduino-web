@@ -1,23 +1,49 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ========================================
-   THEME CUSTOMIZATION - Arduino Brand Colors
+   THEME CUSTOMIZATION - ArduinoHub Light Theme
    ======================================== */
 @theme {
+  --color-arduino-base: #F5F7FA;
+  --color-arduino-surface: #FFFFFF;
   --color-arduino-teal: #00979D;
-  --color-arduino-dark: #005C5F;
-  --color-arduino-light: #62AEB2;
+  --color-arduino-mint: #D1E8E2;
+  --color-arduino-coral: #FFB7B2;
+  --color-arduino-yellow: #FFDAC1;
+
+  --color-text-primary: #2D3748;
+  --color-text-secondary: #718096;
+  --color-text-muted: #A0AEC0;
 
   /* Animations */
   --animate-fade-in: fadeIn 0.3s ease-in-out;
   --animate-slide-up: slideUp 0.3s ease-out;
   --animate-float: float 6s ease-in-out infinite;
-  --animate-glow: glow 2s ease-in-out infinite alternate;
-  --animate-shimmer: shimmer 2s linear infinite;
-  --animate-gradient-shift: gradientShift 15s ease infinite;
-  --animate-scale-in: scaleIn 0.2s ease-out;
-  --animate-shake: shake 0.5s ease-in-out;
+  --animate-pulse-soft: pulseSoft 3s ease-in-out infinite;
+  --animate-pulse-soft: pulseSoft 3s ease-in-out infinite;
+}
+
+@layer utilities {
+  .text-arduino-light {
+    color: #F0FDFA;
+  }
+}
+
+
+@layer base {
+  body {
+    @apply bg-arduino-base text-arduino-text-secondary font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sans font-bold text-arduino-text-primary;
+  }
 }
 
 @keyframes fadeIn {
@@ -50,296 +76,94 @@
   }
 
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-10px);
   }
 }
 
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 5px rgba(0, 151, 157, 0.5);
-  }
-
-  100% {
-    box-shadow: 0 0 20px rgba(0, 151, 157, 0.8), 0 0 30px rgba(0, 151, 157, 0.4);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-@keyframes gradientShift {
+@keyframes pulseSoft {
 
   0%,
   100% {
-    background-position: 0% 50%;
+    opacity: 1;
   }
 
   50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes scaleIn {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes shake {
-
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translateX(-5px);
-  }
-
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translateX(5px);
+    opacity: 0.7;
   }
 }
 
 /* ========================================
-   AUTH PAGES - PREMIUM UI COMPONENTS
+   UI COMPONENTS - NEW DESIGN SYSTEM
    ======================================== */
 
-/* Animated gradient background cho auth pages */
+/* Card Styles */
+.card-base {
+  @apply bg-white rounded-2xl shadow-card border border-gray-100 transition-all duration-300;
+}
+
+.card-hover {
+  @apply hover:shadow-hover hover:-translate-y-1;
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply bg-arduino-teal text-white font-semibold py-2 px-6 rounded-xl shadow-lg shadow-arduino-teal/20 hover:shadow-xl hover:shadow-arduino-teal/30 hover:-translate-y-0.5 transition-all duration-200 active:translate-y-0;
+}
+
+.btn-secondary {
+  @apply bg-white text-arduino-teal font-semibold py-2 px-6 rounded-xl border-2 border-arduino-teal/10 hover:bg-arduino-mint/20 hover:border-arduino-teal/30 transition-all duration-200;
+}
+
+.btn-ghost {
+  @apply text-arduino-text-secondary hover:text-arduino-teal hover:bg-gray-100/50 py-2 px-4 rounded-lg transition-all;
+}
+
+/* Input Styles */
+.input-field {
+  @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-arduino-text-primary focus:outline-none focus:ring-2 focus:ring-arduino-teal/20 focus:border-arduino-teal/50 transition-all;
+}
+
+/* Badge Styles */
+.badge {
+  @apply px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider;
+}
+
+.badge-teal {
+  @apply bg-arduino-mint text-arduino-teal;
+}
+
+.badge-coral {
+  @apply bg-arduino-coral/20 text-red-500;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
+}
+
+/* Auth Page Enhancements */
 .auth-gradient-bg {
-  background: linear-gradient(-45deg,
-      hsl(180 100% 8%),
-      hsl(180 50% 12%),
-      hsl(200 40% 10%),
-      hsl(180 60% 15%));
-  background-size: 400% 400%;
-  animation: var(--animate-gradient-shift);
+  @apply bg-gradient-to-br from-arduino-mint via-white to-arduino-yellow;
 }
 
-/* Glassmorphism card cho forms */
 .auth-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 1.5rem;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  @apply bg-white/80 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl p-8 md:p-10;
 }
 
-@media (min-width: 768px) {
-  .auth-card {
-    padding: 2.5rem;
-  }
-}
-
-.auth-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(0, 151, 157, 0.5),
-      transparent);
-}
-
-/* Premium input với glow effect */
-.auth-input {
-  width: 100%;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  color: white;
-  transition: all 0.3s;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.auth-input::placeholder {
-  color: #9ca3af;
-}
-
-.auth-input:focus {
-  outline: none;
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(0, 151, 157, 0.5);
-  box-shadow:
-    0 0 0 3px rgba(0, 151, 157, 0.1),
-    0 0 20px rgba(0, 151, 157, 0.2);
-}
-
-.auth-input:hover:not(:focus) {
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Primary button với shimmer effect */
-.auth-btn-primary {
-  position: relative;
-  width: 100%;
-  padding: 0.875rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  color: white;
-  overflow: hidden;
-  transition: all 0.3s;
-  background: linear-gradient(135deg, #00979D, #005C5F);
-}
-
-.auth-btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow:
-    0 10px 40px rgba(0, 151, 157, 0.4),
-    0 0 20px rgba(0, 151, 157, 0.3);
-}
-
-.auth-btn-primary:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.auth-btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Shimmer loading overlay cho button */
-.auth-btn-primary.loading::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* Floating decorative orbs */
-.auth-orb {
-  position: absolute;
-  border-radius: 9999px;
-  opacity: 0.3;
-  filter: blur(64px);
-  background: linear-gradient(135deg, #00979D, #62AEB2);
-}
-
-/* Error message animation */
-.auth-error {
-  border-radius: 0.75rem;
-  padding: 1rem;
-  font-size: 0.875rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
-}
-
-.auth-error.shake {
-  animation: shake 0.5s ease-in-out;
-}
-
-/* Success indicator */
-.auth-success-icon {
-  color: #4ade80;
-  animation: var(--animate-scale-in);
-}
-
-/* Label styling */
-.auth-label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #d1d5db;
-  margin-bottom: 0.5rem;
-}
-
-/* Secondary button (outline) */
-.auth-btn-secondary {
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 500;
-  text-align: center;
-  transition: all 0.3s;
-  color: #00979D;
-  border: 1px solid rgba(0, 151, 157, 0.3);
-}
-
-.auth-btn-secondary:hover {
-  background: rgba(0, 151, 157, 0.1);
-}
-
-/* Utility classes for animations */
+/* Utility Animations */
 .animate-fade-in {
   animation: var(--animate-fade-in);
 }
 
 .animate-slide-up {
   animation: var(--animate-slide-up);
-}
-
-.animate-float {
-  animation: var(--animate-float);
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.4s ease-out;
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.5;
-  }
 }

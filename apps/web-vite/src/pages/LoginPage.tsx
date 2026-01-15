@@ -61,7 +61,7 @@ export default function LoginPage() {
                     <Link to="/" className="inline-flex items-center gap-3 group">
                         <div className="relative">
                             <Cpu className="h-12 w-12 text-arduino-teal transition-transform group-hover:scale-110" />
-                            <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-arduino-light animate-pulse" />
+                            <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-arduino-yellow animate-pulse" />
                         </div>
                         <span className="text-3xl font-bold text-white">
                             Arduino<span className="text-arduino-teal">Hub</span>

@@ -9,6 +9,7 @@ import {
     CheckCircle2,
     Loader2
 } from 'lucide-react';
+import { Button } from '../components/ui/Button';
 
 export default function WebIdePage() {
     // Editor State
@@ -171,45 +172,47 @@ export default function WebIdePage() {
     };
 
     return (
-        <div className="h-screen bg-slate-950 flex flex-col overflow-hidden">
+        <div className="h-screen bg-gray-50 flex flex-col overflow-hidden font-sans">
             {/* Toolbar */}
-            <header className="shrink-0 h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4">
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-teal-500/10 rounded-lg flex items-center justify-center border border-teal-500/20">
-                            <Cpu className="w-5 h-5 text-teal-400" />
+            <header className="shrink-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shadow-sm z-10">
+                <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-arduino-teal/10 rounded-xl flex items-center justify-center border border-arduino-teal/20">
+                            <Cpu className="w-6 h-6 text-arduino-teal" />
                         </div>
-                        <h1 className="font-bold text-white text-sm hidden sm:block">Web IDE</h1>
+                        <h1 className="font-bold text-gray-900 text-lg hidden sm:block">Web IDE</h1>
                     </div>
 
-                    <div className="h-6 w-px bg-slate-800 mx-2" />
+                    <div className="h-8 w-px bg-gray-200" />
 
-                    <div className="flex items-center gap-2">
-                        <button
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="secondary"
                             onClick={handleCompile}
                             disabled={isCompiling}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition-colors text-sm border border-slate-700"
+                            className="gap-2"
                             title="Verify / Compile"
                         >
-                            {isCompiling ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4 text-green-400" />}
+                            {isCompiling ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4 text-green-500" />}
                             <span className="hidden sm:inline">Verify</span>
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                            variant="secondary"
                             onClick={handleUpload}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition-colors text-sm border border-slate-700"
+                            className="gap-2"
                             title="Upload"
                         >
-                            <Download className="w-4 h-4 text-cyan-400" />
+                            <Download className="w-4 h-4 text-arduino-teal" />
                             <span className="hidden sm:inline">Upload</span>
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 bg-slate-950 rounded-lg p-1 border border-slate-800">
-                        <Usb className={`w-4 h-4 ${isConnected ? 'text-green-400' : 'text-slate-500'}`} />
+                    <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1 border border-gray-200">
+                        <Usb className={`w-4 h-4 ml-2 ${isConnected ? 'text-green-500' : 'text-gray-400'}`} />
                         <select
-                            className="bg-transparent text-xs text-slate-300 focus:outline-none"
+                            className="bg-transparent text-sm text-gray-600 focus:outline-none py-1 pr-2"
                             value={baudRate}
                             onChange={(e) => setBaudRate(Number(e.target.value))}
                             disabled={isConnected}
@@ -219,61 +222,58 @@ export default function WebIdePage() {
                         </select>
                     </div>
 
-                    <button
+                    <Button
                         onClick={handleConnect}
-                        className={`
-                            flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all
-                            ${isConnected
-                                ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
-                                : 'bg-teal-500 text-white hover:bg-teal-400 shadow-lg shadow-teal-500/20'
-                            }
-                        `}
+                        className={isConnected ? "bg-red-50 text-red-500 border-red-200 hover:bg-red-100 shadow-none" : "bg-arduino-teal hover:bg-teal-600 shadow-lg shadow-arduino-teal/20"}
                     >
                         {isConnected ? 'Disconnect' : 'Connect Device'}
-                    </button>
+                    </Button>
                 </div>
             </header>
 
             {/* Main Content Split View */}
             <main className="flex-1 flex overflow-hidden">
                 {/* Code Editor */}
-                <div className="flex-1 bg-[#1e1e1e] flex flex-col border-r border-slate-800">
-                    <div className="shrink-0 flex items-center justify-between px-4 py-2 bg-slate-800/50 border-b border-slate-800">
-                        <span className="text-xs text-slate-400 font-mono">sketch.ino</span>
-                        <div className="flex gap-1.5">
-                            <div className="w-2.5 h-2.5 rounded-full bg-slate-600" />
-                            <div className="w-2.5 h-2.5 rounded-full bg-slate-600" />
+                <div className="flex-1 bg-[#1e1e1e] flex flex-col border-r border-gray-800 relative group">
+                    <div className="shrink-0 flex items-center justify-between px-4 py-2 bg-[#2d2d2d] border-b border-[#1e1e1e]">
+                        <span className="text-xs text-gray-400 font-mono flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-arduino-teal" />
+                            sketch.ino
+                        </span>
+                        <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="w-2.5 h-2.5 rounded-full bg-gray-600" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-gray-600" />
                         </div>
                     </div>
                     <textarea
                         value={code}
                         onChange={(e) => setCode(e.target.value)}
-                        className="flex-1 bg-[#1e1e1e] text-slate-300 font-mono text-sm p-4 resize-none focus:outline-none leading-relaxed"
+                        className="flex-1 bg-[#1e1e1e] text-gray-300 font-mono text-sm p-4 resize-none focus:outline-none leading-relaxed selection:bg-arduino-teal/30"
                         spellCheck={false}
                     />
                 </div>
 
                 {/* Serial Monitor */}
-                <div className="w-[400px] bg-[#0c0c0c] flex flex-col border-l border-slate-800">
-                    <div className="shrink-0 flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800 h-[37px]">
+                <div className="w-[400px] bg-[#0c0c0c] flex flex-col border-l border-gray-800 shadow-xl z-20">
+                    <div className="shrink-0 flex items-center justify-between px-4 py-3 bg-[#1a1a1a] border-b border-[#333]">
                         <div className="flex items-center gap-2">
-                            <Terminal className="w-4 h-4 text-slate-400" />
-                            <span className="text-xs text-slate-400 font-medium">Serial Monitor</span>
+                            <Terminal className="w-4 h-4 text-gray-400" />
+                            <span className="text-xs text-gray-300 font-medium">Serial Monitor</span>
                         </div>
                         <button
                             onClick={() => setSerialOutput(['> Cleared.'])}
-                            className="text-slate-500 hover:text-slate-300"
+                            className="text-gray-500 hover:text-white transition-colors"
                         >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-4 h-4" />
                         </button>
                     </div>
 
                     {/* Terminal Output */}
-                    <div className="flex-1 overflow-y-auto p-4 font-mono text-xs space-y-1">
+                    <div className="flex-1 overflow-y-auto p-4 font-mono text-xs space-y-1.5 scrollbar-thin scrollbar-thumb-gray-800 scrollbar-track-transparent">
                         {serialOutput.map((line, i) => (
                             <div key={i} className={`${line.includes('>>') ? 'text-cyan-400' :
                                 line.includes('<<') ? 'text-green-400' :
-                                    'text-slate-500'
+                                    'text-gray-400'
                                 }`}>
                                 {line}
                             </div>
@@ -282,7 +282,7 @@ export default function WebIdePage() {
                     </div>
 
                     {/* Input Area */}
-                    <div className="shrink-0 p-3 bg-slate-900 border-t border-slate-800">
+                    <div className="shrink-0 p-3 bg-[#1a1a1a] border-t border-[#333]">
                         <form
                             onSubmit={(e) => { e.preventDefault(); handleSend(); }}
                             className="flex gap-2"
@@ -292,24 +292,24 @@ export default function WebIdePage() {
                                 value={inputCmd}
                                 onChange={(e) => setInputCmd(e.target.value)}
                                 placeholder="Send command..."
-                                className="flex-1 bg-slate-950 border border-slate-700 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-teal-500 font-mono"
+                                className="flex-1 bg-[#0c0c0c] border border-[#333] rounded-md px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-arduino-teal focus:ring-1 focus:ring-arduino-teal font-mono placeholder:text-gray-700"
                                 disabled={!isConnected}
                             />
                             <button
                                 type="submit"
                                 disabled={!isConnected}
-                                className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-md disabled:opacity-50 transition-colors"
+                                className="p-2 bg-[#333] hover:bg-[#444] text-gray-400 hover:text-white rounded-md disabled:opacity-50 transition-colors"
                             >
                                 <Send className="w-4 h-4" />
                             </button>
                         </form>
-                        <div className="flex gap-2 mt-2 text-[10px] text-slate-500 justify-end">
-                            <span className="flex items-center gap-1">
+                        <div className="flex gap-3 mt-3 text-[10px] text-gray-600 justify-end font-mono">
+                            <span className="flex items-center gap-1.5">
                                 <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-                                {isConnected ? 'Online' : 'Offline'}
+                                {isConnected ? 'ONLINE' : 'OFFLINE'}
                             </span>
-                            <span>{baudRate} baud</span>
-                            <span>No Line Ending</span>
+                            <span>{baudRate} BAUD</span>
+                            <span>NO LINE ENDING</span>
                         </div>
                     </div>
                 </div>

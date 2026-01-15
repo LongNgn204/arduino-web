@@ -9,8 +9,15 @@ import {
     CheckCircle2,
     BookOpen,
     Sparkles,
-    Eye
+    Sparkles,
+    Eye,
+    Bookmark
 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
 
 const API_BASE = import.meta.env.PROD
     ? 'https://arduino-workers.stu725114073.workers.dev'
@@ -41,6 +48,23 @@ export default function LessonPage() {
     const [loading, setLoading] = useState(true);
     const [completed, setCompleted] = useState(false);
     const [readingProgress, setReadingProgress] = useState(0);
+    const [isSaved, setIsSaved] = useState(false);
+
+    const handleSave = async () => {
+        setIsSaved(!isSaved);
+        try {
+            await fetch(`${API_BASE}/api/save`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: 'user_current',
+                    itemType: 'lesson',
+                    itemId: lessonId
+                }),
+                credentials: 'include'
+            });
+        } catch (e) { console.error(e); }
+    };
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -113,10 +137,10 @@ export default function LessonPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+            <div className="min-h-screen bg-arduino-base flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-teal-400 border-t-transparent rounded-full animate-spin" />
-                    <p className="text-slate-400 animate-pulse">Đang tải bài học...</p>
+                    <div className="w-12 h-12 border-4 border-arduino-teal border-t-transparent rounded-full animate-spin" />
+                    <p className="text-arduino-text-secondary animate-pulse">Đang tải bài học...</p>
                 </div>
             </div>
         );
@@ -124,63 +148,69 @@ export default function LessonPage() {
 
     if (!lesson) {
         return (
-            <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-                <div className="text-center bg-slate-800/50 p-8 rounded-2xl border border-slate-700">
-                    <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="min-h-screen bg-arduino-base flex items-center justify-center">
+                <Card className="text-center p-8 border-dashed">
+                    <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <BookOpen className="w-8 h-8 text-red-400" />
                     </div>
-                    <p className="text-slate-300 mb-4">Không tìm thấy bài giảng.</p>
-                    <Link to="/dashboard" className="text-teal-400 hover:underline">
+                    <p className="text-arduino-text-secondary mb-4">Không tìm thấy bài giảng.</p>
+                    <Link to="/dashboard" className="text-arduino-teal hover:underline font-medium">
                         ← Quay lại Dashboard
                     </Link>
-                </div>
+                </Card>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <div className="min-h-screen bg-arduino-base text-gray-800 font-sans">
             {/* Reading Progress Bar */}
-            <div className="fixed top-0 left-0 right-0 h-1 bg-slate-800 z-[60]">
+            <div className="fixed top-0 left-0 right-0 h-1 bg-gray-200 z-[60]">
                 <div
-                    className="h-full bg-gradient-to-r from-teal-500 to-cyan-400 transition-all duration-150"
+                    className="h-full bg-arduino-teal transition-all duration-150"
                     style={{ width: `${readingProgress}%` }}
                 />
             </div>
 
             {/* Header */}
-            <header className="sticky top-1 z-50 backdrop-blur-xl bg-slate-900/80 border-b border-slate-700/50">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center gap-4">
                             <Link
                                 to={week ? `/weeks/${week.id}` : '/dashboard'}
-                                className="p-2.5 rounded-xl hover:bg-slate-800 text-slate-400 hover:text-white transition-all hover:scale-105"
+                                className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-arduino-teal transition-colors"
                             >
                                 <ArrowLeft className="w-5 h-5" />
                             </Link>
                             <div>
                                 <div className="flex items-center gap-2 text-xs">
-                                    <span className="px-2 py-0.5 bg-teal-500/10 text-teal-400 rounded-full border border-teal-500/20">
-                                        Tuần {week?.weekNumber || '?'}
-                                    </span>
-                                    <span className="text-slate-500">•</span>
-                                    <span className="text-slate-400">Bài {lesson.orderIndex}</span>
+                                    <Badge variant="mint" className="py-0 h-5">Tuần {week?.weekNumber || '?'}</Badge>
+                                    <span className="text-gray-300">•</span>
+                                    <span className="text-gray-500 font-medium">Bài {lesson.orderIndex}</span>
                                 </div>
-                                <h1 className="text-lg font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent truncate max-w-[300px]">
+                                <h1 className="text-lg font-bold text-gray-900 truncate max-w-[200px] sm:max-w-md">
                                     {lesson.title}
                                 </h1>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 sm:gap-4">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={handleSave}
+                                className={`rounded-full ${isSaved ? 'text-arduino-teal bg-arduino-teal/10' : 'text-gray-400 hover:text-arduino-teal hover:bg-gray-50'}`}
+                            >
+                                <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
+                            </Button>
                             {lesson.duration && (
-                                <div className="hidden sm:flex items-center gap-2 text-sm text-slate-400 bg-slate-800/50 px-3 py-1.5 rounded-full">
+                                <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
                                     <Clock className="w-4 h-4" />
                                     {lesson.duration} phút
                                 </div>
                             )}
-                            <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
                                 <Eye className="w-4 h-4" />
                                 {readingProgress}%
                             </div>
@@ -190,90 +220,89 @@ export default function LessonPage() {
             </header>
 
             {/* Lesson Content */}
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
                 {/* Feature Banner */}
-                <div className="mb-8 p-4 bg-gradient-to-r from-teal-500/10 via-cyan-500/5 to-transparent rounded-2xl border border-teal-500/20 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-teal-500/20 rounded-xl flex items-center justify-center shrink-0">
-                        <Sparkles className="w-6 h-6 text-teal-400" />
+                <div className="mb-8 p-4 bg-gradient-to-r from-arduino-mint/30 to-white rounded-2xl border border-arduino-mint/50 flex items-center gap-4 shadow-sm">
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm text-arduino-teal">
+                        <Sparkles className="w-5 h-5" />
                     </div>
                     <div>
-                        <h2 className="text-white font-semibold">AI Tutor sẵn sàng hỗ trợ</h2>
-                        <p className="text-sm text-slate-400">Bôi đen văn bản để hỏi AI hoặc click nút chat ở góc phải</p>
+                        <h2 className="text-gray-900 font-semibold text-sm md:text-base">AI Tutor sẵn sàng hỗ trợ</h2>
+                        <p className="text-xs md:text-sm text-gray-500">Bôi đen văn bản để hỏi AI hoặc click nút chat ở góc phải</p>
                     </div>
                 </div>
 
-                <article className="prose prose-invert prose-teal max-w-none">
-                    {/* Content Card with Glassmorphism */}
-                    <div className="lesson-content bg-slate-800/30 backdrop-blur-sm rounded-3xl p-6 md:p-10 border border-slate-700/50 shadow-xl shadow-slate-900/50">
+                <article className="prose prose-slate prose-lg max-w-none prose-headings:font-bold prose-h1:text-arduino-teal prose-a:text-arduino-teal prose-img:rounded-xl prose-img:shadow-md">
+                    {/* Content Card */}
+                    <Card className="p-8 md:p-12 shadow-md">
                         <MarkdownRenderer content={lesson.content} />
-                    </div>
+                    </Card>
                 </article>
 
                 {/* Completion Section */}
-                <div className="mt-10 p-6 bg-slate-800/50 rounded-2xl border border-slate-700/50">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <Card className="mt-12 p-8 bg-gradient-to-br from-white to-gray-50 border-gray-100">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                         <div className="text-center sm:text-left">
-                            <h3 className="text-white font-semibold mb-1">
+                            <h3 className="text-gray-900 font-bold text-lg mb-1">
                                 {completed ? '🎉 Tuyệt vời! Bạn đã hoàn thành bài học!' : 'Hoàn thành bài học?'}
                             </h3>
-                            <p className="text-sm text-slate-400">
+                            <p className="text-sm text-gray-500">
                                 {completed ? 'Tiếp tục sang bài tiếp theo hoặc ôn lại nội dung.' : 'Đánh dấu khi bạn đã hiểu nội dung bài học.'}
                             </p>
                         </div>
 
-                        <button
+                        <Button
                             onClick={handleMarkComplete}
                             disabled={completed}
-                            className={`
-                                flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all
-                                ${completed
-                                    ? 'bg-green-500/20 text-green-400 border border-green-500/30 cursor-default'
-                                    : 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:from-teal-400 hover:to-cyan-400 shadow-lg shadow-teal-500/30 hover:scale-105'
-                                }
-                            `}
+                            size="lg"
+                            className={completed ? "bg-green-100 text-green-700 border-green-200 hover:bg-green-100 shadow-none cursor-default" : "bg-arduino-teal hover:bg-teal-600 shadow-lg shadow-arduino-teal/20"}
                         >
                             {completed ? (
                                 <>
-                                    <CheckCircle2 className="w-5 h-5" />
+                                    <CheckCircle2 className="w-5 h-5 mr-2" />
                                     Đã hoàn thành
                                 </>
                             ) : (
                                 <>
-                                    <BookOpen className="w-5 h-5" />
+                                    <BookOpen className="w-5 h-5 mr-2" />
                                     Đánh dấu hoàn thành
                                 </>
                             )}
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Navigation */}
-                    <div className="flex items-center justify-between border-t border-slate-700 mt-6 pt-6">
+                    <div className="flex items-center justify-between border-t border-gray-100 mt-8 pt-8">
                         {siblings.prev ? (
-                            <Link to={`/lessons/${siblings.prev}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all">
-                                <ChevronLeft className="w-5 h-5" />
-                                Bài trước
+                            <Link to={`/lessons/${siblings.prev}`}>
+                                <Button variant="ghost" className="text-gray-500 hover:text-arduino-teal">
+                                    <ChevronLeft className="w-5 h-5 mr-1" />
+                                    Bài trước
+                                </Button>
                             </Link>
                         ) : (
-                            <Link to={week ? `/weeks/${week.id}` : '/dashboard'} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all">
-                                <ChevronLeft className="w-5 h-5" />
-                                Về tuần học
+                            <Link to={week ? `/weeks/${week.id}` : '/dashboard'}>
+                                <Button variant="ghost" className="text-gray-500 hover:text-arduino-teal">
+                                    <ChevronLeft className="w-5 h-5 mr-1" />
+                                    Về tuần học
+                                </Button>
                             </Link>
                         )}
-                        <Link to={`/lessons/${siblings.next}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:from-teal-400 hover:to-cyan-400 transition-all shadow-lg">
-                            Bài sau
-                            <ChevronRight className="w-5 h-5" />
+
+                        <Link to={`/lessons/${siblings.next}`}>
+                            <Button className="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-arduino-teal shadow-sm">
+                                Bài sau
+                                <ChevronRight className="w-5 h-5 ml-1" />
+                            </Button>
                         </Link>
                     </div>
-                </div>
+                </Card>
             </main>
         </div>
     );
 }
 
 // Professional Markdown Renderer using react-markdown
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-
 function MarkdownRenderer({ content }: { content: string }) {
     return (
         <ReactMarkdown
@@ -281,38 +310,42 @@ function MarkdownRenderer({ content }: { content: string }) {
             components={{
                 // Headings
                 h1: ({ children }) => (
-                    <h1 className="text-3xl font-black bg-gradient-to-r from-white via-teal-200 to-cyan-300 bg-clip-text text-transparent mt-10 mb-6 pb-3 border-b border-slate-700/50">
+                    <h1 className="text-3xl md:text-4xl font-black text-gray-900 mt-8 mb-6 pb-4 border-b border-gray-100">
                         {children}
                     </h1>
                 ),
                 h2: ({ children }) => (
-                    <h2 className="text-2xl font-bold text-white mt-8 mb-4 flex items-center gap-3">
-                        <span className="w-1.5 h-8 bg-gradient-to-b from-teal-400 to-cyan-500 rounded-full" />
+                    <h2 className="text-2xl font-bold text-gray-800 mt-10 mb-4 flex items-center gap-3">
+                        <span className="w-1.5 h-8 bg-arduino-teal rounded-full" />
                         {children}
                     </h2>
                 ),
                 h3: ({ children }) => (
-                    <h3 className="text-xl font-semibold text-slate-200 mt-6 mb-3">{children}</h3>
+                    <h3 className="text-xl font-bold text-gray-800 mt-8 mb-3">{children}</h3>
                 ),
                 h4: ({ children }) => (
-                    <h4 className="text-lg font-semibold text-slate-300 mt-4 mb-2">{children}</h4>
+                    <h4 className="text-lg font-semibold text-gray-700 mt-6 mb-2">{children}</h4>
                 ),
                 // Paragraphs
                 p: ({ children }) => (
-                    <p className="text-slate-300 my-3 leading-relaxed text-base">{children}</p>
+                    <p className="text-gray-600 my-4 leading-relaxed text-lg">{children}</p>
                 ),
                 // Lists
-                ul: ({ children }) => <ul className="my-4 space-y-2">{children}</ul>,
-                ol: ({ children }) => <ol className="my-4 space-y-2">{children}</ol>,
-                li: ({ children }) => (
-                    <li className="text-slate-300 ml-6 flex items-start gap-3">
-                        <span className="w-2 h-2 mt-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 shrink-0" />
-                        <span>{children}</span>
-                    </li>
-                ),
+                ul: ({ children }) => <ul className="my-6 space-y-2 list-none">{children}</ul>,
+                ol: ({ children }) => <ol className="my-6 space-y-2 list-decimal list-outside ml-6 text-gray-600 font-medium">{children}</ol>,
+                li: ({ children }) => {
+                    // Check if parent is ul (via context if possible, but here we approximate)
+                    // For safety, we just style generic li
+                    return (
+                        <li className="text-gray-600 flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 mt-2.5 rounded-full bg-arduino-teal shrink-0" />
+                            <span className="flex-1">{children}</span>
+                        </li>
+                    )
+                },
                 // Blockquote
                 blockquote: ({ children }) => (
-                    <blockquote className="my-4 pl-4 border-l-4 border-teal-500 bg-teal-500/5 py-3 pr-4 rounded-r-lg text-slate-300 italic">
+                    <blockquote className="my-8 pl-6 border-l-4 border-arduino-teal bg-arduino-mint/10 py-4 pr-6 rounded-r-lg text-gray-700 italic">
                         {children}
                     </blockquote>
                 ),
@@ -321,24 +354,24 @@ function MarkdownRenderer({ content }: { content: string }) {
                     const isInline = !className;
                     if (isInline) {
                         return (
-                            <code className="px-2 py-1 bg-slate-800 rounded-md text-teal-300 text-sm font-mono border border-slate-700">
+                            <code className="px-1.5 py-0.5 bg-gray-100 rounded-md text-pink-600 text-sm font-mono border border-gray-200">
                                 {children}
                             </code>
                         );
                     }
                     const language = className?.replace('language-', '') || 'cpp';
                     return (
-                        <div className="my-6 rounded-xl overflow-hidden border border-slate-700/50 shadow-lg">
-                            <div className="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 rounded-full bg-red-500" />
-                                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                                    <div className="w-3 h-3 rounded-full bg-green-500" />
+                        <div className="my-8 rounded-xl overflow-hidden border border-gray-200 shadow-md">
+                            <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
+                                <div className="flex items-center gap-1.5">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
                                 </div>
-                                <span className="text-xs text-slate-500 font-mono">{language}</span>
+                                <span className="text-xs text-gray-500 font-mono font-bold uppercase">{language}</span>
                             </div>
-                            <pre className="bg-slate-900 p-4 overflow-x-auto">
-                                <code className="text-sm text-slate-300 font-mono leading-relaxed whitespace-pre">
+                            <pre className="bg-[#1e1e1e] p-5 overflow-x-auto m-0">
+                                <code className="text-sm text-gray-300 font-mono leading-relaxed whitespace-pre">
                                     {children}
                                 </code>
                             </pre>
@@ -348,29 +381,29 @@ function MarkdownRenderer({ content }: { content: string }) {
                 pre: ({ children }) => <>{children}</>,
                 // Tables (GFM)
                 table: ({ children }) => (
-                    <div className="my-6 overflow-x-auto rounded-xl border border-slate-700/50">
+                    <div className="my-8 overflow-x-auto rounded-xl border border-gray-100 shadow-sm">
                         <table className="w-full text-sm">{children}</table>
                     </div>
                 ),
                 thead: ({ children }) => (
-                    <thead className="bg-slate-800 text-slate-200 font-semibold">{children}</thead>
+                    <thead className="bg-gray-50 text-gray-700 font-semibold border-b border-gray-100">{children}</thead>
                 ),
-                tbody: ({ children }) => <tbody className="divide-y divide-slate-700/50">{children}</tbody>,
-                tr: ({ children }) => <tr className="hover:bg-slate-800/50 transition-colors">{children}</tr>,
-                th: ({ children }) => <th className="px-4 py-3 text-left">{children}</th>,
-                td: ({ children }) => <td className="px-4 py-3 text-slate-300">{children}</td>,
+                tbody: ({ children }) => <tbody className="divide-y divide-gray-100 bg-white">{children}</tbody>,
+                tr: ({ children }) => <tr className="hover:bg-gray-50/50 transition-colors">{children}</tr>,
+                th: ({ children }) => <th className="px-6 py-4 text-left whitespace-nowrap">{children}</th>,
+                td: ({ children }) => <td className="px-6 py-4 text-gray-600">{children}</td>,
                 // Links
                 a: ({ href, children }) => (
-                    <a href={href} className="text-teal-400 hover:text-teal-300 underline underline-offset-2" target="_blank" rel="noopener noreferrer">
+                    <a href={href} className="text-arduino-teal hover:text-teal-700 underline underline-offset-2 font-medium transition-colors" target="_blank" rel="noopener noreferrer">
                         {children}
                     </a>
                 ),
                 // Strong/Bold
-                strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
+                strong: ({ children }) => <strong className="text-gray-900 font-bold">{children}</strong>,
                 // Emphasis/Italic
-                em: ({ children }) => <em className="text-slate-200 italic">{children}</em>,
+                em: ({ children }) => <em className="text-gray-800 italic">{children}</em>,
                 // Horizontal Rule
-                hr: () => <hr className="my-8 border-t border-slate-700/50" />,
+                hr: () => <hr className="my-8 border-t border-gray-100" />,
             }}
         >
             {content}

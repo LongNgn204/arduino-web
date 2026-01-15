@@ -32,6 +32,9 @@ const LeaderboardPage = lazy(() =>
 const CertificatePage = lazy(() =>
   import('./pages/CertificatePage').then(m => ({ default: m.CertificatePage }))
 );
+const ProjectListingPage = lazy(() => import('./pages/ProjectListingPage'));
+const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
+const SavedPage = lazy(() => import('./pages/SavedPage'));
 
 // ==========================================
 // APP CONTENT
@@ -81,6 +84,15 @@ function AppContent() {
           } />
           <Route path="/certificate" element={
             <Sidebar><CertificatePage /></Sidebar>
+          } />
+          <Route path="/projects" element={
+            <Sidebar><ProjectListingPage /></Sidebar>
+          } />
+          <Route path="/projects/:projectId" element={
+            <Sidebar><ProjectDetailPage /></Sidebar>
+          } />
+          <Route path="/saved" element={
+            <Sidebar><SavedPage /></Sidebar>
           } />
           <Route path="/ide" element={
             <Sidebar><WebIdePage /></Sidebar>

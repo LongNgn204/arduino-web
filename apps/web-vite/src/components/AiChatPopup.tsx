@@ -13,7 +13,6 @@ import {
     Minimize2,
     Scaling,
     Paperclip,
-    Image as ImageIcon,
     FileText
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';

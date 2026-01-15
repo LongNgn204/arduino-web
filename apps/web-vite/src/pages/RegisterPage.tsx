@@ -101,7 +101,7 @@ export default function RegisterPage() {
                     <Link to="/" className="inline-flex items-center gap-3 group">
                         <div className="relative">
                             <Cpu className="h-12 w-12 text-arduino-teal transition-transform group-hover:scale-110" />
-                            <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-arduino-light animate-pulse" />
+                            <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-arduino-yellow animate-pulse" />
                         </div>
                         <span className="text-3xl font-bold text-white">
                             Arduino<span className="text-arduino-teal">Hub</span>
@@ -176,7 +176,7 @@ export default function RegisterPage() {
                                         <Shield className="h-4 w-4 text-gray-400" />
                                         <span className="text-sm text-gray-400">Độ mạnh:</span>
                                         <span className={`text-sm font-medium ${passwordStrength.level === 1 ? 'text-red-400' :
-                                                passwordStrength.level === 2 ? 'text-yellow-400' : 'text-green-400'
+                                            passwordStrength.level === 2 ? 'text-yellow-400' : 'text-green-400'
                                             }`}>
                                             {passwordStrength.label}
                                         </span>
