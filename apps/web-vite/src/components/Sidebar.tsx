@@ -63,9 +63,10 @@ export default function Sidebar({ children }: SidebarProps) {
             {/* Mobile Menu Button */}
             <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden fixed top-4 left-4 z-[60] p-2 bg-white rounded-xl text-arduino-teal shadow-lg border border-gray-100"
+                className="lg:hidden fixed top-4 left-4 z-[60] p-3 bg-white rounded-xl text-arduino-teal shadow-lg border border-gray-100 active:scale-95 transition-transform"
+                aria-label="Toggle Menu"
             >
-                {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
             {/* Mobile Overlay */}

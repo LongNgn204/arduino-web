@@ -5,23 +5,31 @@
    THEME CUSTOMIZATION - ArduinoHub Light Theme
    ======================================== */
 @theme {
-  --color-arduino-base: #F5F7FA;
+  /* Warm & Soft Theme Palette */
+  --color-arduino-base: #F8FAFCA0;
+  /* Soft warm gray/white mix */
   --color-arduino-surface: #FFFFFF;
-  --color-arduino-teal: #00979D;
-  --color-arduino-mint: #D1E8E2;
-  --color-arduino-coral: #FFB7B2;
-  --color-arduino-yellow: #FFDAC1;
+  --color-arduino-teal: #0D9488;
+  /* Teal-600: Slightly deeper, less neon */
+  --color-arduino-mint: #CCFBF1;
+  /* Teal-100: Softer mint */
+  --color-arduino-coral: #FFE4E6;
+  /* Rose-100: Softe coral/rose */
+  --color-arduino-yellow: #FEF3C7;
+  /* Amber-100: Soft warm yellow */
 
-  --color-text-primary: #2D3748;
-  --color-text-secondary: #718096;
-  --color-text-muted: #A0AEC0;
+  --color-text-primary: #1E293B;
+  /* Slate-800: High contrast but not pitch black */
+  --color-text-secondary: #64748B;
+  /* Slate-500: Comfortable reading gray */
+  --color-text-muted: #94A3B8;
+  /* Slate-400 */
 
   /* Animations */
-  --animate-fade-in: fadeIn 0.3s ease-in-out;
-  --animate-slide-up: slideUp 0.3s ease-out;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-pulse-soft: pulseSoft 3s ease-in-out infinite;
-  --animate-pulse-soft: pulseSoft 3s ease-in-out infinite;
+  --animate-fade-in: fadeIn 0.4s ease-out;
+  --animate-slide-up: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-pulse-soft: pulseSoft 4s ease-in-out infinite;
 }
 
 @layer utilities {

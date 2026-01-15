@@ -55,16 +55,16 @@ export function LeaderboardPage() {
     };
 
     return (
-        <div className="min-h-screen bg-arduino-base text-arduino-text-primary p-6 pb-20 font-sans">
+        <div className="min-h-screen bg-arduino-base text-arduino-text-primary p-4 md:p-6 pb-20 font-sans">
             {/* Header */}
-            <div className="max-w-4xl mx-auto text-center mb-12 animate-fade-in">
+            <div className="max-w-4xl mx-auto text-center mb-8 md:mb-12 animate-fade-in">
                 <div className="inline-flex items-center justify-center p-4 bg-yellow-100 rounded-full mb-4 border border-yellow-200 shadow-sm">
-                    <Trophy className="w-10 h-10 text-yellow-600" />
+                    <Trophy className="w-8 h-8 md:w-10 md:h-10 text-yellow-600" />
                 </div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent mb-2">
+                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent mb-2">
                     Bảng Xếp Hạng
                 </h1>
-                <p className="text-arduino-text-secondary">Vinh danh những sinh viên xuất sắc nhất tuần này</p>
+                <p className="text-arduino-text-secondary text-sm md:text-base">Vinh danh những sinh viên xuất sắc nhất tuần này</p>
             </div>
 
             {/* List */}
@@ -84,10 +84,10 @@ export function LeaderboardPage() {
                     data.map((item) => (
                         <div
                             key={item.id}
-                            className={`relative flex items-center gap-4 p-4 rounded-2xl border transition-all duration-300 ${getRowStyle(item.rank)}`}
+                            className={`relative flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-2xl border transition-all duration-300 ${getRowStyle(item.rank)}`}
                         >
                             {/* Rank */}
-                            <div className="w-12 flex justify-center shrink-0">
+                            <div className="w-8 md:w-12 flex justify-center shrink-0">
                                 {getRankIcon(item.rank)}
                             </div>
 
@@ -95,15 +95,15 @@ export function LeaderboardPage() {
                             <img
                                 src={item.avatar}
                                 alt={item.displayName}
-                                className="w-12 h-12 rounded-full border-2 border-white shadow-md bg-gray-100 object-cover"
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-white shadow-md bg-gray-100 object-cover"
                             />
 
                             {/* Name & Stats */}
                             <div className="flex-1 min-w-0">
-                                <h3 className={`font-bold text-lg truncate ${item.rank === 1 ? 'text-arduino-text-primary' : 'text-arduino-text-secondary'}`}>
+                                <h3 className={`font-bold text-base md:text-lg truncate ${item.rank === 1 ? 'text-arduino-text-primary' : 'text-arduino-text-secondary'}`}>
                                     {item.displayName}
                                 </h3>
-                                <div className="flex gap-4 text-xs text-arduino-text-muted mt-1">
+                                <div className="flex flex-wrap gap-2 text-xs text-arduino-text-muted mt-1">
                                     <Badge variant="secondary" className="gap-1 bg-gray-50 hover:bg-gray-100 text-arduino-text-muted border-gray-100">
                                         <TrendingUp className="w-3 h-3" />
                                         {item.stats.quizzes} Quiz pts

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Card } from '../components/ui/Card'; // Use new UI component
 import { cn } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
 
 // API Base URL
 const API_BASE = import.meta.env.PROD
@@ -124,40 +125,53 @@ export default function DashboardPage() {
             {/* Main Content */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-0 py-8">
                 {/* Welcome Section */}
-                <div className="mb-8 animate-slide-up">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                        Chào mừng trở lại, {user?.displayName || user?.username || 'bạn'}! 👋
-                    </h1>
-                    <p className="text-gray-600">
-                        Tiếp tục hành trình chinh phục Arduino của bạn.
-                    </p>
+                <div className="mb-8 p-6 md:p-10 rounded-3xl bg-gradient-to-r from-arduino-teal to-teal-600 text-white shadow-xl relative overflow-hidden animate-slide-up">
+                    {/* Decorative Elements */}
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-arduino-yellow opacity-20 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
+
+                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div>
+                            <h1 className="text-3xl md:text-4xl font-bold mb-3">
+                                Chào mừng trở lại, {user?.displayName || user?.username || 'bạn'}! 👋
+                            </h1>
+                            <p className="text-teal-100 text-lg max-w-xl">
+                                Hôm nay là một ngày tuyệt vời để tiếp tục hành trình chinh phục Arduino. Bạn đã sẵn sàng chưa?
+                            </p>
+                        </div>
+                        <div className="hidden md:block">
+                            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30 shadow-inner rotate-3 hover:rotate-0 transition-transform">
+                                <Cpu className="w-10 h-10 text-white" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
                     <StatCard
-                        icon={<BookOpen className="w-6 h-6" />}
+                        icon={<BookOpen className="w-5 h-5 md:w-6 md:h-6" />}
                         label="Bài học"
                         value={`${progress.lessons.completed}/${progress.lessons.total}`}
                         color="bg-blue-50 text-blue-500"
                         delay={0}
                     />
                     <StatCard
-                        icon={<Zap className="w-6 h-6" />}
+                        icon={<Zap className="w-5 h-5 md:w-6 md:h-6" />}
                         label="Bài thực hành"
                         value={`${progress.labs.completed}/${progress.labs.total}`}
                         color="bg-orange-50 text-orange-500"
                         delay={100}
                     />
                     <StatCard
-                        icon={<Trophy className="w-6 h-6" />}
+                        icon={<Trophy className="w-5 h-5 md:w-6 md:h-6" />}
                         label="Điểm Quiz TB"
                         value={`${progress.avgQuizScore ?? '--'}%`}
                         color="bg-purple-50 text-purple-500"
                         delay={200}
                     />
                     <StatCard
-                        icon={<Target className="w-6 h-6" />}
+                        icon={<Target className="w-5 h-5 md:w-6 md:h-6" />}
                         label="Tiến độ"
                         value={`${progress.overall}%`}
                         color="bg-teal-50 text-teal-500"
@@ -166,9 +180,11 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Course Section */}
-                <section className="mb-10 animate-slide-up" style={{ animationDelay: '0.4s' }}>
-                    <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                        <GraduationCap className="w-6 h-6 text-arduino-teal" />
+                <section className="mb-12 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+                        <div className="bg-arduino-teal/10 p-2 rounded-lg">
+                            <GraduationCap className="w-6 h-6 text-arduino-teal" />
+                        </div>
                         Khóa học của bạn
                     </h2>
 
@@ -177,12 +193,13 @@ export default function DashboardPage() {
                             <div className="w-10 h-10 border-4 border-arduino-teal border-t-transparent rounded-full animate-spin" />
                         </div>
                     ) : courses.length === 0 ? (
-                        <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <BookOpen className="w-8 h-8 text-gray-400" />
+                        <div className="text-center py-16 bg-white rounded-3xl border border-dashed border-gray-200 shadow-sm">
+                            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <BookOpen className="w-10 h-10 text-gray-300" />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-700">Chưa có khóa học nào</h3>
-                            <p className="text-gray-500 mt-2">Hãy bắt đầu bằng việc đăng ký khóa học đầu tiên!</p>
+                            <h3 className="text-xl font-bold text-gray-800">Chưa có khóa học nào</h3>
+                            <p className="text-gray-500 mt-2 max-w-sm mx-auto mb-6">Hãy bắt đầu bằng việc đăng ký khóa học đầu tiên để mở khóa toàn bộ nội dung.</p>
+                            <Button className="rounded-full">Đăng ký ngay</Button>
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -269,14 +286,14 @@ function StatCard({ icon, label, value, color, delay }: {
     // color prop expects classes like "bg-blue-50 text-blue-500"
     return (
         <Card
-            className="flex flex-col items-center justify-center p-6 hover:shadow-lg transition-all duration-300 transform animate-slide-up"
+            className="flex flex-col items-center justify-center p-4 md:p-6 hover:shadow-lg transition-all duration-300 transform animate-slide-up"
             style={{ animationDelay: `${delay}ms` }}
         >
-            <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-3 transition-transform hover:scale-110", color)}>
+            <div className={cn("w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center mb-3 transition-transform hover:scale-110", color)}>
                 {icon}
             </div>
-            <p className="text-3xl font-bold text-gray-800 mb-1">{value}</p>
-            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{label}</p>
+            <p className="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{value}</p>
+            <p className="text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wide text-center">{label}</p>
         </Card>
     );
 }

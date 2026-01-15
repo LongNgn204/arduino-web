@@ -32,85 +32,90 @@ export default function LandingPage() {
         }
     ];
 
-    const stats = [
-        { value: '12', label: 'Tuần học' },
-        { value: '36+', label: 'Bài học' },
-        { value: '24+', label: 'Labs thực hành' },
-        { value: '100+', label: 'Câu hỏi quiz' }
-    ];
+
 
     return (
         <div className="min-h-screen bg-white text-arduino-text-primary font-sans overflow-hidden">
             {/* Hero Section */}
-            <section className="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden">
-                {/* Animated background */}
-                <div className="absolute inset-0 auth-gradient-bg opacity-70" />
+            <section className="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden pt-20 md:pt-0">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 bg-[#F8FAFCA0] opacity-80" />
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
 
-                {/* Floating orbs */}
-                <div className="auth-orb w-[500px] h-[500px] -top-32 -left-32 animate-float blur-[100px] opacity-40 bg-arduino-mint" />
-                <div className="auth-orb w-[400px] h-[400px] top-1/3 -right-20 animate-float blur-[100px] opacity-40 bg-arduino-yellow" style={{ animationDelay: '2s' }} />
-                <div className="auth-orb w-[300px] h-[300px] bottom-0 left-1/4 animate-float blur-[80px] opacity-40 bg-arduino-coral" style={{ animationDelay: '4s' }} />
+                <div className="relative z-10 max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
+                    {/* Left Content */}
+                    <div className="text-center md:text-left">
+                        {/* Badge */}
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-md border border-arduino-teal/20 mb-8 animate-fade-in shadow-sm mx-auto md:mx-0">
+                            <Sparkles className="w-4 h-4 text-arduino-teal" />
+                            <span className="text-sm font-medium text-arduino-teal">HNUE - Khoa Kỹ thuật & Công nghệ</span>
+                        </div>
 
-                <div className="relative z-10 max-w-5xl mx-auto text-center">
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-md border border-arduino-teal/20 mb-8 animate-fade-in shadow-sm">
-                        <Sparkles className="w-4 h-4 text-arduino-teal" />
-                        <span className="text-sm font-medium text-arduino-teal">HNUE - Khoa Kỹ thuật & Công nghệ</span>
-                    </div>
+                        {/* Heading */}
+                        <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-slide-up text-gray-900 tracking-tight leading-tight" style={{ animationDelay: '0.1s' }}>
+                            Arduino<span className="text-arduino-teal">Hub</span>
+                        </h1>
 
-                    {/* Logo */}
-                    <div className="flex items-center justify-center gap-4 mb-6 animate-slide-up">
-                        <div className="relative p-4 bg-white rounded-3xl shadow-xl shadow-arduino-teal/10">
-                            <Cpu className="w-16 h-16 text-arduino-teal" />
-                            <Sparkles className="absolute -top-3 -right-3 w-8 h-8 text-arduino-yellow animate-pulse-soft fill-arduino-yellow" />
+                        <p className="text-xl md:text-2xl text-gray-600 mb-8 animate-slide-up font-medium leading-relaxed" style={{ animationDelay: '0.2s' }}>
+                            Nền tảng học lập trình hệ thống nhúng & IoT thông minh với AI trợ giảng.
+                        </p>
+
+                        {/* CTA Buttons */}
+                        <div className="flex flex-col sm:flex-row items-center md:justify-start justify-center gap-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+                            <Link to="/register">
+                                <Button size="lg" className="rounded-full px-8 py-4 text-lg shadow-xl shadow-arduino-teal/20 hover:shadow-2xl hover:shadow-arduino-teal/30 hover:-translate-y-1 transition-all">
+                                    Bắt đầu học miễn phí
+                                    <ChevronRight className="w-5 h-5 ml-2" />
+                                </Button>
+                            </Link>
+                            <Link to="/login">
+                                <Button variant="secondary" size="lg" className="rounded-full px-8 py-4 text-lg bg-white/80 backdrop-blur-sm border-2 border-gray-100 hover:bg-white hover:border-arduino-teal/30">
+                                    <Play className="w-5 h-5 mr-2" />
+                                    Đăng nhập
+                                </Button>
+                            </Link>
+                        </div>
+
+                        {/* Mini Stats */}
+                        <div className="mt-12 flex items-center justify-center md:justify-start gap-8 text-gray-500 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                            <div className="flex items-center gap-2">
+                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                <span>Miễn phí 100%</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                <span>Chứng chỉ HNUE</span>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Heading */}
-                    <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-slide-up text-gray-900 tracking-tight" style={{ animationDelay: '0.1s' }}>
-                        Arduino<span className="text-arduino-teal">Hub</span>
-                    </h1>
-
-                    <p className="text-xl md:text-2xl text-gray-600 mb-6 animate-slide-up font-medium" style={{ animationDelay: '0.2s' }}>
-                        Nền tảng học lập trình Arduino thông minh
-                    </p>
-
-                    <p className="text-gray-500 max-w-2xl mx-auto mb-10 animate-slide-up leading-relaxed" style={{ animationDelay: '0.3s' }}>
-                        Học môn <strong className="text-gray-800">"Lập trình hệ thống nhúng & IoT"</strong> với
-                        AI trợ giảng, simulator online và bài tập thực hành theo giáo trình 12 tuần.
-                    </p>
-
-                    {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up" style={{ animationDelay: '0.4s' }}>
-                        <Link to="/register">
-                            <Button size="lg" className="rounded-full px-8 py-6 text-lg shadow-xl shadow-arduino-teal/20 hover:shadow-2xl hover:shadow-arduino-teal/30">
-                                Bắt đầu học miễn phí
-                                <ChevronRight className="w-5 h-5 ml-2" />
-                            </Button>
-                        </Link>
-                        <Link to="/login">
-                            <Button variant="secondary" size="lg" className="rounded-full px-8 py-6 text-lg bg-white/80 backdrop-blur-sm border-2 border-gray-100 hover:bg-white hover:border-arduino-teal/30">
-                                <Play className="w-5 h-5 mr-2" />
-                                Đăng nhập
-                            </Button>
-                        </Link>
-                    </div>
-
-                    {/* Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-                        {stats.map((stat, index) => (
-                            <div key={index} className="text-center group p-4 rounded-2xl hover:bg-white/50 transition-all">
-                                <div className="text-3xl md:text-4xl font-bold text-arduino-teal mb-2 group-hover:scale-110 transition-transform">{stat.value}</div>
-                                <div className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{stat.label}</div>
+                    {/* Right Visual */}
+                    <div className="relative animate-slide-up hidden md:block" style={{ animationDelay: '0.3s' }}>
+                        <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-all duration-500">
+                            <img
+                                src="https://images.unsplash.com/photo-1555421689-d68471e189f2?auto=format&fit=crop&q=80&w=1000"
+                                alt="Arduino Coding Workspace"
+                                className="w-full object-cover h-[500px]"
+                            />
+                            {/* Floating UI Card Mockup */}
+                            <div className="absolute bottom-8 left-8 right-8 bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-gray-100">
+                                <div className="flex items-start gap-4">
+                                    <div className="p-3 bg-arduino-mint/30 rounded-xl">
+                                        <Code className="w-6 h-6 text-arduino-teal" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-gray-900">Bài tập tuần 1: Blink LED</h3>
+                                        <p className="text-sm text-gray-500 mt-1">Viết chương trình điều khiển đèn LED nhấp nháy...</p>
+                                        <div className="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                            <div className="h-full w-2/3 bg-arduino-teal rounded-full" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Scroll indicator */}
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
-                    <div className="w-6 h-10 rounded-full border-2 border-gray-400 flex items-start justify-center p-2">
-                        <div className="w-1 h-2 bg-gray-400 rounded-full" />
+                        </div>
+                        {/* Decorative Blob */}
+                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-arduino-yellow rounded-full blur-3xl opacity-50 -z-10" />
+                        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-arduino-teal rounded-full blur-3xl opacity-30 -z-10" />
                     </div>
                 </div>
             </section>
