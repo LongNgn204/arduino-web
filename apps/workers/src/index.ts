@@ -22,7 +22,15 @@ const app = new Hono<{ Bindings: Env }>();
 
 // CORS - cho phép frontend gọi API
 app.use('*', cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://arduino-web.pages.dev'],
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://localhost:5175',
+        'https://arduino-web.pages.dev',
+        'https://hocarduinohnue.pages.dev'
+    ],
     credentials: true, // Cho phép gửi cookie
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],

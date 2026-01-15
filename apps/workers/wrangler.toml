@@ -8,6 +8,7 @@ compatibility_flags = ["nodejs_compat"]
 binding = "DB"
 database_name = "arduino-db"
 database_id = "a2d393f3-7754-494d-b1f3-20430b50513e"
+migrations_dir = "drizzle/migrations"
 
 # KV Namespace for rate limiting
 [[kv_namespaces]]
