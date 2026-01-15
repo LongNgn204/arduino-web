@@ -143,12 +143,28 @@ export const examDrills = sqliteTable('exam_drills', {
     title: text('title').notNull(),
     description: text('description'),
     content: text('content').notNull(), // Markdown - đề bài
-    rubric: text('rubric'), // JSON - tiêu chí chấm
     sampleSolution: text('sample_solution'), // Lời giải mẫu (admin only)
+    simulatorUrl: text('simulator_url'), // Wokwi embed URL
+    difficulty: text('difficulty', { enum: ['easy', 'medium', 'hard'] }).notNull().default('medium'),
+    passingScore: integer('passing_score').notNull().default(60),
     timeLimit: integer('time_limit').notNull().default(60), // Phút
     isPublished: integer('is_published', { mode: 'boolean' }).notNull().default(false),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 });
+
+// Bảng drill_submissions - lịch sử làm bài drill
+export const drillSubmissions = sqliteTable('drill_submissions', {
+    id: text('id').primaryKey(),
+    userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    drillId: text('drill_id').notNull().references(() => examDrills.id, { onDelete: 'cascade' }),
+    code: text('code').notNull(), // Code nộp
+    score: integer('score').notNull(), // Điểm chấm
+    passed: integer('passed', { mode: 'boolean' }).notNull(),
+    feedback: text('feedback'), // AI Feedback
+    submittedAt: integer('submitted_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+}, (table) => ({
+    userDrillIdx: index('drill_submissions_user_drill_idx').on(table.userId, table.drillId),
+}));
 
 // ==========================================
 // PROGRESS & ATTEMPTS
@@ -236,4 +252,5 @@ export type Quiz = typeof quizzes.$inferSelect;
 export type Question = typeof questions.$inferSelect;
 export type QuizAttempt = typeof quizAttempts.$inferSelect;
 export type LabSubmission = typeof labSubmissions.$inferSelect;
+export type DrillSubmission = typeof drillSubmissions.$inferSelect;
 export type AiChatLog = typeof aiChatLogs.$inferSelect;

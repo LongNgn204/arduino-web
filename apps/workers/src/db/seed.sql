@@ -184,3 +184,27 @@ INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct
 INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-12-03', 'quiz-12', 3, 'single', 'Question 3 for Week 12?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
 INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-12-04', 'quiz-12', 4, 'single', 'Question 4 for Week 12?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
 INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-12-05', 'quiz-12', 5, 'single', 'Question 5 for Week 12?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+-- ==========================================
+-- EXAM DRILLS (Seed Data)
+-- ==========================================
+INSERT INTO exam_drills (id, week_id, title, description, time_limit, content, simulator_url, difficulty, passing_score, is_published, created_at) VALUES 
+('drill-01', 'week-04', 'Mid-term Challenge: Smart Traffic Light', 'Thiết kế hệ thống đèn giao thông thông minh có nút nhấn cho người đi bộ.', 60, 
+'<h1>Đề bài: Đèn Giao Thông Thông Minh</h1>
+<p>Bạn hãy thiết kế hệ thống đèn giao thông tại ngã tư với yêu cầu sau:</p>
+<ul>
+    <li>3 LED: Đỏ (D13), Vàng (D12), Xanh (D11).</li>
+    <li>1 Nút nhấn (D2): Dành cho người đi bộ qua đường.</li>
+</ul>
+<h3>Yêu cầu hoạt động:</h3>
+<ol>
+    <li>Mặc định: Đèn Xanh sáng, các đèn khác tắt.</li>
+    <li>Khi nhấn nút:
+        <ul>
+            <li>Đèn Xanh tắt, Đèn Vàng nhấp nháy 3 giây.</li>
+            <li>Đèn Đỏ sáng 10 giây (để người đi bộ qua đường).</li>
+            <li>Sau đó quay lại trạng thái Đèn Xanh.</li>
+        </ul>
+    </li>
+</ol>
+<p><strong>Lưu ý:</strong> Sử dụng <code>millis()</code> để quản lý thời gian, không dùng <code>delay()</code> chặn nút nhấn.</p>',
+'https://wokwi.com/projects/new/arduino-uno', 'hard', 70, 1, unixepoch());

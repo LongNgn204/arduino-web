@@ -72,7 +72,11 @@ app.route('/api', progressRoutes);
 
 // Drills routes: /api/drills/*
 import drillsRoutes from './routes/drills';
+import leaderboardRoutes from './routes/leaderboard';
+import certificateRoutes from './routes/certificate';
 app.route('/api', drillsRoutes);
+app.route('/api', leaderboardRoutes);
+app.route('/api', certificateRoutes);
 
 // ==========================================
 // ERROR HANDLING

@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "fae16325-d9ac-40ec-a421-af523cd148b6",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "19e455f1-b459-459d-96af-262d325229ab",
+  "prevId": "fae16325-d9ac-40ec-a421-af523cd148b6",
   "tables": {
     "ai_chat_logs": {
       "name": "ai_chat_logs",
@@ -213,6 +213,109 @@
         }
       },
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "drill_submissions": {
+      "name": "drill_submissions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "drill_id": {
+          "name": "drill_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "score": {
+          "name": "score",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "passed": {
+          "name": "passed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "feedback": {
+          "name": "feedback",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "submitted_at": {
+          "name": "submitted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        }
+      },
+      "indexes": {
+        "drill_submissions_user_drill_idx": {
+          "name": "drill_submissions_user_drill_idx",
+          "columns": [
+            "user_id",
+            "drill_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "drill_submissions_user_id_users_id_fk": {
+          "name": "drill_submissions_user_id_users_id_fk",
+          "tableFrom": "drill_submissions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "drill_submissions_drill_id_exam_drills_id_fk": {
+          "name": "drill_submissions_drill_id_exam_drills_id_fk",
+          "tableFrom": "drill_submissions",
+          "tableTo": "exam_drills",
+          "columnsFrom": [
+            "drill_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}

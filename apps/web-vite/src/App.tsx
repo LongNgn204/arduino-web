@@ -10,6 +10,8 @@ import LessonPage from './pages/LessonPage';
 import LabPage from './pages/LabPage';
 import QuizPage from './pages/QuizPage';
 import { ExamDrillPage } from './pages/ExamDrillPage';
+import { LeaderboardPage } from './pages/LeaderboardPage';
+import { CertificatePage } from './pages/CertificatePage';
 import UpdatePopup from './components/UpdatePopup';
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
         <Route path="/labs/:labId" element={<LabPage />} />
         <Route path="/quizzes/:quizId" element={<QuizPage />} />
         <Route path="/drills/:drillId" element={<ExamDrillPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/certificate" element={<CertificatePage />} />
       </Routes>
     </BrowserRouter>
   );

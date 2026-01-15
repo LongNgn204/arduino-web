@@ -1,7 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../stores/authStore';
 import { Clock, Code, AlertTriangle, Send, Expand, Minimize } from 'lucide-react';
 
 const API_BASE = import.meta.env.PROD
@@ -20,7 +19,6 @@ interface ExamDrill {
 export function ExamDrillPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user } = useAuthStore();
 
     const [drill, setDrill] = useState<ExamDrill | null>(null);
     const [timeLeft, setTimeLeft] = useState<number>(0); // Seconds

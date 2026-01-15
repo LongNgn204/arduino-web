@@ -10,7 +10,8 @@ import {
     LogOut,
     Trophy,
     Target,
-    Cpu
+    Cpu,
+    Award
 } from 'lucide-react';
 
 // API Base URL
@@ -186,6 +187,37 @@ export default function DashboardPage() {
                     )}
                 </section>
 
+                {/* Challenge Section */}
+                <section className="mb-8">
+                    <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                        <Trophy className="w-6 h-6 text-yellow-400" />
+                        Thử thách & Xếp hạng
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <QuickLinkCard
+                            title="Kiểm tra áp lực"
+                            subtitle="Exam Drill 60 phút"
+                            href="/drills/drill-01"
+                            icon={<Zap className="w-5 h-5" />}
+                            color="cyan"
+                        />
+                        <QuickLinkCard
+                            title="Bảng xếp hạng"
+                            subtitle="Top 10 tuần này"
+                            href="/leaderboard"
+                            icon={<Trophy className="w-5 h-5" />}
+                            color="yellow"
+                        />
+                        <QuickLinkCard
+                            title="Chứng nhận"
+                            subtitle="Nhận bằng tốt nghiệp"
+                            href="/certificate"
+                            icon={<Award className="w-5 h-5" />}
+                            color="purple"
+                        />
+                    </div>
+                </section>
+
                 {/* Quick Links */}
                 <section>
                     <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
@@ -198,12 +230,13 @@ export default function DashboardPage() {
                             subtitle="Bài tiếp theo: Running LEDs"
                             href="/weeks/week-01"
                             progress={60}
+                            color="teal"
                         />
                         <QuickLinkCard
                             title="Quiz: Arduino cơ bản"
                             subtitle="10 câu hỏi • 15 phút"
                             href="/quizzes/quiz-01"
-                            isQuiz
+                            color="purple"
                         />
                     </div>
                 </section>
@@ -290,20 +323,31 @@ function CourseCard({ course, progress }: { course: Course; progress: number }) 
 }
 
 // Quick Link Card Component
-function QuickLinkCard({ title, subtitle, href, progress, isQuiz }: {
+function QuickLinkCard({ title, subtitle, href, progress, icon, color = 'teal' }: {
     title: string;
     subtitle: string;
     href: string;
     progress?: number;
-    isQuiz?: boolean;
+    icon?: React.ReactNode;
+    color?: string;
 }) {
+    const getColorClasses = (c: string) => {
+        const colors: Record<string, string> = {
+            teal: 'bg-teal-500/10 text-teal-400 group-hover:bg-teal-500',
+            cyan: 'bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500',
+            purple: 'bg-purple-500/10 text-purple-400 group-hover:bg-purple-500',
+            yellow: 'bg-yellow-500/10 text-yellow-400 group-hover:bg-yellow-500',
+        };
+        return colors[c] || colors.teal;
+    };
+
     return (
         <Link
             to={href}
-            className="group flex items-center justify-between p-4 bg-slate-800/50 rounded-xl border border-slate-700/50 hover:border-teal-500/50 transition-all"
+            className={`group flex items-center justify-between p-4 bg-slate-800/50 rounded-xl border border-slate-700/50 hover:border-${color}-500/50 transition-all`}
         >
             <div className="flex-1">
-                <h4 className="font-medium text-white group-hover:text-teal-400 transition-colors">{title}</h4>
+                <h4 className={`font-medium text-white group-hover:text-${color}-400 transition-colors`}>{title}</h4>
                 <p className="text-sm text-slate-400">{subtitle}</p>
                 {progress !== undefined && (
                     <div className="mt-2 h-1 w-24 bg-slate-700 rounded-full overflow-hidden">
@@ -312,11 +356,10 @@ function QuickLinkCard({ title, subtitle, href, progress, isQuiz }: {
                 )}
             </div>
             <div className={`
-        w-10 h-10 rounded-lg flex items-center justify-center
-        ${isQuiz ? 'bg-purple-500/10 text-purple-400' : 'bg-teal-500/10 text-teal-400'}
-        group-hover:bg-teal-500 group-hover:text-white transition-all
+        w-10 h-10 rounded-lg flex items-center justify-center transition-all
+        ${getColorClasses(color)} group-hover:text-white
       `}>
-                <ChevronRight className="w-5 h-5" />
+                {icon || <ChevronRight className="w-5 h-5" />}
             </div>
         </Link>
     );

@@ -97,7 +97,7 @@ export default function QuizPage() {
     };
 
     const [submitting, setSubmitting] = useState(false);
-    const [results, setResults] = useState<Array<{
+    const [_results, setResults] = useState<Array<{
         questionId: string;
         correct: boolean;
         explanation: string | null;
