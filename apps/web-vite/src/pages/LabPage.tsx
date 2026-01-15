@@ -10,7 +10,10 @@ import {
     FileCode,
     MonitorPlay,
     MessageSquare,
-    CheckCircle2
+    CheckCircle2,
+    Zap,
+    AlertCircle,
+    Maximize2
 } from 'lucide-react';
 import AiChatPopup from '../components/AiChatPopup';
 
@@ -48,6 +51,7 @@ export default function LabPage() {
     const [code, setCode] = useState('');
     const [activeTab, setActiveTab] = useState<'instructions' | 'code' | 'simulator'>('instructions');
     const [isSaving, setIsSaving] = useState(false);
+    const [saveStatus, setSaveStatus] = useState<'idle' | 'saved' | 'error'>('idle');
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -78,6 +82,7 @@ export default function LabPage() {
     const handleSave = async () => {
         if (!lab) return;
         setIsSaving(true);
+        setSaveStatus('idle');
         try {
             const res = await fetch(`${API_BASE}/api/labs/${lab.id}/save`, {
                 method: 'POST',
@@ -86,10 +91,12 @@ export default function LabPage() {
                 body: JSON.stringify({ code, submit: false }),
             });
             if (res.ok) {
-                console.log('Code saved successfully');
+                setSaveStatus('saved');
+                setTimeout(() => setSaveStatus('idle'), 2000);
             }
         } catch (error) {
             console.error('Failed to save code:', error);
+            setSaveStatus('error');
         } finally {
             setIsSaving(false);
         }
@@ -120,7 +127,10 @@ export default function LabPage() {
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-amber-400 border-t-transparent rounded-full animate-spin" />
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-slate-400 animate-pulse">Đang tải bài thực hành...</p>
+                </div>
             </div>
         );
     }
@@ -128,7 +138,7 @@ export default function LabPage() {
     if (!lab) {
         return (
             <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-                <div className="text-center">
+                <div className="text-center bg-slate-800/50 p-8 rounded-2xl border border-slate-700">
                     <p className="text-slate-400 mb-4">Không tìm thấy bài thực hành.</p>
                     <Link to="/dashboard" className="text-teal-400 hover:underline">
                         ← Quay lại Dashboard
@@ -139,132 +149,151 @@ export default function LabPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-900 flex flex-col">
+        <div className="h-screen bg-slate-950 flex flex-col overflow-hidden">
             {/* Header */}
-            <header className="sticky top-0 z-50 bg-slate-900 border-b border-slate-700/50">
-                <div className="max-w-full mx-auto px-4">
-                    <div className="flex items-center justify-between h-14">
-                        <div className="flex items-center gap-4">
-                            <Link
-                                to={week ? `/weeks/${week.id}` : '/dashboard'}
-                                className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-                            >
-                                <ArrowLeft className="w-5 h-5" />
-                            </Link>
-                            <div>
-                                <p className="text-xs text-slate-400">
-                                    {week ? `Tuần ${week.weekNumber} • Lab ${lab.orderIndex}` : 'Thực hành'}
-                                </p>
-                                <h1 className="text-sm font-semibold text-white truncate max-w-[200px] md:max-w-[400px]">
-                                    {lab.title}
-                                </h1>
+            <header className="shrink-0 bg-slate-900 border-b border-slate-800">
+                <div className="flex items-center justify-between h-14 px-4">
+                    <div className="flex items-center gap-4">
+                        <Link
+                            to={week ? `/weeks/${week.id}` : '/dashboard'}
+                            className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                        </Link>
+                        <div>
+                            <div className="flex items-center gap-2 text-xs">
+                                <span className="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/20">
+                                    Lab {lab.orderIndex}
+                                </span>
+                                {week && <span className="text-slate-500">• Tuần {week.weekNumber}</span>}
                             </div>
+                            <h1 className="text-sm font-bold text-white truncate max-w-[200px] md:max-w-[400px]">
+                                {lab.title}
+                            </h1>
                         </div>
+                    </div>
 
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={handleSave}
-                                disabled={isSaving}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors text-sm"
-                            >
-                                <Save className="w-4 h-4" />
-                                {isSaving ? 'Đang lưu...' : 'Lưu'}
-                            </button>
-                            <button
-                                onClick={handleSubmit}
-                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors text-sm font-medium"
-                            >
-                                <Send className="w-4 h-4" />
-                                Nộp bài
-                            </button>
-                        </div>
+                    <div className="flex items-center gap-2">
+                        {/* Save Status Indicator */}
+                        {saveStatus === 'saved' && (
+                            <span className="text-xs text-green-400 flex items-center gap-1 animate-fadeIn">
+                                <CheckCircle2 className="w-3 h-3" /> Đã lưu
+                            </span>
+                        )}
+
+                        <button
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors text-sm border border-slate-700"
+                        >
+                            <Save className="w-4 h-4" />
+                            {isSaving ? 'Đang lưu...' : 'Lưu'}
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-400 hover:to-orange-400 transition-all text-sm font-medium shadow-lg shadow-amber-500/20"
+                        >
+                            <Send className="w-4 h-4" />
+                            Nộp bài
+                        </button>
                     </div>
                 </div>
             </header>
 
             {/* Tab Bar */}
-            <div className="bg-slate-800/50 border-b border-slate-700/50">
-                <div className="max-w-full mx-auto px-4">
-                    <div className="flex gap-1">
+            <div className="shrink-0 bg-slate-900/80 border-b border-slate-800">
+                <div className="flex gap-1 px-4 py-2">
+                    <TabButton
+                        active={activeTab === 'instructions'}
+                        onClick={() => setActiveTab('instructions')}
+                        icon={<FileCode className="w-4 h-4" />}
+                    >
+                        Hướng dẫn
+                    </TabButton>
+                    <TabButton
+                        active={activeTab === 'code'}
+                        onClick={() => setActiveTab('code')}
+                        icon={<Play className="w-4 h-4" />}
+                    >
+                        Code Editor
+                    </TabButton>
+                    {lab.simulatorUrl && (
                         <TabButton
-                            active={activeTab === 'instructions'}
-                            onClick={() => setActiveTab('instructions')}
-                            icon={<FileCode className="w-4 h-4" />}
+                            active={activeTab === 'simulator'}
+                            onClick={() => setActiveTab('simulator')}
+                            icon={<MonitorPlay className="w-4 h-4" />}
                         >
-                            Hướng dẫn
+                            Simulator
                         </TabButton>
-                        <TabButton
-                            active={activeTab === 'code'}
-                            onClick={() => setActiveTab('code')}
-                            icon={<Play className="w-4 h-4" />}
-                        >
-                            Code Editor
-                        </TabButton>
-                        {lab.simulatorUrl && (
-                            <TabButton
-                                active={activeTab === 'simulator'}
-                                onClick={() => setActiveTab('simulator')}
-                                icon={<MonitorPlay className="w-4 h-4" />}
-                            >
-                                Simulator
-                            </TabButton>
-                        )}
-                    </div>
+                    )}
                 </div>
             </div>
 
-            {/* Main Content */}
+            {/* Main Content - Full Height */}
             <main className="flex-1 overflow-hidden">
                 {activeTab === 'instructions' && (
-                    <div className="h-full overflow-y-auto p-6">
+                    <div className="h-full overflow-y-auto p-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
                         <div className="max-w-4xl mx-auto space-y-6">
-                            {/* Objective */}
+                            {/* Objective Card */}
                             {lab.objective && (
-                                <section className="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50">
-                                    <h3 className="font-semibold text-white mb-2 flex items-center gap-2">
-                                        <CheckCircle2 className="w-5 h-5 text-teal-400" />
-                                        Mục tiêu
+                                <section className="bg-gradient-to-br from-teal-500/10 to-transparent rounded-2xl p-6 border border-teal-500/20">
+                                    <h3 className="font-bold text-white mb-3 flex items-center gap-2">
+                                        <div className="w-8 h-8 bg-teal-500/20 rounded-lg flex items-center justify-center">
+                                            <Zap className="w-5 h-5 text-teal-400" />
+                                        </div>
+                                        Mục tiêu bài thực hành
                                     </h3>
-                                    <p className="text-slate-300">{lab.objective}</p>
+                                    <p className="text-slate-300 leading-relaxed">{lab.objective}</p>
                                 </section>
                             )}
 
                             {/* Instructions */}
-                            <section className="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50">
-                                <h3 className="font-semibold text-white mb-4">Hướng dẫn chi tiết</h3>
+                            <section className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+                                <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                                    <FileCode className="w-5 h-5 text-cyan-400" />
+                                    Hướng dẫn chi tiết
+                                </h3>
                                 <div className="prose prose-invert prose-sm max-w-none">
-                                    <pre className="whitespace-pre-wrap text-slate-300 text-sm leading-relaxed">
+                                    <div className="text-slate-300 leading-relaxed whitespace-pre-wrap">
                                         {lab.instructions}
-                                    </pre>
+                                    </div>
                                 </div>
                             </section>
 
-                            {/* Wiring */}
+                            {/* Wiring Diagram */}
                             {lab.wiring && (
-                                <section className="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50">
-                                    <h3 className="font-semibold text-white mb-4">Sơ đồ kết nối</h3>
-                                    <div className="bg-slate-900 rounded-lg p-4 text-slate-300 text-sm font-mono">
-                                        {lab.wiring}
+                                <section className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+                                    <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                                        <AlertCircle className="w-5 h-5 text-yellow-400" />
+                                        Sơ đồ kết nối
+                                    </h3>
+                                    <div className="bg-slate-900 rounded-xl p-4 text-slate-300 text-sm font-mono border border-slate-700 overflow-x-auto">
+                                        <pre className="whitespace-pre-wrap">{lab.wiring}</pre>
                                     </div>
                                 </section>
                             )}
 
                             {/* Rubric */}
                             {lab.rubric && (
-                                <section className="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50">
-                                    <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                                        <MessageSquare className="w-5 h-5 text-purple-400" />
-                                        Tiêu chí chấm điểm ({lab.rubric.total} điểm)
+                                <section className="bg-gradient-to-br from-purple-500/10 to-transparent rounded-2xl p-6 border border-purple-500/20">
+                                    <h3 className="font-bold text-white mb-5 flex items-center gap-2">
+                                        <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                                            <MessageSquare className="w-5 h-5 text-purple-400" />
+                                        </div>
+                                        Tiêu chí chấm điểm
+                                        <span className="ml-auto text-sm font-normal text-purple-400">
+                                            Tổng: {lab.rubric.total} điểm
+                                        </span>
                                     </h3>
                                     <div className="space-y-3">
                                         {lab.rubric.criteria.map((c, i) => (
-                                            <div key={i} className="flex items-start gap-3 bg-slate-900/50 rounded-lg p-3">
-                                                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold">
+                                            <div key={i} className="flex items-start gap-4 bg-slate-900/50 rounded-xl p-4 border border-slate-700/50 hover:border-purple-500/30 transition-colors">
+                                                <span className="w-12 h-12 shrink-0 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg font-bold">
                                                     {c.points}
                                                 </span>
                                                 <div>
-                                                    <p className="font-medium text-white">{c.name}</p>
-                                                    <p className="text-sm text-slate-400">{c.description}</p>
+                                                    <p className="font-semibold text-white">{c.name}</p>
+                                                    <p className="text-sm text-slate-400 mt-1">{c.description}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -272,11 +301,11 @@ export default function LabPage() {
                                 </section>
                             )}
 
-                            {/* Duration */}
+                            {/* Duration Info */}
                             {lab.duration && (
-                                <div className="flex items-center gap-2 text-slate-400 text-sm">
+                                <div className="flex items-center gap-2 text-slate-500 text-sm">
                                     <Clock className="w-4 h-4" />
-                                    Thời gian ước tính: {lab.duration} phút
+                                    Thời gian ước tính: <span className="text-slate-300">{lab.duration} phút</span>
                                 </div>
                             )}
                         </div>
@@ -284,29 +313,39 @@ export default function LabPage() {
                 )}
 
                 {activeTab === 'code' && (
-                    <div className="h-full flex flex-col">
-                        {/* Code Editor Area */}
-                        <div className="flex-1 p-4">
-                            <div className="h-full bg-slate-950 rounded-xl border border-slate-700 overflow-hidden">
-                                <div className="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
-                                    <span className="text-sm text-slate-400">main.ino</span>
-                                    <span className="text-xs text-slate-500">Arduino C++</span>
+                    <div className="h-full flex flex-col bg-[#1e1e1e]">
+                        {/* Code Editor Header */}
+                        <div className="shrink-0 flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-1.5">
+                                    <div className="w-3 h-3 rounded-full bg-red-500" />
+                                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                                    <div className="w-3 h-3 rounded-full bg-green-500" />
                                 </div>
-                                <textarea
-                                    value={code}
-                                    onChange={(e) => setCode(e.target.value)}
-                                    className="w-full h-[calc(100%-40px)] bg-slate-950 text-slate-300 font-mono text-sm p-4 resize-none focus:outline-none"
-                                    spellCheck={false}
-                                    placeholder="// Viết code Arduino của bạn ở đây..."
-                                />
+                                <span className="text-sm text-slate-300 font-medium">main.ino</span>
+                                <span className="text-xs text-slate-500 px-2 py-0.5 bg-slate-700 rounded">Arduino C++</span>
                             </div>
+                            <button className="p-1.5 hover:bg-slate-700 rounded text-slate-400 hover:text-white transition-colors">
+                                <Maximize2 className="w-4 h-4" />
+                            </button>
+                        </div>
+
+                        {/* Code Editor */}
+                        <div className="flex-1 relative">
+                            <textarea
+                                value={code}
+                                onChange={(e) => setCode(e.target.value)}
+                                className="absolute inset-0 w-full h-full bg-[#1e1e1e] text-slate-300 font-mono text-sm p-4 resize-none focus:outline-none leading-relaxed"
+                                spellCheck={false}
+                                placeholder="// Viết code Arduino của bạn ở đây..."
+                            />
                         </div>
                     </div>
                 )}
 
                 {activeTab === 'simulator' && lab.simulatorUrl && (
-                    <div className="h-full p-4">
-                        <div className="h-full bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+                    <div className="h-full p-4 bg-slate-950">
+                        <div className="h-full bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
                             <iframe
                                 src={lab.simulatorUrl}
                                 className="w-full h-full"
@@ -340,12 +379,12 @@ function TabButton({
         <button
             onClick={onClick}
             className={`
-        flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors
-        ${active
-                    ? 'border-amber-400 text-amber-400'
-                    : 'border-transparent text-slate-400 hover:text-white'
+                flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all
+                ${active
+                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }
-      `}
+            `}
         >
             {icon}
             {children}

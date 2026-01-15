@@ -165,7 +165,16 @@ export const useAuthStore = create<AuthState>()(
         }),
         {
             name: 'arduino-auth',
-            partialize: (state) => ({ user: state.user }),
+            partialize: (state) => ({
+                user: state.user,
+                isAuthenticated: state.isAuthenticated
+            }),
+            onRehydrateStorage: () => (state) => {
+                // When rehydrating from localStorage, sync isAuthenticated with user
+                if (state && state.user) {
+                    state.isAuthenticated = true;
+                }
+            }
         }
     )
 );
