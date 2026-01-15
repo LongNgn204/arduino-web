@@ -1,7 +1,10 @@
--- Generated Seed Data from noidunghoc.md
--- Date: 2026-01-15T05:10:28.181Z
+-- Seed data cho Arduino Learning Hub
+-- Generated from curriculum/ markdown files
+-- Run: cd apps/workers && npx wrangler d1 execute arduino-db --remote --file=src/db/seed.sql
 
--- CLEAR DATA
+-- ==========================================
+-- CLEAR OLD DATA
+-- ==========================================
 DELETE FROM lab_submissions;
 DELETE FROM quiz_attempts;
 DELETE FROM progress;
@@ -13,266 +16,6451 @@ DELETE FROM labs;
 DELETE FROM lessons;
 DELETE FROM weeks;
 DELETE FROM courses;
-DELETE FROM sessions;
-DELETE FROM users;
 
--- USERS
-INSERT INTO users (id, username, password_hash, role, display_name, created_at, updated_at) VALUES 
-('admin-001', 'admin', 'pbkdf2$100000$c2FsdF9hZG1pbl90ZXN0$WkYxR2FEbG1iSEZ3WVhOemQyOXlaQT09', 'admin', 'Administrator', unixepoch(), unixepoch()),
-('student-001', 'sinhvien', 'pbkdf2$100000$c2FsdF9zdHVkZW50X3Rlc3Q$dGVzdHBhc3N3b3JkMTIz', 'student', 'Nguyen Hoang Long', unixepoch(), unixepoch());
-
+-- ==========================================
 -- COURSE
+-- ==========================================
 INSERT INTO courses (id, code, title, description, total_weeks, is_published, created_at) VALUES 
-('course-tech476', 'TECH476', 'Lập trình hệ thống nhúng & IoT', 'Khóa học Arduino Uno 12 tuần: Từ cơ bản đến IoT. Học lý thuyết, thực hành simulator, và làm dự án thực tế.', 12, 1, unixepoch());
+('course-tech476', 'TECH476', 'Lập trình hệ thống nhúng & IoT', 
+ 'Khóa học Arduino Uno 12 tuần: Từ GPIO cơ bản đến WiFi & IoT. Học lý thuyết chi tiết, thực hành với simulator Wokwi, và làm dự án thực tế.', 
+ 12, 1, unixepoch());
 
--- WEEK 1
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-01', 'course-tech476', 1, 'Tổng quan hệ thống nhúng & GPIO (LED)', '# Tổng quan hệ thống nhúng & GPIO (LED)
+-- ==========================================
+-- WEEKS (with full overview)
+-- ==========================================
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-01', 'course-tech476', 1, 'Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)', 
+ '', 
+ '[]', 
+ '["Arduino Uno","GPIO","Tách hàm"]', 1, unixepoch());
 
-- Khái niệm hệ thống nhúng; vai trò MCU.  
-- GPIO digital output: `pinMode`, `digitalWrite`.  
-- LED + điện trở hạn dòng (220Ω/330Ω).  
-- `delay(ms)` và tính “blocking” (tuần sau sẽ học cách tốt hơ...', '["Biết Arduino Uno là gì, cấu trúc `setup()` và `loop()`.","Điều khiển LED đơn và nhiều LED theo quy luật thời gian.","Rèn tư duy vòng lặp, mảng pin, tách hàm."]', 1, unixepoch());
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-01-01', 'week-01', 1, 'Lý thuyết cốt lõi', '- Khái niệm hệ thống nhúng; vai trò MCU.  
-- GPIO digital output: `pinMode`, `digitalWrite`.  
-- LED + điện trở hạn dòng (220Ω/330Ω).  
-- `delay(ms)` và tính “blocking” (tuần sau sẽ học cách tốt hơn).
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-02', 'course-tech476', 2, 'Thiết kế Hệ thống Nhúng & LED 7 Đoạn', 
+ '', 
+ '[]', 
+ '["Top-Down","Bottom-Up","LED 7 đoạn","Common Cathode","Common Anode","Multiplexing","74HC595"]', 1, unixepoch());
 
-### Mini-lecture (giọng giảng viên)
-- “Arduino là MCU chạy vòng lặp vô hạn. `setup()` chạy đúng 1 lần để khởi tạo, còn `loop()` chạy mãi.”  
-- “Trong nhúng, ta mô tả: **Input** (nút/cảm biến) → **Process** (logic) → **Output** (LED/relay/màn hình).”
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-03', 'course-tech476', 3, 'Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad', 
+ '', 
+ '[]', 
+ '["INPUT_PULLUP","Logic đảo","Debounce","Edge Detection","Keypad"]', 1, unixepoch());
 
-## 1.3 Pin map & mạch
-- LED1..LED5: D2, D3, D4, D5, D6 (mỗi LED có điện trở).  
-- Chân còn lại LED về GND.', 30, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-01-01', 'week-01', 1, 'Bài 1-1: Điều khiển LED theo quy luật thời gian', '**Yêu cầu:**
-1) Bật 1s, tắt 1s, lặp 5 lần.  
-2) Bật 3s, tắt 0,5s, lặp 5 lần.  
-3) Bật 0,5s, tắt 3s, lặp 5 lần.  
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-04', 'course-tech476', 4, 'Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)', 
+ '', 
+ '[]', 
+ '["ADC 10-bit","analogRead()","PWM","analogWrite()","map()","Duty Cycle"]', 1, unixepoch());
 
-**Gợi ý chuẩn hoá code:** viết hàm `blinkN(tOnMs, tOffMs, n)` và gọi 3 lần.
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-05', 'course-tech476', 5, 'Thực hành Tích hợp I/O', 
+ '', 
+ '[]', 
+ '["State Machine","Non-blocking","Modular code","Tách I/O","Debug từng phần"]', 1, unixepoch());
 
-**Tiêu chí PASS:** đúng số lần lặp, đúng khoảng thời gian (sai số nhỏ do chạy thực tế).
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-06', 'course-tech476', 6, 'Cảm biến trong Hệ thống Nhúng', 
+ '', 
+ '[]', 
+ '["HC-SR04","DHT11","PIR","TTP223"]', 1, unixepoch());
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-01-02', 'week-01', 2, 'Bài 1-2: Điều khiển 5 LED (D2–D6) theo quy tắc', '**Yêu cầu:**
-- Bật tuần tự LED1→LED5, cách 1s giữa các LED.  
-- Giữ tất cả LED sáng 5s.  
-- Tắt tuần tự LED5→LED1, cách 1s.
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-07', 'course-tech476', 7, 'Giao thức Kết nối Nối tiếp (Serial UART)', 
+ '', 
+ '[]', 
+ '["UART","Baudrate","Serial.print()","Serial.read()","Serial.readStringUntil()","SoftwareSerial"]', 1, unixepoch());
 
-**Tiêu chí PASS:** đúng thứ tự, đúng delay, không bỏ sót LED.
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-08', 'course-tech476', 8, 'Giao thức Kết nối I2C', 
+ '', 
+ '[]', 
+ '["I2C","Wire.h","Address","I2C Scanner","LCD I2C"]', 1, unixepoch());
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-01-03', 'week-01', 3, 'Bài 1-3: Điều khiển 5 LED (D2–D6) “duy nhất một LED sáng”', '**Yêu cầu:**
-- Duy nhất 1 LED sáng chạy 1→5, trễ 1s.  
-- Duy nhất 1 LED sáng chạy 5→1, trễ 0,5s.
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-09', 'course-tech476', 9, 'Giao thức Kết nối SPI', 
+ '', 
+ '[]', 
+ '[]', 1, unixepoch());
 
-**Tiêu chí PASS:** luôn chỉ có 1 LED sáng tại mọi thời điểm.', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-10', 'course-tech476', 10, 'Giao thức 1-Wire (DS18B20)', 
+ '', 
+ '[]', 
+ '[]', 1, unixepoch());
 
--- WEEK 2
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-02', 'course-tech476', 2, 'Thiết kế hệ thống nhúng & LED 7 đoạn', '# Thiết kế hệ thống nhúng & LED 7 đoạn
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-11', 'course-tech476', 11, 'Giao tiếp WiFi - Chế độ WebServer', 
+ '', 
+ '[]', 
+ '[]', 1, unixepoch());
 
-- Top-Down: yêu cầu → module → thiết kế → tích hợp → test.  
-- Bottom-Up: thử nghiệm module trước rồi ghép hệ thống.  
-- LED 7 đoạn: common cathode/anode (đảo logic).  
-- Multiplexing: quét digit n...', '["Hiểu Top-Down vs Bottom-Up, cách thiết kế bài nhúng.","Điều khiển LED 7 đoạn (1 số) và module 4 số (quét).","(Nếu có) điều khiển module 4 số qua 74HC595."]', 1, unixepoch());
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-02-01', 'week-02', 1, 'Lý thuyết cốt lõi', '- Top-Down: yêu cầu → module → thiết kế → tích hợp → test.  
-- Bottom-Up: thử nghiệm module trước rồi ghép hệ thống.  
-- LED 7 đoạn: common cathode/anode (đảo logic).  
-- Multiplexing: quét digit nhanh để hiển thị 4 số ổn định.  
-- 74HC595: shift register, giảm số chân điều khiển.', 30, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-02-01', 'week-02', 1, 'Bài 2-1: LED 7 đoạn (1 số)', '**Yêu cầu:**
-- Hiển thị 0→9, trễ 2s.  
-- Hiển thị 0→9 rồi 9→0, trễ 2s.  
-- Hiển thị các số chẵn: 0,2,4,6,8 và số lẻ: 1,3,5,7.
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-12', 'course-tech476', 12, 'Giao tiếp WiFi - Chế độ Asynchronous WebServer', 
+ '', 
+ '[]', 
+ '[]', 1, unixepoch());
 
-**Tiêu chí PASS:** hiển thị đúng số, không sai segment.
+-- ==========================================
+-- LESSONS (Full content from curriculum)
+-- ==========================================
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-01-01', 'week-01', 1, 'Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)', 
+ '## 🎯 Mục tiêu học tập
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-02-02', 'week-02', 2, 'Bài 2-2: Mô đun 4 LED 7 đoạn', '**Yêu cầu:**
-- Hiển thị số tự nhiên 0→9999, trễ 0,3s.  
-- Hiển thị số chẵn 0→9998, trễ 0,3s.
+Sau khi hoàn thành tuần này, bạn sẽ:
 
-**Tiêu chí PASS:** quét đủ nhanh (không nhấp nháy rõ), số đúng.
+1. ✅ Hiểu Arduino Uno là gì và vai trò trong hệ thống nhúng
+2. ✅ Nắm vững cấu trúc chương trình Arduino: `setup()` và `loop()`
+3. ✅ Sử dụng thành thạo `pinMode()`, `digitalWrite()`, `delay()`
+4. ✅ Điều khiển LED đơn và nhiều LED theo quy luật thời gian
+5. ✅ Viết code sạch với mảng, vòng lặp, và tách hàm
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-02-03', 'week-02', 3, 'Bài 2-3: Module 4 LED 7 đoạn + 74HC595', '**Yêu cầu:**
-- Hiển thị 0–9 trên tất cả chữ số.  
-- Đếm tăng 0→9999, trễ 0,2s.  
-- Đếm giảm 9999→0, trễ 0,2s.  
-- Nháy cả 4 led 4 lần, chu kỳ nháy 2s.
+---
 
-**Tiêu chí PASS:** đúng logic shift + latch, hiển thị mượt.', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+## 📚 Phần 1: Lý thuyết cốt lõi
 
--- WEEK 3
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-03', 'course-tech476', 3, 'Input: Nút nhấn & Keypad', '# Input: Nút nhấn & Keypad
+### 1.1 Hệ thống nhúng là gì?
 
-- INPUT_PULLUP: không nhấn HIGH, nhấn LOW (đảo logic).  
-- Debounce 20–50ms.  
-- Edge detection (phát hiện nhấn mới) để đếm lần nhấn.  
-- Keypad: quét hàng/cột, mapping phím....', '["Đọc nút nhấn đúng, chống dội, bắt cạnh.","Keypad đọc ký tự và chuỗi, làm bài mật khẩu."]', 1, unixepoch());
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-03-01', 'week-03', 1, 'Lý thuyết cốt lõi', '- INPUT_PULLUP: không nhấn HIGH, nhấn LOW (đảo logic).  
-- Debounce 20–50ms.  
-- Edge detection (phát hiện nhấn mới) để đếm lần nhấn.  
-- Keypad: quét hàng/cột, mapping phím.', 30, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-03-01', 'week-03', 1, 'Bài 3-1: Nhấn → LED bật, nhả → LED tắt', '**Serial format bắt buộc:**
-- Trạng thái nút ấn: (1 - nhấn, 0 - không nhấn)  
-- Trạng thái led: (bật / tắt)
+**Hệ thống nhúng (Embedded System)** là một hệ thống máy tính được thiết kế để thực hiện một hoặc một vài chức năng chuyên biệt, thường nằm bên trong một thiết bị lớn hơn.
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-03-02', 'week-03', 2, 'Bài 3-2: Đếm số lần nhấn, lẻ bật, chẵn tắt', '**Serial format bắt buộc:**
-- Số lần nhấn nút: xx  
-- Trạng thái led: (bật / tắt)
+#### Ví dụ thực tế:
+- 🚗 **Ô tô**: Hệ thống ABS, túi khí, điều hòa tự động
+- 🏠 **Nhà thông minh**: Đèn cảm biến, khóa cửa vân tay
+- 📱 **Điện thoại**: Cảm biến vân tay, gyroscope
+- 🎮 **Game console**: Điều khiển tay cầm, xử lý đồ họa
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-03-03', 'week-03', 3, 'Bài 3-3: Keypad đọc 1 ký tự', '**Serial format:** `Kí tự vừa nhập: ____`
+#### Đặc điểm của hệ thống nhúng:
+| Đặc điểm | Mô tả |
+|----------|-------|
+| **Chuyên biệt** | Làm một việc và làm tốt |
+| **Thời gian thực** | Phản hồi nhanh, đúng deadline |
+| **Tài nguyên hạn chế** | RAM ít, CPU chậm hơn PC |
+| **Tiêu thụ điện thấp** | Chạy pin, tiết kiệm năng lượng |
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-03-04', 'week-03', 4, 'Bài 3-4: Keypad điều khiển 5 LED theo mapping', '- nhấn 1 → bật led1; nhấn 2 → tắt led1  
-- nhấn 3 → bật led2; nhấn 4 → tắt led2  
-- nhấn 5 → bật led3; nhấn 6 → tắt led3  
-- nhấn 7 → bật led4; nhấn 8 → tắt led4  
-- nhấn 9 → bật led5; nhấn 0 → tắt led5
+### 1.2 Arduino Uno - Board học tập lý tưởng
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-03-05', 'week-03', 5, 'Bài 3-5: Keypad password (kết thúc bằng `#`)', '- Mật khẩu đúng: bật LED xanh; Serial: `Mật khẩu đúng`  
-- Mật khẩu sai: bật LED đỏ; Serial: `Mật khẩu sai`', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+**Arduino Uno** là board vi điều khiển (MCU) sử dụng chip **ATmega328P**, được thiết kế cho người mới bắt đầu học lập trình nhúng.
 
--- WEEK 4
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-04', 'course-tech476', 4, 'Analog input/output: ADC & PWM', '# Analog input/output: ADC & PWM
+#### Thông số kỹ thuật:
+| Thông số | Giá trị |
+|----------|---------|
+| **Vi xử lý** | ATmega328P |
+| **Điện áp hoạt động** | 5V |
+| **Tần số xung nhịp** | 16 MHz |
+| **Flash Memory** | 32 KB (chứa chương trình) |
+| **SRAM** | 2 KB (biến runtime) |
+| **EEPROM** | 1 KB (lưu dữ liệu khi tắt nguồn) |
+| **Digital I/O Pins** | 14 (6 có PWM) |
+| **Analog Input Pins** | 6 |
 
-- ADC 10-bit: 0..1023.  
-- Điện áp: `V = raw * 5.0 / 1023`.  
-- PWM: `analogWrite(0..255)` trên chân PWM (3,5,6,9,10,11).  
-- Map & clamp giá trị....', '["Đọc pot raw/V/%; PWM điều khiển độ sáng.","Điều khiển chu kỳ nháy theo pot.","Điều khiển 7 LED theo 3 chế độ %."]', 1, unixepoch());
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-04-01', 'week-04', 1, 'Lý thuyết cốt lõi', '- ADC 10-bit: 0..1023.  
-- Điện áp: `V = raw * 5.0 / 1023`.  
-- PWM: `analogWrite(0..255)` trên chân PWM (3,5,6,9,10,11).  
-- Map & clamp giá trị.', 30, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-04-01', 'week-04', 1, 'Bài 4-1: Đọc điện áp pot — 3 dạng', '- Raw (analogRead)  
-- Điện áp (V)  
-- %
+#### Sơ đồ chân Arduino Uno:
+```
+                    +-----[USB]-----+
+                    |               |
+              RESET |[ ]   [ ][ ][ ]| D13 (LED_BUILTIN)
+               3.3V |[ ]   [ ][ ][ ]| D12 
+                 5V |[ ]   [ ][ ][ ]| D11 (PWM)
+                GND |[ ]   [ ][ ][ ]| D10 (PWM)
+                GND |[ ]   [ ][ ][ ]| D9  (PWM)
+                Vin |[ ]   [ ][ ][ ]| D8
+                    |               |
+                 A0 |[ ]       [ ][ ]| D7
+                 A1 |[ ]       [ ][ ]| D6  (PWM)
+                 A2 |[ ]       [ ][ ]| D5  (PWM)
+                 A3 |[ ]       [ ][ ]| D4
+            SDA/A4  |[ ]       [ ][ ]| D3  (PWM)
+            SCL/A5  |[ ]       [ ][ ]| D2
+                    |               |
+                    +---------------+
+```
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-04-02', 'week-04', 2, 'Bài 4-2: PWM độ sáng LED theo pot', 'Serial bắt buộc:
-- Raw  
-- % đã xử lý  
-- Vout tính theo V
+### 1.3 Cấu trúc chương trình Arduino
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-04-03', 'week-04', 3, 'Bài 4-3: Điều khiển tốc độ nháy theo pot', '- Chu kỳ bật/tắt từ 0,1s (pot=1023) đến 1s (pot=0).  
-Serial bắt buộc:
-- % pot  
-- Chế độ LED (bật/tắt hiện hành)  
-- Chu kỳ (Ton + Toff)
+Mọi chương trình Arduino đều có **hai hàm bắt buộc**:
 
----', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-04-04', 'week-04', 4, 'Bài 4-4: 7 LED (D2→D8) theo pot, 3 chế độ', '- <30%: chạy 2→8  
-- >70%: chạy 8→2  
-- 31–69%: chạy từ giữa ra hai phía (5→8 và 5→2)  
-Serial bắt buộc:
-- % pot  
-- chế độ hiện hành', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+```cpp
+void setup() {
+    // Chạy MỘT LẦN DUY NHẤT khi khởi động
+    // Dùng để: cấu hình pin, khởi tạo Serial, thiết lập ban đầu
+}
 
--- WEEK 5
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-05', 'course-tech476', 5, 'Thực hành tích hợp I/O', '# Thực hành tích hợp I/O
+void loop() {
+    // Chạy LẶP LẠI VÔ HẠN sau khi setup() hoàn tất
+    // Dùng để: logic chính của chương trình
+}
+```
 
-...', '["Ghép nút + pot + LED + 7-seg thành hệ thống.","Làm quen “state/mode” (cơ bản), giảm lỗi khi thi."]', 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-05-01', 'week-05', 1, 'Bài 5-1: LED trang trí theo pot', '- pot <25%: LED1→LED8, lặp 3 lần  
-- pot >75%: LED8→LED1, lặp 3 lần  
-- 25–75%: sáng từ 2 phía (LED1→LED4 và LED8→LED5)', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-05-02', 'week-05', 2, 'Bài 5-2: Số lượng LED sáng theo pot', '- chia 10%  
-- pot >=20% → LED1 sáng  
-- mỗi +10% thêm 1 LED', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-05-03', 'week-05', 3, 'Bài 5-3: LED trang trí theo số lần nhấn', '- nhấn 1 lần: chạy 1→8  
-- nhấn 2 lần: chạy 8→1  
-- nhấn 3 lần: như nhấn 1…', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-05-04', 'week-05', 4, 'Bài 5-4: Hiển thị % pot (00→99) bằng 4 LED 7 đoạn', '', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-05-05', 'week-05', 5, 'Bài 5-5: Hiển thị số lần nhấn (00→99) bằng 4 LED 7 đoạn', '', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-05-06', 'week-05', 6, 'Bài 5-6: 4 LED 7 đoạn theo nút: nhấn 1 lần đếm tăng 00→99; nhấn 2 lần đếm giảm 99→00', '', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+#### Ví dụ minh họa luồng thực thi:
+```
+[Cấp nguồn] → [setup() chạy 1 lần] → [loop() lần 1] → [loop() lần 2] → ... → [vô hạn]
+```
 
--- WEEK 6
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-06', 'course-tech476', 6, 'Cảm biến trong hệ thống nhúng', '# Cảm biến trong hệ thống nhúng
+### 1.4 GPIO - General Purpose Input/Output
 
-...', '["Đọc HC-SR04, DHT11, PIR, TTP223.","Điều khiển cảnh báo theo ngưỡng; Serial đúng format."]', 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-06-01', 'week-06', 1, 'Bài 6-1: HC-SR04 + 8 LED chọn chương trình theo khoảng cách', '- <30cm: chương trình 1: chạy led1→led8  
-- >80cm: chương trình 2: chạy led8→led1  
-- 30–80cm: chương trình 3: bật/tắt 8 led chu kỳ 1s  
-Serial: `Khoảng cách __ cm -> Chương trình __`', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-06-02', 'week-06', 2, 'Bài 6-2: HC-SR04 cảnh báo màu (xanh/vàng/đỏ)', '- >60cm: an toàn, bật led xanh  
-- 30–60cm: cảnh báo, bật led vàng  
-- <30cm: nguy hiểm, bật led đỏ  
-Serial: `Khoảng cách __ cm. trạng thái an toàn/cảnh báo/nguy hiểm`', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-06-03', 'week-06', 3, 'Bài 6-3: HC-SR04 số led bật theo khoảng cách', '- 20cm bật 1 LED  
-- mỗi +10cm thêm 1 LED, tối đa 8  
-Serial: `Khoảng cách __ cm. Số led bật __`', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-06-04', 'week-06', 4, 'Bài 6-4: DHT11 giám sát nhiệt độ/độ ẩm theo ngưỡng', '- 2 dưới ngưỡng → xanh  
-- 1 vượt ngưỡng → vàng  
-- 2 vượt ngưỡng → đỏ  
-Serial: `Nhiệt độ: __ C. Độ ẩm: __ %. Màu led đang bật.`', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-06-05', 'week-06', 5, 'Bài 6-5: 2 TTP223 tăng/giảm (0..9) + hiển thị 7 đoạn', '- chạm A tăng, chạm B giảm  
-- chặn biên 0..9  
-Serial: `Đã chạm cảm biến: __ , tổng số lần chạm: __ lần.`', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-06-06', 'week-06', 6, 'Bài 6-6: PIR kích hoạt LED + relay còi', '- Có tín hiệu: `Có di chuyển trong phạm vi giám sát. Kích hoạt báo động`  
-- Không: `An toàn`', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+**GPIO** là các chân đa năng, có thể cấu hình làm **INPUT** (đọc tín hiệu) hoặc **OUTPUT** (xuất tín hiệu).
 
--- WEEK 7
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-07', 'course-tech476', 7, 'Serial UART', '# Serial UART
+#### Các hàm GPIO cơ bản:
 
-...', '["Hiểu UART, baudrate, Serial Monitor.","Thiết kế lệnh điều khiển đơn giản PC↔Arduino.","(Nâng cao) Arduino↔Arduino."]', 1, unixepoch());
+```cpp
+// 1. Cấu hình chế độ chân
+pinMode(pin, mode);
+// - pin: số chân (2-13 hoặc A0-A5)
+// - mode: INPUT, OUTPUT, hoặc INPUT_PULLUP
 
--- WEEK 8
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-08', 'course-tech476', 8, 'I2C', '# I2C
+// 2. Xuất tín hiệu số
+digitalWrite(pin, value);
+// - value: HIGH (5V) hoặc LOW (0V)
 
-...', '["Biết SDA/SCL (Uno: A4/A5).","Quét địa chỉ I2C, dùng LCD1602 I2C.","Uno–Uno I2C Master/Slave."]', 1, unixepoch());
+// 3. Đọc tín hiệu số
+int state = digitalRead(pin);
+// - state: HIGH hoặc LOW
+```
 
--- WEEK 9
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-09', 'course-tech476', 9, 'SPI', '# SPI
+### 1.5 LED và điện trở hạn dòng
 
-- SPI truyền đồng bộ theo xung clock SCK.  
-- 1 master điều khiển nhiều slave bằng SS/CS.  
-- Ưu/nhược so với I2C (tốc độ vs số dây)....', '["Hiểu SPI: MOSI/MISO/SCK/SS, master–slave, tốc độ.","Điều khiển thiết bị qua SPI (thực tế thường dùng 74HC595 / MAX7219)."]', 1, unixepoch());
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-09-01', 'week-09', 1, 'Lý thuyết cốt lõi', '- SPI truyền đồng bộ theo xung clock SCK.  
-- 1 master điều khiển nhiều slave bằng SS/CS.  
-- Ưu/nhược so với I2C (tốc độ vs số dây).', 30, 1, unixepoch());
+#### Tại sao LED cần điện trở?
 
--- WEEK 10
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-10', 'course-tech476', 10, '1-Wire', '# 1-Wire
+LED (Light Emitting Diode) có đặc tính: khi có điện áp thuận, dòng điện tăng **rất nhanh** và có thể làm cháy LED nếu không giới hạn.
 
-...', '["Hiểu 1-Wire: 1 dây data, địa chỉ ROM, nhiều thiết bị chung bus.","Thực hành DS18B20 (phổ biến nhất)."]', 1, unixepoch());
+**Công thức tính điện trở hạn dòng:**
+```
+R = (Vnguồn - Vled) / Iled
 
--- WEEK 11
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-11', 'course-tech476', 11, 'WiFi WebServer (Cơ bản)', '# WiFi WebServer (Cơ bản)
+Với Arduino 5V và LED đỏ (Vled ≈ 2V, Iled = 20mA):
+R = (5V - 2V) / 0.02A = 150Ω
 
-...', '["Bật/tắt LED từ xa qua mạng LAN bằng webserver cơ bản.","UI đúng tiêu đề + nút theo đề bài.","Arduino Uno **không có WiFi tích hợp**. Để làm WebServer ổn định, khuyến nghị dùng **ESP8266/ESP32**.","Nếu lớp yêu cầu “Uno + module WiFi AT command” thì nội dung sẽ phức tạp hơn."]', 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-11-01', 'week-11', 1, 'Bài 11.1', '- Trang web tiêu đề: `Hệ thống bật / tắt Led – WebServer cấu hình cơ bản`  
-- Nút ON và OFF tương ứng trạng thái.', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-11-02', 'week-11', 2, 'Bài 11.2', '- Tiêu đề: `Hệ thống bật / tắt 2 Led – WebServer cấu hình cơ bản`  
-- Có khu vực LED1 và LED2  
-- Nút hiển thị `BAT`/`TAT` đúng trạng thái hiện hành.', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
+→ Thường dùng 220Ω hoặc 330Ω để an toàn
+```
 
--- WEEK 12
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, is_published, created_at) VALUES ('week-12', 'course-tech476', 12, 'WiFi Async WebServer (Không đồng bộ)', '# WiFi Async WebServer (Không đồng bộ)
+#### Sơ đồ kết nối LED cơ bản:
+```
+Arduino Pin D2 ──[220Ω]──┐
+                         │
+                       (+)LED(-)
+                         │
+                        GND
+```
 
-...', '["Hiểu sync vs async, tối ưu responsiveness.","Làm hệ thống IoT realtime hơn (cơ sở cho dashboard)."]', 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-12-01', 'week-12', 1, 'Bài 12.1', '- Tiêu đề: `Hệ thống bật / tắt Led – WebServer cấu hình không đồng bộ`  
-- Nút ON/OFF.', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-12-02', 'week-12', 2, 'Bài 12.2', '- Tiêu đề: `Hệ thống bật / tắt 2 Led – WebServer cấu hình không đồng bộ`  
-- LED1/LED2; nút `BAT/TAT` theo trạng thái.', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
+### 1.6 Hàm delay() và nhược điểm
 
--- EXAM DRILLS
-INSERT INTO exam_drills (id, week_id, title, description, content, sample_solution, time_limit, is_published, created_at) VALUES 
-('drill-01', 'week-01', 'Kiểm tra LED cơ bản', 'Kiểm tra khả năng điều khiển LED của bạn!', 
-'## Đề bài
+```cpp
+delay(ms);  // Tạm dừng chương trình trong ms mili-giây
+```
 
-Viết chương trình điều khiển 5 LED (D2-D6):
+**Ưu điểm**: Đơn giản, dễ dùng  
+**Nhược điểm**: 
+- ⚠️ **Blocking** - CPU không làm gì khác trong lúc chờ
+- ⚠️ Không phản hồi được nút nhấn, cảm biến trong lúc delay
+- ⚠️ Tuần sau sẽ học cách tốt hơn với `millis()`
 
-1. **Phase 1**: Bật tất cả LED trong 2 giây
-2. **Phase 2**: Chạy LED từ trái sang phải (mỗi LED sáng 500ms)
-3. **Phase 3**: Nháy tất cả LED 3 lần, chu kỳ 1s
+---
 
-**Yêu cầu**:
-- Code sạch, có comment
-- Sử dụng hàm riêng cho mỗi hiệu ứng
-- Chạy vòng lặp vô hạn',
-'// Sample solution code', 30, 1, unixepoch());
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 Blink LED cơ bản (Hello World của Arduino)
+
+```cpp
+/*
+ * Bài 1: Blink LED - Chương trình đầu tiên
+ * LED nháy 1 giây bật, 1 giây tắt
+ * 
+ * Phần cứng:
+ * - LED đỏ nối từ D13 qua điện trở 220Ω xuống GND
+ * - Hoặc dùng LED_BUILTIN (LED trên board)
+ */
+
+const int LED_PIN = 13;  // Chân kết nối LED
+
+void setup() {
+    pinMode(LED_PIN, OUTPUT);  // Cấu hình chân làm OUTPUT
+}
+
+void loop() {
+    digitalWrite(LED_PIN, HIGH);  // Bật LED (5V)
+    delay(1000);                   // Chờ 1 giây (1000ms)
+    
+    digitalWrite(LED_PIN, LOW);   // Tắt LED (0V)
+    delay(1000);                   // Chờ 1 giây
+}
+```
+
+### 2.2 Hàm blinkN() - Nháy LED theo số lần
+
+```cpp
+/*
+ * Bài 1-1: Điều khiển LED theo quy luật thời gian
+ * 
+ * Yêu cầu:
+ * 1) Bật 1s, tắt 1s, lặp 5 lần
+ * 2) Bật 3s, tắt 0.5s, lặp 5 lần  
+ * 3) Bật 0.5s, tắt 3s, lặp 5 lần
+ */
+
+const int LED_PIN = 2;  // LED nối vào chân D2
+
+// Hàm nháy LED n lần với thời gian bật và tắt tùy chỉnh
+void blinkN(int tOnMs, int tOffMs, int n) {
+    for (int i = 0; i < n; i++) {
+        digitalWrite(LED_PIN, HIGH);
+        delay(tOnMs);
+        
+        digitalWrite(LED_PIN, LOW);
+        delay(tOffMs);
+    }
+}
+
+void setup() {
+    pinMode(LED_PIN, OUTPUT);
+    Serial.begin(9600);  // Bật Serial để theo dõi
+    
+    Serial.println("=== Bắt đầu chương trình ===");
+}
+
+void loop() {
+    // Quy luật 1: Bật 1s, tắt 1s, lặp 5 lần
+    Serial.println("Quy luật 1: 1s ON / 1s OFF x 5");
+    blinkN(1000, 1000, 5);
+    delay(2000);  // Nghỉ 2s giữa các quy luật
+    
+    // Quy luật 2: Bật 3s, tắt 0.5s, lặp 5 lần
+    Serial.println("Quy luật 2: 3s ON / 0.5s OFF x 5");
+    blinkN(3000, 500, 5);
+    delay(2000);
+    
+    // Quy luật 3: Bật 0.5s, tắt 3s, lặp 5 lần
+    Serial.println("Quy luật 3: 0.5s ON / 3s OFF x 5");
+    blinkN(500, 3000, 5);
+    delay(2000);
+    
+    Serial.println("=== Lặp lại từ đầu ===\n");
+}
+```
+
+### 2.3 Điều khiển 5 LED tuần tự
+
+```cpp
+/*
+ * Bài 1-2: Điều khiển 5 LED (D2–D6) theo quy tắc
+ * 
+ * Yêu cầu:
+ * - Bật tuần tự LED1→LED5, cách 1s giữa các LED
+ * - Giữ tất cả LED sáng 5s
+ * - Tắt tuần tự LED5→LED1, cách 1s
+ */
+
+// Sử dụng mảng để quản lý nhiều LED
+const int LED_PINS[] = {2, 3, 4, 5, 6};
+const int NUM_LEDS = 5;
+
+void setup() {
+    Serial.begin(9600);
+    
+    // Cấu hình tất cả LED pins làm OUTPUT
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+        digitalWrite(LED_PINS[i], LOW);  // Tắt hết ban đầu
+    }
+    
+    Serial.println("=== 5 LED Sequential Control ===");
+}
+
+void loop() {
+    // Phase 1: Bật tuần tự từ LED1 → LED5
+    Serial.println("Phase 1: Bật tuần tự →");
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], HIGH);
+        Serial.print("LED ");
+        Serial.print(i + 1);
+        Serial.println(" ON");
+        delay(1000);
+    }
+    
+    // Phase 2: Giữ tất cả sáng 5 giây
+    Serial.println("Phase 2: Giữ sáng 5s...");
+    delay(5000);
+    
+    // Phase 3: Tắt tuần tự từ LED5 → LED1
+    Serial.println("Phase 3: Tắt tuần tự ←");
+    for (int i = NUM_LEDS - 1; i >= 0; i--) {
+        digitalWrite(LED_PINS[i], LOW);
+        Serial.print("LED ");
+        Serial.print(i + 1);
+        Serial.println(" OFF");
+        delay(1000);
+    }
+    
+    Serial.println("=== Hoàn thành 1 chu kỳ ===\n");
+    delay(2000);  // Nghỉ trước khi lặp lại
+}
+```
+
+### 2.4 Hiệu ứng LED đuổi (Knight Rider / Running LEDs)
+
+```cpp
+/*
+ * Bài 1-3: Điều khiển 5 LED "duy nhất một LED sáng"
+ * 
+ * Yêu cầu:
+ * - Duy nhất 1 LED sáng chạy 1→5, trễ 1s
+ * - Duy nhất 1 LED sáng chạy 5→1, trễ 0.5s
+ */
+
+const int LED_PINS[] = {2, 3, 4, 5, 6};
+const int NUM_LEDS = 5;
+
+// Hàm tắt tất cả LED
+void allOff() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], LOW);
+    }
+}
+
+// Hàm bật duy nhất 1 LED tại vị trí index
+void onlyOne(int index) {
+    allOff();
+    digitalWrite(LED_PINS[index], HIGH);
+}
+
+void setup() {
+    Serial.begin(9600);
+    
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+    }
+    allOff();
+    
+    Serial.println("=== Knight Rider Effect ===");
+}
+
+void loop() {
+    // Chạy từ trái sang phải (LED1 → LED5), delay 1s
+    Serial.println("→ Forward (1s delay)");
+    for (int i = 0; i < NUM_LEDS; i++) {
+        onlyOne(i);
+        delay(1000);
+    }
+    
+    // Chạy từ phải sang trái (LED5 → LED1), delay 0.5s
+    Serial.println("← Backward (0.5s delay)");
+    for (int i = NUM_LEDS - 1; i >= 0; i--) {
+        onlyOne(i);
+        delay(500);
+    }
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+
+### 3.1 LED không sáng
+
+| Nguyên nhân | Cách kiểm tra | Cách sửa |
+|-------------|---------------|----------|
+| LED ngược chiều | Đổi chiều chân LED | Chân dài (+) vào pin, chân ngắn (-) vào GND |
+| Quên điện trở | LED cháy hoặc quá tối | Thêm điện trở 220Ω |
+| Sai số chân | `pinMode` không đúng pin | Kiểm tra lại số chân trong code |
+| Thiếu GND chung | Mạch hở | Nối GND của breadboard vào GND Arduino |
+
+### 3.2 LED sáng nhưng không nháy
+
+- **Nguyên nhân**: Quên gọi `pinMode()` trong `setup()`
+- **Cách sửa**: Thêm `pinMode(LED_PIN, OUTPUT);`
+
+### 3.3 Chương trình không upload được
+
+| Lỗi | Nguyên nhân | Cách sửa |
+|-----|-------------|----------|
+| "Port not found" | Chưa cắm cable / driver lỗi | Cài driver CH340 hoặc CP2102 |
+| "avrdude: stk500_recv" | Sai board/port | Tools → Board: Arduino Uno |
+| "Compilation error" | Lỗi cú pháp | Đọc kỹ thông báo lỗi |
+
+### 3.4 Checklist debug nhanh
+
+1. ✅ Cáp USB có truyền **dữ liệu** (không phải cáp sạc)?
+2. ✅ Chọn đúng **Board**: Arduino Uno?
+3. ✅ Chọn đúng **Port**: COM3, COM4...?
+4. ✅ LED có **điện trở** 220Ω-330Ω?
+5. ✅ Các GND đã **nối chung**?
+6. ✅ Code có lỗi **typo** (viết sai tên hàm)?
+
+---
+
+## 🎓 Phần 4: Tóm tắt kiến thức
+
+### Key Points:
+
+1. **Arduino Uno** là board vi điều khiển ATmega328P, hoạt động ở 5V/16MHz
+2. Mọi chương trình có 2 hàm: `setup()` (chạy 1 lần) và `loop()` (lặp vô hạn)
+3. **GPIO**: `pinMode(pin, OUTPUT)` → `digitalWrite(pin, HIGH/LOW)`
+4. LED cần **điện trở hạn dòng** 220Ω để không cháy
+5. `delay(ms)` tạm dừng chương trình nhưng **blocking** (CPU không làm gì khác)
+6. Dùng **mảng + vòng lặp** để quản lý nhiều LED hiệu quả
+7. **Tách hàm** giúp code gọn, dễ đọc, tái sử dụng
+
+### Công thức cần nhớ:
+
+```
+R = (Vnguồn - Vled) / Iled
+```
+
+### Thuật ngữ quan trọng:
+
+| Thuật ngữ | Ý nghĩa |
+|-----------|---------|
+| GPIO | Chân vào/ra đa năng |
+| MCU | Vi điều khiển (Microcontroller Unit) |
+| Blocking | CPU không làm gì trong lúc chờ |
+| HIGH/LOW | Mức logic 5V / 0V |
+| OUTPUT/INPUT | Chế độ xuất / nhập tín hiệu |
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-02-01', 'week-02', 1, 'Thiết kế Hệ thống Nhúng & LED 7 Đoạn', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Hiểu phương pháp thiết kế Top-Down và Bottom-Up
+2. ✅ Nắm cấu tạo LED 7 đoạn: Common Cathode vs Common Anode
+3. ✅ Tạo bảng mã segment để hiển thị số 0-9
+4. ✅ Điều khiển module 4 số bằng kỹ thuật Multiplexing (quét)
+5. ✅ Sử dụng 74HC595 để giảm số chân điều khiển
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 Phương pháp thiết kế hệ thống nhúng
+
+#### Top-Down Design (Từ trên xuống)
+
+Bắt đầu từ **yêu cầu tổng thể**, chia nhỏ thành các module con, rồi thiết kế từng phần.
+
+```
+[Yêu cầu] → [Thiết kế tổng thể] → [Chia module] → [Thiết kế chi tiết] → [Tích hợp] → [Test]
+```
+
+**Ưu điểm**:
+- Có cái nhìn toàn cảnh trước
+- Dễ quản lý dự án lớn
+- Phát hiện sớm lỗi logic
+
+#### Bottom-Up Design (Từ dưới lên)
+
+Bắt đầu từ **module nhỏ nhất**, thử nghiệm từng phần rồi ghép lại.
+
+```
+[Module A chạy] + [Module B chạy] → [Ghép A+B] → [Thêm C] → [Hệ thống hoàn chỉnh]
+```
+
+**Ưu điểm**:
+- Phù hợp học tập, thử nghiệm
+- Phát hiện sớm lỗi phần cứng
+- Dễ debug từng phần
+
+#### Khi nào dùng?
+
+| Tình huống | Phương pháp |
+|------------|-------------|
+| Dự án lớn, nhiều người | Top-Down |
+| Học module mới | Bottom-Up |
+| Thi thực hành 60 phút | Bottom-Up (test LED trước, rồi ghép logic) |
+
+### 1.2 LED 7 đoạn - Cấu tạo và nguyên lý
+
+**LED 7 đoạn** gồm 7 thanh LED (a-g) và 1 dấu chấm (dp), dùng để hiển thị số 0-9 và một số ký tự.
+
+#### Sơ đồ các segment:
+```
+     aaaa
+    f    b
+    f    b
+     gggg
+    e    c
+    e    c
+     dddd   dp
+```
+
+#### Common Cathode (CC) vs Common Anode (CA)
+
+| Loại | Chân chung | Bật segment | Tắt segment |
+|------|-----------|-------------|-------------|
+| **Common Cathode** | GND (0V) | HIGH | LOW |
+| **Common Anode** | VCC (5V) | LOW | HIGH |
+
+```
+Common Cathode:           Common Anode:
+      +5V                       +5V
+       │                         │
+   [220Ω]                    (Chung)
+       │                         │
+     (LED)                     (LED)
+       │                         │
+    (Chung)                   [220Ω]
+       │                         │
+      GND                    GPIO Pin
+```
+
+> ⚠️ **Quan trọng**: Khi mua LED 7 đoạn, hãy kiểm tra loại CC hay CA để viết code đúng logic!
+
+### 1.3 Bảng mã Segment (Common Cathode)
+
+Với Common Cathode, segment sáng khi nhận tín hiệu HIGH.
+
+| Số | a | b | c | d | e | f | g | Hex | Binary |
+|---|---|---|---|---|---|---|---|-----|--------|
+| 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0x3F | 0b00111111 |
+| 1 | 0 | 1 | 1 | 0 | 0 | 0 | 0 | 0x06 | 0b00000110 |
+| 2 | 1 | 1 | 0 | 1 | 1 | 0 | 1 | 0x5B | 0b01011011 |
+| 3 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 0x4F | 0b01001111 |
+| 4 | 0 | 1 | 1 | 0 | 0 | 1 | 1 | 0x66 | 0b01100110 |
+| 5 | 1 | 0 | 1 | 1 | 0 | 1 | 1 | 0x6D | 0b01101101 |
+| 6 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 0x7D | 0b01111101 |
+| 7 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0x07 | 0b00000111 |
+| 8 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 0x7F | 0b01111111 |
+| 9 | 1 | 1 | 1 | 1 | 0 | 1 | 1 | 0x6F | 0b01101111 |
+
+> 💡 **Mẹo nhớ**: Số 8 bật tất cả (0x7F), số 1 chỉ bật b và c (0x06)
+
+### 1.4 Kỹ thuật Multiplexing (Quét LED)
+
+Khi có **4 LED 7 đoạn** (module 4 số), nếu điều khiển trực tiếp cần 4×8 = 32 chân! 
+
+**Giải pháp**: Dùng kỹ thuật **quét (multiplexing)** - bật từng digit luân phiên rất nhanh, mắt người không nhận ra.
+
+```
+Thời gian:  |--D1--|--D2--|--D3--|--D4--|--D1--|...
+            
+Digit 1:    ████                        ████
+Digit 2:          ████                  
+Digit 3:                ████            
+Digit 4:                      ████      
+```
+
+**Nguyên lý**:
+1. Bật digit 1, xuất mã segment cho số cần hiển thị
+2. Tắt digit 1, bật digit 2, xuất mã mới
+3. Lặp lại với tốc độ > 50Hz (mỗi digit < 5ms)
+
+**Sơ đồ kết nối module 4 số**:
+```
+Arduino          Module 4 LED 7 đoạn
+   D2 ──────────── Segment a
+   D3 ──────────── Segment b
+   D4 ──────────── Segment c
+   D5 ──────────── Segment d
+   D6 ──────────── Segment e
+   D7 ──────────── Segment f
+   D8 ──────────── Segment g
+   
+   D9 ──────────── Digit 1 (hàng nghìn)
+   D10 ─────────── Digit 2 (hàng trăm)
+   D11 ─────────── Digit 3 (hàng chục)
+   D12 ─────────── Digit 4 (hàng đơn vị)
+```
+
+### 1.5 IC 74HC595 - Shift Register
+
+**74HC595** là IC thanh ghi dịch 8-bit, cho phép điều khiển 8 output chỉ với 3 chân Arduino.
+
+#### Chân quan trọng:
+
+| Chân | Tên | Chức năng |
+|------|-----|-----------|
+| 14 | DS (SER) | Data Serial Input |
+| 11 | SHCP (SRCLK) | Shift Register Clock |
+| 12 | STCP (RCLK) | Storage Register Clock (Latch) |
+| Q0-Q7 | | 8 Output pins |
+
+#### Nguyên lý hoạt động:
+1. Đẩy 8 bit dữ liệu vào DS theo nhịp SHCP
+2. Xung STCP "chốt" dữ liệu ra các chân Q0-Q7
+3. Arduino chỉ cần 3 chân: Data, Clock, Latch
+
+```
+Arduino            74HC595
+   D2 ─────────── DS (Data)
+   D3 ─────────── SHCP (Clock)
+   D4 ─────────── STCP (Latch)
+                  
+                  Q0 ── Segment a
+                  Q1 ── Segment b
+                  Q2 ── Segment c
+                  Q3 ── Segment d
+                  Q4 ── Segment e
+                  Q5 ── Segment f
+                  Q6 ── Segment g
+                  Q7 ── Segment dp
+```
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 LED 7 đoạn đơn - Đếm 0→9
+
+```cpp
+/*
+ * Bài 2-1a: LED 7 đoạn đếm 0→9
+ * Hiển thị số 0 đến 9, trễ 2 giây mỗi số
+ * 
+ * Phần cứng: LED 7 đoạn Common Cathode
+ * - Segment a-g: D2-D8
+ * - Common: GND
+ * - Mỗi segment qua điện trở 220Ω
+ */
+
+// Chân segment a-g (thứ tự: a, b, c, d, e, f, g)
+const int SEG_PINS[] = {2, 3, 4, 5, 6, 7, 8};
+const int NUM_SEGS = 7;
+
+// Bảng mã segment cho số 0-9 (Common Cathode)
+// Bit order: gfedcba (bit 0 = a, bit 6 = g)
+const byte DIGITS[] = {
+    0b00111111,  // 0: a,b,c,d,e,f ON
+    0b00000110,  // 1: b,c ON
+    0b01011011,  // 2: a,b,d,e,g ON
+    0b01001111,  // 3: a,b,c,d,g ON
+    0b01100110,  // 4: b,c,f,g ON
+    0b01101101,  // 5: a,c,d,f,g ON
+    0b01111101,  // 6: a,c,d,e,f,g ON
+    0b00000111,  // 7: a,b,c ON
+    0b01111111,  // 8: all ON
+    0b01101111   // 9: a,b,c,d,f,g ON
+};
+
+// Hàm hiển thị 1 số (0-9)
+void displayDigit(int num) {
+    if (num < 0 || num > 9) return;
+    
+    byte pattern = DIGITS[num];
+    for (int i = 0; i < NUM_SEGS; i++) {
+        digitalWrite(SEG_PINS[i], (pattern >> i) & 1);
+    }
+}
+
+// Hàm tắt tất cả segment
+void clearDisplay() {
+    for (int i = 0; i < NUM_SEGS; i++) {
+        digitalWrite(SEG_PINS[i], LOW);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    
+    // Cấu hình tất cả chân segment làm OUTPUT
+    for (int i = 0; i < NUM_SEGS; i++) {
+        pinMode(SEG_PINS[i], OUTPUT);
+    }
+    clearDisplay();
+    
+    Serial.println("=== LED 7 Segment: Count 0-9 ===");
+}
+
+void loop() {
+    // Đếm từ 0 đến 9
+    for (int i = 0; i <= 9; i++) {
+        displayDigit(i);
+        Serial.print("Displaying: ");
+        Serial.println(i);
+        delay(2000);  // Chờ 2 giây
+    }
+    
+    Serial.println("--- Restart ---\n");
+}
+```
+
+### 2.2 LED 7 đoạn - Đếm lên xuống + Số chẵn/lẻ
+
+```cpp
+/*
+ * Bài 2-1b: LED 7 đoạn với nhiều chế độ
+ * 
+ * Yêu cầu:
+ * 1) 0→9, trễ 2s
+ * 2) 0→9 rồi 9→0, trễ 2s
+ * 3) Số chẵn: 0,2,4,6,8 và số lẻ: 1,3,5,7,9
+ */
+
+const int SEG_PINS[] = {2, 3, 4, 5, 6, 7, 8};
+const int NUM_SEGS = 7;
+
+const byte DIGITS[] = {
+    0b00111111,  // 0
+    0b00000110,  // 1
+    0b01011011,  // 2
+    0b01001111,  // 3
+    0b01100110,  // 4
+    0b01101101,  // 5
+    0b01111101,  // 6
+    0b00000111,  // 7
+    0b01111111,  // 8
+    0b01101111   // 9
+};
+
+void displayDigit(int num) {
+    if (num < 0 || num > 9) return;
+    byte pattern = DIGITS[num];
+    for (int i = 0; i < NUM_SEGS; i++) {
+        digitalWrite(SEG_PINS[i], (pattern >> i) & 1);
+    }
+}
+
+void clearDisplay() {
+    for (int i = 0; i < NUM_SEGS; i++) {
+        digitalWrite(SEG_PINS[i], LOW);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    for (int i = 0; i < NUM_SEGS; i++) {
+        pinMode(SEG_PINS[i], OUTPUT);
+    }
+    clearDisplay();
+    Serial.println("=== LED 7 Segment Multi-Mode ===");
+}
+
+void loop() {
+    // Chế độ 1: Đếm 0→9
+    Serial.println("\n[Mode 1] Count UP: 0 -> 9");
+    for (int i = 0; i <= 9; i++) {
+        displayDigit(i);
+        Serial.println(i);
+        delay(2000);
+    }
+    
+    delay(1000);  // Nghỉ giữa các chế độ
+    
+    // Chế độ 2: Đếm 0→9 rồi 9→0
+    Serial.println("\n[Mode 2] Count UP then DOWN");
+    for (int i = 0; i <= 9; i++) {
+        displayDigit(i);
+        Serial.print("UP: ");
+        Serial.println(i);
+        delay(2000);
+    }
+    for (int i = 9; i >= 0; i--) {
+        displayDigit(i);
+        Serial.print("DOWN: ");
+        Serial.println(i);
+        delay(2000);
+    }
+    
+    delay(1000);
+    
+    // Chế độ 3: Số chẵn
+    Serial.println("\n[Mode 3a] EVEN numbers: 0,2,4,6,8");
+    for (int i = 0; i <= 8; i += 2) {
+        displayDigit(i);
+        Serial.println(i);
+        delay(2000);
+    }
+    
+    delay(1000);
+    
+    // Chế độ 3: Số lẻ
+    Serial.println("\n[Mode 3b] ODD numbers: 1,3,5,7,9");
+    for (int i = 1; i <= 9; i += 2) {
+        displayDigit(i);
+        Serial.println(i);
+        delay(2000);
+    }
+    
+    Serial.println("\n=== Cycle Complete ===");
+    delay(2000);
+}
+```
+
+### 2.3 Module 4 LED 7 đoạn - Đếm 0→9999
+
+```cpp
+/*
+ * Bài 2-2: Module 4 LED 7 đoạn - Đếm 0→9999
+ * 
+ * Phần cứng: Module 4 digit 7-segment (Common Cathode)
+ * - Segment a-g: D2-D8
+ * - Digit 1-4: D9-D12 (điều khiển transistor hoặc trực tiếp)
+ * 
+ * Kỹ thuật: Multiplexing (quét nhanh 4 digit)
+ */
+
+// Chân segment
+const int SEG_PINS[] = {2, 3, 4, 5, 6, 7, 8};  // a-g
+const int NUM_SEGS = 7;
+
+// Chân điều khiển digit (Common Cathode: HIGH = bật digit)
+const int DIGIT_PINS[] = {9, 10, 11, 12};  // D1-D4
+const int NUM_DIGITS = 4;
+
+// Bảng mã segment
+const byte DIGITS_CODE[] = {
+    0b00111111,  // 0
+    0b00000110,  // 1
+    0b01011011,  // 2
+    0b01001111,  // 3
+    0b01100110,  // 4
+    0b01101101,  // 5
+    0b01111101,  // 6
+    0b00000111,  // 7
+    0b01111111,  // 8
+    0b01101111   // 9
+};
+
+// Số cần hiển thị (0-9999)
+int displayNumber = 0;
+
+// Hàm xuất mã segment cho 1 số
+void setSegments(int num) {
+    if (num < 0 || num > 9) num = 0;
+    byte pattern = DIGITS_CODE[num];
+    for (int i = 0; i < NUM_SEGS; i++) {
+        digitalWrite(SEG_PINS[i], (pattern >> i) & 1);
+    }
+}
+
+// Hàm tắt tất cả digit
+void allDigitsOff() {
+    for (int i = 0; i < NUM_DIGITS; i++) {
+        digitalWrite(DIGIT_PINS[i], LOW);
+    }
+}
+
+// Hàm quét hiển thị 4 digit (gọi liên tục trong loop)
+void refreshDisplay(int number) {
+    // Tách số thành 4 chữ số
+    int digits[4];
+    digits[3] = number % 10;          // Hàng đơn vị
+    digits[2] = (number / 10) % 10;   // Hàng chục
+    digits[1] = (number / 100) % 10;  // Hàng trăm
+    digits[0] = (number / 1000) % 10; // Hàng nghìn
+    
+    // Quét từng digit
+    for (int d = 0; d < NUM_DIGITS; d++) {
+        allDigitsOff();           // Tắt tất cả digit
+        setSegments(digits[d]);   // Chuẩn bị segment
+        digitalWrite(DIGIT_PINS[d], HIGH);  // Bật digit hiện tại
+        delay(5);                 // Giữ 5ms (tốc độ quét ~50Hz)
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    
+    // Cấu hình chân segment
+    for (int i = 0; i < NUM_SEGS; i++) {
+        pinMode(SEG_PINS[i], OUTPUT);
+    }
+    
+    // Cấu hình chân digit
+    for (int i = 0; i < NUM_DIGITS; i++) {
+        pinMode(DIGIT_PINS[i], OUTPUT);
+    }
+    
+    allDigitsOff();
+    Serial.println("=== 4-Digit Counter 0-9999 ===");
+}
+
+// Biến đếm thời gian không dùng delay()
+unsigned long previousMillis = 0;
+const long interval = 300;  // 0.3 giây mỗi lần tăng
+
+void loop() {
+    // Luôn gọi refreshDisplay để quét LED
+    refreshDisplay(displayNumber);
+    
+    // Kiểm tra thời gian để tăng số
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= interval) {
+        previousMillis = currentMillis;
+        
+        displayNumber++;
+        if (displayNumber > 9999) {
+            displayNumber = 0;
+            Serial.println("Reset to 0");
+        }
+        
+        // In ra Serial mỗi 100 số
+        if (displayNumber % 100 == 0) {
+            Serial.print("Count: ");
+            Serial.println(displayNumber);
+        }
+    }
+}
+```
+
+### 2.4 Module 4 digit với 74HC595
+
+```cpp
+/*
+ * Bài 2-3: Module 4 LED 7 đoạn + 74HC595
+ * 
+ * Phần cứng:
+ * - 74HC595 điều khiển 8 segment (a-g + dp)
+ * - D9-D12 điều khiển 4 digit
+ * 
+ * Yêu cầu:
+ * - Hiển thị 0-9 trên tất cả chữ số
+ * - Đếm tăng 0→9999, trễ 0.2s
+ * - Đếm giảm 9999→0, trễ 0.2s
+ * - Nháy cả 4 led 4 lần, chu kỳ 2s
+ */
+
+// Chân 74HC595
+const int DATA_PIN = 2;   // DS (SER)
+const int CLOCK_PIN = 3;  // SHCP (SRCLK)
+const int LATCH_PIN = 4;  // STCP (RCLK)
+
+// Chân điều khiển digit
+const int DIGIT_PINS[] = {9, 10, 11, 12};
+const int NUM_DIGITS = 4;
+
+// Bảng mã segment (bit order: dp-g-f-e-d-c-b-a)
+const byte DIGITS_CODE[] = {
+    0b00111111,  // 0
+    0b00000110,  // 1
+    0b01011011,  // 2
+    0b01001111,  // 3
+    0b01100110,  // 4
+    0b01101101,  // 5
+    0b01111101,  // 6
+    0b00000111,  // 7
+    0b01111111,  // 8
+    0b01101111   // 9
+};
+
+// Hàm gửi byte qua 74HC595
+void shiftOutByte(byte data) {
+    digitalWrite(LATCH_PIN, LOW);
+    shiftOut(DATA_PIN, CLOCK_PIN, MSBFIRST, data);
+    digitalWrite(LATCH_PIN, HIGH);
+}
+
+// Hàm tắt tất cả digit
+void allDigitsOff() {
+    for (int i = 0; i < NUM_DIGITS; i++) {
+        digitalWrite(DIGIT_PINS[i], LOW);
+    }
+}
+
+// Hàm quét hiển thị 4 digit
+void refreshDisplay(int number) {
+    int digits[4];
+    digits[3] = number % 10;
+    digits[2] = (number / 10) % 10;
+    digits[1] = (number / 100) % 10;
+    digits[0] = (number / 1000) % 10;
+    
+    for (int d = 0; d < NUM_DIGITS; d++) {
+        allDigitsOff();
+        shiftOutByte(DIGITS_CODE[digits[d]]);
+        digitalWrite(DIGIT_PINS[d], HIGH);
+        delay(4);  // 4ms mỗi digit
+    }
+}
+
+// Hàm hiển thị liên tục trong khoảng thời gian ms
+void displayFor(int number, unsigned long durationMs) {
+    unsigned long start = millis();
+    while (millis() - start < durationMs) {
+        refreshDisplay(number);
+    }
+}
+
+// Hàm nháy tất cả digit
+void blinkAll(int times, int periodMs) {
+    int halfPeriod = periodMs / 2;
+    
+    for (int i = 0; i < times; i++) {
+        // Sáng tất cả digit (hiện 8888)
+        unsigned long start = millis();
+        while (millis() - start < halfPeriod) {
+            refreshDisplay(8888);
+        }
+        
+        // Tắt tất cả
+        allDigitsOff();
+        shiftOutByte(0x00);
+        delay(halfPeriod);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    
+    pinMode(DATA_PIN, OUTPUT);
+    pinMode(CLOCK_PIN, OUTPUT);
+    pinMode(LATCH_PIN, OUTPUT);
+    
+    for (int i = 0; i < NUM_DIGITS; i++) {
+        pinMode(DIGIT_PINS[i], OUTPUT);
+    }
+    
+    allDigitsOff();
+    Serial.println("=== 74HC595 + 4-Digit Display ===");
+}
+
+void loop() {
+    // Phần 1: Hiển thị 0-9 trên tất cả chữ số
+    Serial.println("\n[Part 1] Show 0-9 on all digits");
+    for (int i = 0; i <= 9; i++) {
+        int num = i * 1000 + i * 100 + i * 10 + i;  // 0000, 1111, 2222...
+        Serial.println(num);
+        displayFor(num, 1000);  // Hiển thị 1 giây
+    }
+    
+    // Phần 2: Đếm tăng 0→9999
+    Serial.println("\n[Part 2] Count UP 0 -> 9999");
+    for (int i = 0; i <= 9999; i++) {
+        displayFor(i, 200);  // 0.2s mỗi số
+        if (i % 500 == 0) {
+            Serial.print("UP: ");
+            Serial.println(i);
+        }
+    }
+    
+    // Phần 3: Đếm giảm 9999→0
+    Serial.println("\n[Part 3] Count DOWN 9999 -> 0");
+    for (int i = 9999; i >= 0; i--) {
+        displayFor(i, 200);
+        if (i % 500 == 0) {
+            Serial.print("DOWN: ");
+            Serial.println(i);
+        }
+    }
+    
+    // Phần 4: Nháy 4 lần, chu kỳ 2s
+    Serial.println("\n[Part 4] Blink 4 times, period 2s");
+    blinkAll(4, 2000);
+    
+    Serial.println("\n=== Cycle Complete ===");
+    delay(2000);
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+
+### 3.1 LED 7 đoạn hiển thị sai số
+
+| Nguyên nhân | Cách kiểm tra | Cách sửa |
+|-------------|---------------|----------|
+| Nhầm loại CC/CA | Test 1 segment riêng | Đảo logic trong code |
+| Sai thứ tự segment | Kiểm tra từng segment a-g | Sắp xếp lại SEG_PINS[] |
+| Bảng mã sai | So sánh với datasheet | Sửa mảng DIGITS_CODE[] |
+
+### 3.2 Module 4 số nhấp nháy hoặc mờ
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Quét quá chậm (delay lớn) | Giảm delay xuống 3-5ms mỗi digit |
+| Không tắt digit trước khi đổi | Thêm allDigitsOff() trước setSegments() |
+| Dùng delay() trong loop | Dùng millis() để không block |
+
+### 3.3 74HC595 không hoạt động
+
+| Nguyên nhân | Cách kiểm tra | Cách sửa |
+|-------------|---------------|----------|
+| Sai chân | Đo tín hiệu oscilloscope | DS=pin14, SHCP=pin11, STCP=pin12 |
+| Quên nối GND | Kiểm tra chân 8 | Nối GND của 595 với Arduino |
+| Quên nối VCC | Kiểm tra chân 16 | Nối VCC 5V |
+| OE không LOW | Kiểm tra chân 13 | Nối OE xuống GND |
+
+### 3.4 Checklist debug LED 7 đoạn
+
+1. ✅ Xác định loại Common Cathode hay Common Anode?
+2. ✅ Có điện trở 220Ω mỗi segment?
+3. ✅ Thứ tự chân segment đúng (a-b-c-d-e-f-g)?
+4. ✅ GND chung giữa Arduino và LED?
+5. ✅ Với 74HC595: OE nối GND, MR nối VCC?
+
+---
+
+## 🎓 Phần 4: Tóm tắt kiến thức
+
+### Key Points:
+
+1. **Top-Down**: Thiết kế tổng thể trước, chia module sau
+2. **Bottom-Up**: Test từng module nhỏ, ghép dần
+3. **LED 7 đoạn**: 7 segment (a-g) + dp, có 2 loại CC và CA
+4. **Common Cathode**: Chân chung = GND, HIGH = sáng
+5. **Common Anode**: Chân chung = VCC, LOW = sáng
+6. **Multiplexing**: Quét nhanh nhiều digit, mắt không nhận ra nhấp nháy
+7. **74HC595**: Shift register 8-bit, điều khiển 8 output bằng 3 chân Arduino
+
+### Công thức quan trọng:
+
+```
+Tần số quét tối thiểu: 50Hz
+→ Mỗi digit tối đa: 1000ms / 50 / 4 = 5ms
+
+Số 4 chữ số từ int:
+  đơn vị = number % 10
+  chục = (number / 10) % 10
+  trăm = (number / 100) % 10
+  nghìn = (number / 1000) % 10
+```
+
+### Thuật ngữ quan trọng:
+
+| Thuật ngữ | Ý nghĩa |
+|-----------|---------|
+| Segment | 1 thanh LED trong LED 7 đoạn |
+| Common Cathode | Chân chung nối GND |
+| Common Anode | Chân chung nối VCC |
+| Multiplexing | Kỹ thuật quét nhiều digit |
+| Shift Register | IC dịch bit, mở rộng output |
+| Latch | Chốt dữ liệu ra output |
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-03-01', 'week-03', 1, 'Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Hiểu INPUT_PULLUP và tại sao nút nhấn thường đảo logic
+2. ✅ Xử lý hiện tượng dội phím (bouncing) với debounce
+3. ✅ Bắt cạnh (edge detection) để đếm số lần nhấn
+4. ✅ Đọc ký tự từ keypad ma trận 4x4
+5. ✅ Xây dựng hệ thống mật khẩu đơn giản
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 Nút nhấn và cách nối mạch
+
+**Nút nhấn** (push button) là công tắc tạm thời: nhấn = nối mạch, nhả = hở mạch.
+
+#### Hai cách nối phổ biến:
+
+**Cách 1: Pull-down (Điện trở kéo xuống)**
+```
+    +5V
+     │
+   [Nút]
+     │
+     ├──── Arduino Pin (D2)
+     │
+   [10kΩ]
+     │
+    GND
+```
+- Không nhấn: Pin đọc LOW (bị kéo xuống GND qua điện trở)
+- Nhấn: Pin đọc HIGH (nối trực tiếp 5V)
+
+**Cách 2: Pull-up (Điện trở kéo lên)**
+```
+    +5V
+     │
+   [10kΩ]
+     │
+     ├──── Arduino Pin (D2)
+     │
+   [Nút]
+     │
+    GND
+```
+- Không nhấn: Pin đọc HIGH (bị kéo lên 5V qua điện trở)
+- Nhấn: Pin đọc LOW (nối trực tiếp GND)
+
+### 1.2 INPUT_PULLUP - Điện trở nội bên trong Arduino
+
+Arduino có **điện trở pull-up nội** (~20kΩ). Dùng `INPUT_PULLUP` là cách đơn giản nhất:
+
+```cpp
+pinMode(2, INPUT_PULLUP);  // Bật điện trở pull-up nội
+```
+
+Kết nối đơn giản:
+```
+Arduino Pin (D2) ──┬── [Nút] ── GND
+                   │
+              (Pull-up nội ~20kΩ)
+                   │
+                  +5V
+```
+
+| Trạng thái | digitalRead() | Logic thực tế |
+|------------|---------------|---------------|
+| Không nhấn | HIGH (1) | Chưa nhấn |
+| Nhấn | LOW (0) | Đang nhấn |
+
+> ⚠️ **Lưu ý**: Logic **đảo ngược** so với trực giác! HIGH = không nhấn, LOW = nhấn.
+
+### 1.3 Hiện tượng Bounce (Dội phím)
+
+Khi nhấn nút, tiếp điểm cơ khí **nảy lên xuống** nhiều lần trong vài mili-giây:
+
+```
+Tín hiệu thực tế khi nhấn 1 lần:
+     ┌───────────────
+     │ ┌─┐ ┌─┐ ┌─┐
+─────┘ └─┘ └─┘ └─┘
+     |← Bounce ~10-50ms →|
+
+Mong muốn:
+     ┌───────────────────
+─────┘
+```
+
+Arduino đọc mỗi "nảy" thành 1 lần nhấn → sai lệch!
+
+#### Debounce - Chống dội phím
+
+**Nguyên lý**: Sau khi phát hiện thay đổi, chờ 20-50ms rồi mới xác nhận.
+
+```cpp
+const int BUTTON_PIN = 2;
+const unsigned long DEBOUNCE_TIME = 50;  // ms
+
+bool lastState = HIGH;
+unsigned long lastDebounceTime = 0;
+
+bool readButtonDebounced() {
+    bool currentState = digitalRead(BUTTON_PIN);
+    
+    if (currentState != lastState) {
+        lastDebounceTime = millis();
+    }
+    
+    if (millis() - lastDebounceTime > DEBOUNCE_TIME) {
+        lastState = currentState;
+        return currentState;
+    }
+    
+    return lastState;
+}
+```
+
+### 1.4 Edge Detection - Bắt cạnh
+
+Để **đếm số lần nhấn** (không phải trạng thái), cần phát hiện **thời điểm chuyển đổi**:
+
+- **Cạnh xuống (Falling Edge)**: HIGH → LOW (bắt đầu nhấn)
+- **Cạnh lên (Rising Edge)**: LOW → HIGH (nhả nút)
+
+```cpp
+bool lastButtonState = HIGH;
+int pressCount = 0;
+
+void loop() {
+    bool currentState = digitalRead(BUTTON_PIN);
+    
+    // Phát hiện cạnh xuống (lần nhấn mới)
+    if (lastButtonState == HIGH && currentState == LOW) {
+        pressCount++;
+        Serial.print("Nhấn lần: ");
+        Serial.println(pressCount);
+    }
+    
+    lastButtonState = currentState;
+}
+```
+
+### 1.5 Keypad ma trận 4x4
+
+**Keypad** có 16 phím nhưng chỉ cần 8 chân (4 hàng + 4 cột):
+
+```
+        C1   C2   C3   C4
+        ↓    ↓    ↓    ↓
+R1 → [ 1 ][ 2 ][ 3 ][ A ]
+R2 → [ 4 ][ 5 ][ 6 ][ B ]
+R3 → [ 7 ][ 8 ][ 9 ][ C ]
+R4 → [ * ][ 0 ][ # ][ D ]
+```
+
+**Nguyên lý quét**:
+1. Đặt R1 = LOW, R2-R4 = HIGH
+2. Đọc C1-C4: nếu có cột = LOW → phím ở giao R1 và cột đó được nhấn
+3. Lặp lại với R2, R3, R4
+
+**Thư viện Keypad.h**:
+```cpp
+#include <Keypad.h>
+
+const byte ROWS = 4;
+const byte COLS = 4;
+
+char keys[ROWS][COLS] = {
+    {''1'',''2'',''3'',''A''},
+    {''4'',''5'',''6'',''B''},
+    {''7'',''8'',''9'',''C''},
+    {''*'',''0'',''#'',''D''}
+};
+
+byte rowPins[ROWS] = {9, 8, 7, 6};  // Nối với R1-R4
+byte colPins[COLS] = {5, 4, 3, 2};  // Nối với C1-C4
+
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+```
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 Nút nhấn điều khiển LED (Nhấn bật, nhả tắt)
+
+```cpp
+/*
+ * Bài 3-1: Nhấn → LED bật, Nhả → LED tắt
+ * 
+ * Phần cứng:
+ * - Nút nhấn: D2 với INPUT_PULLUP (nối D2 → Nút → GND)
+ * - LED: D13
+ * 
+ * Serial format bắt buộc:
+ * - Trạng thái nút ấn: (1 - nhấn, 0 - không nhấn)
+ * - Trạng thái led: (bật / tắt)
+ */
+
+const int BUTTON_PIN = 2;
+const int LED_PIN = 13;
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);  // Bật pull-up nội
+    pinMode(LED_PIN, OUTPUT);
+    
+    Serial.println("=== Button Control LED ===");
+    Serial.println("Nhấn nút để bật LED, nhả để tắt");
+}
+
+void loop() {
+    // Đọc trạng thái nút (LOW = đang nhấn với INPUT_PULLUP)
+    bool buttonPressed = (digitalRead(BUTTON_PIN) == LOW);
+    
+    // Điều khiển LED theo nút
+    if (buttonPressed) {
+        digitalWrite(LED_PIN, HIGH);
+    } else {
+        digitalWrite(LED_PIN, LOW);
+    }
+    
+    // In ra Serial theo format yêu cầu
+    static bool lastPrintState = false;
+    if (buttonPressed != lastPrintState) {
+        Serial.print("Trạng thái nút ấn: ");
+        Serial.println(buttonPressed ? "1 - nhấn" : "0 - không nhấn");
+        
+        Serial.print("Trạng thái led: ");
+        Serial.println(buttonPressed ? "bật" : "tắt");
+        Serial.println();
+        
+        lastPrintState = buttonPressed;
+    }
+    
+    delay(10);  // Debounce đơn giản
+}
+```
+
+### 2.2 Đếm số lần nhấn - Lẻ bật, chẵn tắt
+
+```cpp
+/*
+ * Bài 3-2: Đếm số lần nhấn, lẻ bật LED, chẵn tắt
+ * 
+ * Serial format bắt buộc:
+ * - Số lần nhấn nút: xx
+ * - Trạng thái led: (bật / tắt)
+ */
+
+const int BUTTON_PIN = 2;
+const int LED_PIN = 13;
+
+int pressCount = 0;
+bool lastButtonState = HIGH;
+unsigned long lastDebounceTime = 0;
+const unsigned long DEBOUNCE_DELAY = 50;
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    pinMode(LED_PIN, OUTPUT);
+    
+    Serial.println("=== Press Counter ===");
+    Serial.println("Nhấn nút để đếm. Lẻ = bật, Chẵn = tắt");
+    Serial.println();
+}
+
+void loop() {
+    bool currentState = digitalRead(BUTTON_PIN);
+    
+    // Debounce check
+    if (currentState != lastButtonState) {
+        lastDebounceTime = millis();
+    }
+    
+    if ((millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+        // Phát hiện cạnh xuống (bắt đầu nhấn)
+        static bool stableState = HIGH;
+        if (currentState != stableState) {
+            stableState = currentState;
+            
+            if (stableState == LOW) {  // Vừa nhấn xuống
+                pressCount++;
+                
+                // Lẻ = bật, Chẵn = tắt
+                bool ledState = (pressCount % 2 == 1);
+                digitalWrite(LED_PIN, ledState ? HIGH : LOW);
+                
+                // In theo format yêu cầu
+                Serial.print("Số lần nhấn nút: ");
+                Serial.println(pressCount);
+                Serial.print("Trạng thái led: ");
+                Serial.println(ledState ? "bật" : "tắt");
+                Serial.println();
+            }
+        }
+    }
+    
+    lastButtonState = currentState;
+}
+```
+
+### 2.3 Keypad đọc 1 ký tự
+
+```cpp
+/*
+ * Bài 3-3: Keypad đọc 1 ký tự
+ * 
+ * Phần cứng: Keypad 4x4
+ * - Hàng (R1-R4): D9, D8, D7, D6
+ * - Cột (C1-C4): D5, D4, D3, D2
+ * 
+ * Serial format: Kí tự vừa nhập: ____
+ */
+
+#include <Keypad.h>
+
+const byte ROWS = 4;
+const byte COLS = 4;
+
+char keys[ROWS][COLS] = {
+    {''1'',''2'',''3'',''A''},
+    {''4'',''5'',''6'',''B''},
+    {''7'',''8'',''9'',''C''},
+    {''*'',''0'',''#'',''D''}
+};
+
+byte rowPins[ROWS] = {9, 8, 7, 6};
+byte colPins[COLS] = {5, 4, 3, 2};
+
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+void setup() {
+    Serial.begin(9600);
+    Serial.println("=== Keypad Reader ===");
+    Serial.println("Nhấn phím bất kỳ...");
+    Serial.println();
+}
+
+void loop() {
+    char key = keypad.getKey();
+    
+    if (key) {
+        Serial.print("Kí tự vừa nhập: ");
+        Serial.println(key);
+    }
+}
+```
+
+### 2.4 Keypad điều khiển 5 LED
+
+```cpp
+/*
+ * Bài 3-4: Keypad điều khiển 5 LED theo mapping
+ * 
+ * Mapping:
+ * - 1/2: bật/tắt LED1
+ * - 3/4: bật/tắt LED2
+ * - 5/6: bật/tắt LED3
+ * - 7/8: bật/tắt LED4
+ * - 9/0: bật/tắt LED5
+ */
+
+#include <Keypad.h>
+
+const byte ROWS = 4;
+const byte COLS = 4;
+
+char keys[ROWS][COLS] = {
+    {''1'',''2'',''3'',''A''},
+    {''4'',''5'',''6'',''B''},
+    {''7'',''8'',''9'',''C''},
+    {''*'',''0'',''#'',''D''}
+};
+
+byte rowPins[ROWS] = {9, 8, 7, 6};
+byte colPins[COLS] = {5, 4, 3, 2};
+
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+// LED pins (A0-A4 vì D2-D9 dùng cho keypad)
+const int LED_PINS[] = {A0, A1, A2, A3, A4};
+const int NUM_LEDS = 5;
+
+void setup() {
+    Serial.begin(9600);
+    
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+        digitalWrite(LED_PINS[i], LOW);
+    }
+    
+    Serial.println("=== Keypad LED Control ===");
+    Serial.println("1/2: LED1 | 3/4: LED2 | 5/6: LED3");
+    Serial.println("7/8: LED4 | 9/0: LED5");
+    Serial.println();
+}
+
+void loop() {
+    char key = keypad.getKey();
+    
+    if (key) {
+        Serial.print("Phím nhấn: ");
+        Serial.print(key);
+        Serial.print(" -> ");
+        
+        switch (key) {
+            case ''1'':
+                digitalWrite(LED_PINS[0], HIGH);
+                Serial.println("LED1 ON");
+                break;
+            case ''2'':
+                digitalWrite(LED_PINS[0], LOW);
+                Serial.println("LED1 OFF");
+                break;
+            case ''3'':
+                digitalWrite(LED_PINS[1], HIGH);
+                Serial.println("LED2 ON");
+                break;
+            case ''4'':
+                digitalWrite(LED_PINS[1], LOW);
+                Serial.println("LED2 OFF");
+                break;
+            case ''5'':
+                digitalWrite(LED_PINS[2], HIGH);
+                Serial.println("LED3 ON");
+                break;
+            case ''6'':
+                digitalWrite(LED_PINS[2], LOW);
+                Serial.println("LED3 OFF");
+                break;
+            case ''7'':
+                digitalWrite(LED_PINS[3], HIGH);
+                Serial.println("LED4 ON");
+                break;
+            case ''8'':
+                digitalWrite(LED_PINS[3], LOW);
+                Serial.println("LED4 OFF");
+                break;
+            case ''9'':
+                digitalWrite(LED_PINS[4], HIGH);
+                Serial.println("LED5 ON");
+                break;
+            case ''0'':
+                digitalWrite(LED_PINS[4], LOW);
+                Serial.println("LED5 OFF");
+                break;
+            default:
+                Serial.println("(không mapping)");
+        }
+    }
+}
+```
+
+### 2.5 Keypad Password (kết thúc bằng #)
+
+```cpp
+/*
+ * Bài 3-5: Keypad password
+ * 
+ * - Nhập mật khẩu, kết thúc bằng #
+ * - Mật khẩu đúng ("1234"): bật LED xanh, Serial: "Mật khẩu đúng"
+ * - Mật khẩu sai: bật LED đỏ, Serial: "Mật khẩu sai"
+ * - Nhấn * để xóa và nhập lại
+ */
+
+#include <Keypad.h>
+
+const byte ROWS = 4;
+const byte COLS = 4;
+
+char keys[ROWS][COLS] = {
+    {''1'',''2'',''3'',''A''},
+    {''4'',''5'',''6'',''B''},
+    {''7'',''8'',''9'',''C''},
+    {''*'',''0'',''#'',''D''}
+};
+
+byte rowPins[ROWS] = {9, 8, 7, 6};
+byte colPins[COLS] = {5, 4, 3, 2};
+
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+const int LED_GREEN = A0;
+const int LED_RED = A1;
+
+// Mật khẩu đúng
+const String CORRECT_PASSWORD = "1234";
+
+// Buffer nhập mật khẩu
+String inputPassword = "";
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(LED_GREEN, OUTPUT);
+    pinMode(LED_RED, OUTPUT);
+    
+    resetLEDs();
+    
+    Serial.println("=== Password System ===");
+    Serial.println("Nhập mật khẩu, nhấn # để xác nhận");
+    Serial.println("Nhấn * để xóa và nhập lại");
+    Serial.println();
+    Serial.print("Password: ");
+}
+
+void resetLEDs() {
+    digitalWrite(LED_GREEN, LOW);
+    digitalWrite(LED_RED, LOW);
+}
+
+void loop() {
+    char key = keypad.getKey();
+    
+    if (key) {
+        if (key == ''#'') {
+            // Xác nhận mật khẩu
+            Serial.println();
+            
+            if (inputPassword == CORRECT_PASSWORD) {
+                digitalWrite(LED_GREEN, HIGH);
+                digitalWrite(LED_RED, LOW);
+                Serial.println("Mật khẩu đúng");
+            } else {
+                digitalWrite(LED_GREEN, LOW);
+                digitalWrite(LED_RED, HIGH);
+                Serial.println("Mật khẩu sai");
+            }
+            
+            // Reset để nhập lại
+            delay(2000);
+            inputPassword = "";
+            resetLEDs();
+            Serial.println();
+            Serial.print("Password: ");
+            
+        } else if (key == ''*'') {
+            // Xóa và nhập lại
+            inputPassword = "";
+            resetLEDs();
+            Serial.println();
+            Serial.println("Đã xóa!");
+            Serial.print("Password: ");
+            
+        } else {
+            // Thêm ký tự vào buffer
+            inputPassword += key;
+            Serial.print("*");  // Ẩn ký tự thật
+        }
+    }
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+
+### 3.1 Nút nhấn "ma" - Đọc nhiều lần khi nhấn 1 lần
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Không debounce | Thêm delay(50) hoặc dùng millis() debounce |
+| Không bắt cạnh | Lưu lastState, so sánh với currentState |
+
+### 3.2 Nút đọc sai logic (luôn HIGH hoặc luôn LOW)
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Quên INPUT_PULLUP | Thêm `pinMode(pin, INPUT_PULLUP);` |
+| Nút nối sai | Kiểm tra nút nối từ pin → GND |
+| Chân nối lung tung | Pin floating, thêm điện trở pull-up/down |
+
+### 3.3 Keypad không nhận phím
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Sai thứ tự chân | Đổi rowPins[] và colPins[] |
+| Sai ma trận keys[][] | Map lại theo layout thực tế |
+| Quên cài thư viện | Sketch → Include Library → Manage → Keypad |
+
+### 3.4 Checklist debug nút nhấn
+
+1. ✅ Dùng `INPUT_PULLUP`?
+2. ✅ Nút nối từ pin xuống GND?
+3. ✅ Có debounce (delay hoặc millis)?
+4. ✅ Có bắt cạnh (lưu lastState)?
+5. ✅ Serial.print() để debug trạng thái?
+
+---
+
+## 🎓 Phần 4: Tóm tắt kiến thức
+
+### Key Points:
+
+1. **INPUT_PULLUP**: Bật điện trở kéo lên nội, không cần điện trở ngoài
+2. **Logic đảo**: INPUT_PULLUP → không nhấn = HIGH, nhấn = LOW
+3. **Debounce**: Chống dội phím, chờ 20-50ms sau khi phát hiện thay đổi
+4. **Edge Detection**: Bắt cạnh xuống/lên để đếm lần nhấn
+5. **Keypad**: Quét ma trận hàng/cột, dùng thư viện Keypad.h
+
+### Pattern code quan trọng:
+
+```cpp
+// Debounce + Edge Detection
+if (currentState != lastState) {
+    lastDebounceTime = millis();
+}
+if ((millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    if (currentState != stableState) {
+        stableState = currentState;
+        if (stableState == LOW) {
+            // Xử lý khi nhấn
+        }
+    }
+}
+lastState = currentState;
+```
+
+### Thuật ngữ quan trọng:
+
+| Thuật ngữ | Ý nghĩa |
+|-----------|---------|
+| Pull-up | Điện trở kéo lên VCC |
+| Pull-down | Điện trở kéo xuống GND |
+| Bounce | Hiện tượng dội phím |
+| Debounce | Chống dội phím |
+| Edge | Cạnh (thời điểm chuyển đổi) |
+| Falling Edge | Cạnh xuống (HIGH→LOW) |
+| Rising Edge | Cạnh lên (LOW→HIGH) |
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-04-01', 'week-04', 1, 'Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Hiểu ADC (Analog to Digital Converter) và độ phân giải 10-bit
+2. ✅ Đọc giá trị từ potentiometer: raw, điện áp (V), phần trăm (%)
+3. ✅ Hiểu PWM (Pulse Width Modulation) và khái niệm Duty Cycle
+4. ✅ Điều khiển độ sáng LED bằng PWM
+5. ✅ Sử dụng hàm map() để chuyển đổi dải giá trị
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 Tín hiệu Analog vs Digital
+
+| Đặc điểm | Digital | Analog |
+|----------|---------|--------|
+| Giá trị | Chỉ 0 hoặc 1 (HIGH/LOW) | Vô số giá trị liên tục |
+| Ví dụ | Nút nhấn, LED on/off | Độ sáng, nhiệt độ, âm lượng |
+| Arduino | Digital pins (D0-D13) | Analog pins (A0-A5) |
+
+```
+Digital:     Analog:
+   5V ___     5V  ╱╲  
+     │   │       ╱  ╲
+     │   │      ╱    ╲
+   0V ───┘    0V ─────── 
+```
+
+### 1.2 ADC - Analog to Digital Converter
+
+**ADC** chuyển đổi tín hiệu analog (0-5V) thành số digital mà vi điều khiển hiểu được.
+
+#### Thông số ADC của Arduino Uno:
+
+| Thông số | Giá trị |
+|----------|---------|
+| Độ phân giải | 10-bit |
+| Dải giá trị | 0 - 1023 |
+| Điện áp đầu vào | 0V - 5V |
+| Số chân analog | 6 (A0-A5) |
+
+#### Công thức chuyển đổi:
+
+```
+raw = analogRead(A0);           // 0-1023
+
+voltage = raw * 5.0 / 1023;     // 0.0V - 5.0V
+
+percent = raw * 100.0 / 1023;   // 0% - 100%
+```
+
+**Giải thích**:
+- 0V → raw = 0
+- 2.5V → raw = 512 (khoảng giữa)
+- 5V → raw = 1023
+
+### 1.3 Potentiometer (Biến trở)
+
+**Potentiometer** (pot) là biến trở điều chỉnh được, dùng để thay đổi điện áp analog.
+
+#### Sơ đồ kết nối:
+
+```
+        +5V
+         │
+       ┌─┴─┐
+       │POT│  ← Vặn núm để thay đổi điện áp
+       └─┬─┘
+         │
+         ├──── A0 (Arduino analog input)
+         │
+        GND
+```
+
+- **Chân 1**: Nối VCC (5V)
+- **Chân 2**: Nối Arduino A0 (chân giữa, output)
+- **Chân 3**: Nối GND
+
+### 1.4 PWM - Pulse Width Modulation
+
+**PWM** tạo tín hiệu "analog giả" bằng cách bật/tắt digital rất nhanh.
+
+#### Duty Cycle (Chu kỳ làm việc):
+
+```
+100% Duty:  _______________
+            |             |
+            
+ 50% Duty:  ___     ___
+            |  |   |  |
+            ───────────
+
+ 25% Duty:  __      __
+            | |    | |
+            ─────────────
+```
+
+**Công thức**:
+```
+Duty Cycle (%) = (Thời gian HIGH / Chu kỳ) × 100
+```
+
+#### Arduino PWM:
+
+| Thông số | Giá trị |
+|----------|---------|
+| Hàm | analogWrite(pin, value) |
+| Dải giá trị | 0 - 255 |
+| Chân PWM (Uno) | 3, 5, 6, 9, 10, 11 |
+| Tần số | ~490 Hz (pin 3,9,10,11) hoặc ~980 Hz (pin 5,6) |
+
+```cpp
+analogWrite(9, 0);    // 0% duty → LED tắt
+analogWrite(9, 127);  // 50% duty → LED sáng 50%
+analogWrite(9, 255);  // 100% duty → LED sáng tối đa
+```
+
+### 1.5 Hàm map() - Chuyển đổi dải giá trị
+
+```cpp
+map(value, fromLow, fromHigh, toLow, toHigh);
+```
+
+**Ví dụ**:
+```cpp
+int raw = analogRead(A0);          // 0-1023
+int pwm = map(raw, 0, 1023, 0, 255); // → 0-255
+```
+
+**Công thức nội bộ**:
+```
+output = (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow
+```
+
+### 1.6 Constrain - Giới hạn giá trị
+
+```cpp
+constrain(value, min, max);
+```
+
+Đảm bảo giá trị nằm trong khoảng [min, max]:
+```cpp
+int safe = constrain(value, 0, 255);  // Giới hạn 0-255
+```
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 Đọc điện áp Potentiometer - 3 dạng
+
+```cpp
+/*
+ * Bài 4-1: Đọc điện áp pot — 3 dạng
+ * 
+ * Phần cứng:
+ * - Potentiometer: VCC→5V, GND→GND, Signal→A0
+ * 
+ * Output:
+ * - Raw (0-1023)
+ * - Điện áp (V)
+ * - Phần trăm (%)
+ */
+
+const int POT_PIN = A0;
+
+void setup() {
+    Serial.begin(9600);
+    Serial.println("=== Potentiometer Reader ===");
+    Serial.println("Vặn pot để thay đổi giá trị\n");
+}
+
+void loop() {
+    // Đọc giá trị raw
+    int raw = analogRead(POT_PIN);
+    
+    // Chuyển sang điện áp (V)
+    float voltage = raw * 5.0 / 1023.0;
+    
+    // Chuyển sang phần trăm (%)
+    float percent = raw * 100.0 / 1023.0;
+    
+    // In ra Serial
+    Serial.print("Raw: ");
+    Serial.print(raw);
+    Serial.print(" | Voltage: ");
+    Serial.print(voltage, 2);  // 2 chữ số thập phân
+    Serial.print(" V | Percent: ");
+    Serial.print(percent, 1);  // 1 chữ số thập phân
+    Serial.println(" %");
+    
+    delay(200);  // Đọc 5 lần/giây
+}
+```
+
+### 2.2 PWM điều khiển độ sáng LED
+
+```cpp
+/*
+ * Bài 4-2: PWM độ sáng LED theo pot
+ * 
+ * Phần cứng:
+ * - Potentiometer: A0
+ * - LED: D9 (chân PWM) qua điện trở 220Ω
+ * 
+ * Serial bắt buộc:
+ * - Raw
+ * - % đã xử lý
+ * - Vout tính theo V
+ */
+
+const int POT_PIN = A0;
+const int LED_PIN = 9;  // Phải là chân PWM!
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(LED_PIN, OUTPUT);
+    
+    Serial.println("=== PWM LED Brightness Control ===");
+    Serial.println("Vặn pot để điều chỉnh độ sáng\n");
+}
+
+void loop() {
+    // Đọc pot
+    int raw = analogRead(POT_PIN);
+    
+    // Map từ 0-1023 sang 0-255 (PWM)
+    int pwmValue = map(raw, 0, 1023, 0, 255);
+    
+    // Xuất PWM ra LED
+    analogWrite(LED_PIN, pwmValue);
+    
+    // Tính toán cho Serial
+    float percent = raw * 100.0 / 1023.0;
+    float vout = pwmValue * 5.0 / 255.0;  // Điện áp trung bình PWM
+    
+    // In theo format yêu cầu
+    Serial.print("Raw: ");
+    Serial.print(raw);
+    Serial.print(" | %: ");
+    Serial.print(percent, 1);
+    Serial.print(" | Vout: ");
+    Serial.print(vout, 2);
+    Serial.println(" V");
+    
+    delay(100);
+}
+```
+
+### 2.3 Điều khiển tốc độ nháy theo pot
+
+```cpp
+/*
+ * Bài 4-3: Điều khiển tốc độ nháy theo pot
+ * 
+ * - Chu kỳ bật/tắt từ 0.1s (pot=1023) đến 1s (pot=0)
+ * 
+ * Serial bắt buộc:
+ * - % pot
+ * - Chế độ LED (bật/tắt)
+ * - Chu kỳ (Ton + Toff)
+ */
+
+const int POT_PIN = A0;
+const int LED_PIN = 13;
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(LED_PIN, OUTPUT);
+    
+    Serial.println("=== Blink Speed Control ===");
+    Serial.println("Vặn pot để thay đổi tốc độ nháy\n");
+}
+
+unsigned long previousMillis = 0;
+bool ledState = false;
+
+void loop() {
+    // Đọc pot
+    int raw = analogRead(POT_PIN);
+    float percent = raw * 100.0 / 1023.0;
+    
+    // Map: pot=0 → 1000ms, pot=1023 → 100ms
+    // (Pot cao = nháy nhanh, pot thấp = nháy chậm)
+    int halfPeriod = map(raw, 0, 1023, 1000, 100);
+    int fullPeriod = halfPeriod * 2;
+    
+    // Non-blocking blink
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= halfPeriod) {
+        previousMillis = currentMillis;
+        ledState = !ledState;
+        digitalWrite(LED_PIN, ledState);
+        
+        // In theo format yêu cầu
+        Serial.print("% pot: ");
+        Serial.print(percent, 1);
+        Serial.print(" | LED: ");
+        Serial.print(ledState ? "bật" : "tắt");
+        Serial.print(" | Chu kỳ: ");
+        Serial.print(fullPeriod);
+        Serial.println(" ms");
+    }
+}
+```
+
+### 2.4 7 LED theo pot - 3 chế độ
+
+```cpp
+/*
+ * Bài 4-4: 7 LED (D2→D8) theo pot, 3 chế độ
+ * 
+ * - <30%: chạy 2→8 (trái sang phải)
+ * - >70%: chạy 8→2 (phải sang trái)
+ * - 30-70%: chạy từ giữa ra hai phía (5→8 và 5→2)
+ * 
+ * Serial bắt buộc:
+ * - % pot
+ * - chế độ hiện hành
+ */
+
+const int LED_PINS[] = {2, 3, 4, 5, 6, 7, 8};  // 7 LED
+const int NUM_LEDS = 7;
+const int POT_PIN = A0;
+
+int currentLed = 0;
+int direction = 1;  // 1 = forward, -1 = backward
+unsigned long previousMillis = 0;
+const int LED_DELAY = 200;
+
+// Biến cho chế độ 3 (từ giữa ra)
+int leftLed = 3;   // Bắt đầu từ giữa (index 3 = pin 5)
+int rightLed = 3;
+
+void allOff() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], LOW);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+    }
+    allOff();
+    
+    Serial.println("=== 7 LED Pot Control ===");
+}
+
+void loop() {
+    int raw = analogRead(POT_PIN);
+    float percent = raw * 100.0 / 1023.0;
+    
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis < LED_DELAY) return;
+    previousMillis = currentMillis;
+    
+    allOff();
+    
+    if (percent < 30) {
+        // Chế độ 1: Chạy trái → phải (2→8)
+        digitalWrite(LED_PINS[currentLed], HIGH);
+        currentLed++;
+        if (currentLed >= NUM_LEDS) currentLed = 0;
+        
+        static bool printed1 = false;
+        if (!printed1) {
+            Serial.print("% pot: ");
+            Serial.print(percent, 1);
+            Serial.println(" | Chế độ: Chạy trái→phải (2→8)");
+            printed1 = true;
+        }
+        
+    } else if (percent > 70) {
+        // Chế độ 2: Chạy phải → trái (8→2)
+        digitalWrite(LED_PINS[currentLed], HIGH);
+        currentLed--;
+        if (currentLed < 0) currentLed = NUM_LEDS - 1;
+        
+        static bool printed2 = false;
+        if (!printed2) {
+            Serial.print("% pot: ");
+            Serial.print(percent, 1);
+            Serial.println(" | Chế độ: Chạy phải→trái (8→2)");
+            printed2 = true;
+        }
+        
+    } else {
+        // Chế độ 3: Từ giữa ra hai phía
+        if (leftLed >= 0) digitalWrite(LED_PINS[leftLed], HIGH);
+        if (rightLed < NUM_LEDS) digitalWrite(LED_PINS[rightLed], HIGH);
+        
+        leftLed--;
+        rightLed++;
+        
+        if (leftLed < 0 && rightLed >= NUM_LEDS) {
+            // Reset về giữa
+            leftLed = 3;
+            rightLed = 3;
+        }
+        
+        static bool printed3 = false;
+        if (!printed3) {
+            Serial.print("% pot: ");
+            Serial.print(percent, 1);
+            Serial.println(" | Chế độ: Từ giữa ra hai phía");
+            printed3 = true;
+        }
+    }
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+
+### 3.1 analogRead() trả về 0 hoặc 1023 liên tục
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Pot nối sai chân | Kiểm tra: VCC-Signal-GND |
+| Chân A0 hỏng | Thử chân A1-A5 khác |
+| Pot hỏng | Đo điện trở bằng đồng hồ |
+
+### 3.2 analogWrite() LED không sáng
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Dùng chân không PWM | Chỉ dùng pin 3, 5, 6, 9, 10, 11 |
+| Quên điện trở | Thêm 220Ω cho LED |
+| Giá trị PWM = 0 | Kiểm tra map() hoặc raw |
+
+### 3.3 LED nhấp nháy thay vì điều chỉnh độ sáng
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Nhiễu từ pot | Thêm tụ 100nF song song pot |
+| Đọc quá nhanh | Thêm delay hoặc lọc trung bình |
+
+### 3.4 Giá trị analog "nhảy" lung tung
+
+**Giải pháp**: Dùng bộ lọc trung bình:
+
+```cpp
+int smoothAnalogRead(int pin) {
+    long sum = 0;
+    for (int i = 0; i < 10; i++) {
+        sum += analogRead(pin);
+        delay(1);
+    }
+    return sum / 10;
+}
+```
+
+---
+
+## 🎓 Phần 4: Tóm tắt kiến thức
+
+### Key Points:
+
+1. **ADC 10-bit**: Chuyển 0-5V thành 0-1023
+2. **analogRead()**: Đọc giá trị analog từ A0-A5
+3. **PWM**: Tín hiệu digital bật/tắt nhanh tạo "analog giả"
+4. **analogWrite()**: Xuất PWM 0-255 (chỉ chân 3,5,6,9,10,11)
+5. **map()**: Chuyển đổi giữa các dải giá trị
+6. **Duty Cycle**: Tỉ lệ % thời gian HIGH trong 1 chu kỳ
+
+### Công thức quan trọng:
+
+```
+Điện áp (V) = raw × 5.0 / 1023
+Phần trăm (%) = raw × 100.0 / 1023
+PWM từ raw = map(raw, 0, 1023, 0, 255)
+```
+
+### Thuật ngữ quan trọng:
+
+| Thuật ngữ | Ý nghĩa |
+|-----------|---------|
+| ADC | Analog to Digital Converter |
+| PWM | Pulse Width Modulation |
+| Duty Cycle | Chu kỳ làm việc (% HIGH) |
+| Resolution | Độ phân giải (10-bit = 1024 mức) |
+| Potentiometer | Biến trở xoay |
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-05-01', 'week-05', 1, 'Thực hành Tích hợp I/O', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Tích hợp nhiều loại input/output trong 1 chương trình
+2. ✅ Sử dụng cấu trúc state/mode để quản lý chế độ hoạt động
+3. ✅ Kết hợp LED, 7-segment, nút nhấn, potentiometer
+4. ✅ Viết code modular với các hàm riêng biệt
+5. ✅ Chuẩn bị kỹ năng cho bài thi thực hành
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 State Machine (Máy trạng thái)
+
+**State Machine** là cách tổ chức code theo các **trạng thái** và **sự kiện chuyển đổi**.
+
+```
+┌─────────┐  Nhấn nút   ┌─────────┐
+│ STATE_A │ ──────────► │ STATE_B │
+│ (Mode 1)│             │ (Mode 2)│
+└─────────┘ ◄────────── └─────────┘
+              Nhấn nút
+```
+
+**Ví dụ code**:
+```cpp
+enum State { MODE_1, MODE_2, MODE_3 };
+State currentState = MODE_1;
+
+void loop() {
+    if (buttonPressed()) {
+        currentState = (State)((currentState + 1) % 3);
+    }
+    
+    switch (currentState) {
+        case MODE_1: runMode1(); break;
+        case MODE_2: runMode2(); break;
+        case MODE_3: runMode3(); break;
+    }
+}
+```
+
+### 1.2 Nguyên tắc tích hợp I/O
+
+1. **Chia module**: Mỗi chức năng 1 hàm riêng
+2. **Non-blocking**: Dùng `millis()` thay `delay()`
+3. **Tách đọc/xử lý/xuất**: Input → Logic → Output
+4. **Debug từng phần**: Test riêng trước khi ghép
+
+```cpp
+void loop() {
+    // 1. Đọc input
+    int potValue = analogRead(A0);
+    bool buttonState = readButton();
+    
+    // 2. Xử lý logic
+    int mode = calculateMode(potValue);
+    if (buttonState) changeMode();
+    
+    // 3. Xuất output
+    updateLEDs(mode);
+    updateDisplay(value);
+}
+```
+
+### 1.3 Quản lý nhiều định thời
+
+Khi có nhiều việc cần timing khác nhau:
+
+```cpp
+unsigned long lastLedUpdate = 0;
+unsigned long lastDisplayUpdate = 0;
+const int LED_INTERVAL = 100;
+const int DISPLAY_INTERVAL = 500;
+
+void loop() {
+    unsigned long now = millis();
+    
+    if (now - lastLedUpdate >= LED_INTERVAL) {
+        lastLedUpdate = now;
+        updateLEDs();
+    }
+    
+    if (now - lastDisplayUpdate >= DISPLAY_INTERVAL) {
+        lastDisplayUpdate = now;
+        refreshDisplay();
+    }
+}
+```
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 LED trang trí theo pot
+
+```cpp
+/*
+ * Bài 5-1: LED trang trí theo pot
+ * 
+ * - pot <25%: LED1→LED8, lặp 3 lần
+ * - pot >75%: LED8→LED1, lặp 3 lần
+ * - 25–75%: sáng từ 2 phía (LED1→LED4 và LED8→LED5)
+ */
+
+const int LED_PINS[] = {2, 3, 4, 5, 6, 7, 8, 9};
+const int NUM_LEDS = 8;
+const int POT_PIN = A0;
+
+int currentLed = 0;
+int loopCount = 0;
+unsigned long lastUpdate = 0;
+const int SPEED = 150;
+
+void allOff() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], LOW);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+    }
+    allOff();
+    Serial.println("=== LED Decoration by Pot ===");
+}
+
+void loop() {
+    int raw = analogRead(POT_PIN);
+    float percent = raw * 100.0 / 1023.0;
+    
+    if (millis() - lastUpdate < SPEED) return;
+    lastUpdate = millis();
+    
+    allOff();
+    
+    if (percent < 25) {
+        // Chế độ 1: 1→8, lặp 3 lần
+        digitalWrite(LED_PINS[currentLed], HIGH);
+        currentLed++;
+        if (currentLed >= NUM_LEDS) {
+            currentLed = 0;
+            loopCount++;
+            if (loopCount >= 3) loopCount = 0;
+        }
+        Serial.println("Mode: 1→8 (pot < 25%)");
+        
+    } else if (percent > 75) {
+        // Chế độ 2: 8→1, lặp 3 lần
+        digitalWrite(LED_PINS[NUM_LEDS - 1 - currentLed], HIGH);
+        currentLed++;
+        if (currentLed >= NUM_LEDS) {
+            currentLed = 0;
+            loopCount++;
+            if (loopCount >= 3) loopCount = 0;
+        }
+        Serial.println("Mode: 8→1 (pot > 75%)");
+        
+    } else {
+        // Chế độ 3: từ 2 phía
+        static int left = 0, right = 7;
+        digitalWrite(LED_PINS[left], HIGH);
+        digitalWrite(LED_PINS[right], HIGH);
+        left++;
+        right--;
+        if (left > 3) {
+            left = 0;
+            right = 7;
+        }
+        Serial.println("Mode: 2 phía (25-75%)");
+    }
+}
+```
+
+### 2.2 Số lượng LED sáng theo pot (10% mỗi LED)
+
+```cpp
+/*
+ * Bài 5-2: Số lượng LED sáng theo pot
+ * 
+ * - Chia 10% mỗi LED
+ * - pot >=20%: LED1 sáng
+ * - Mỗi +10% thêm 1 LED
+ */
+
+const int LED_PINS[] = {2, 3, 4, 5, 6, 7, 8, 9};
+const int NUM_LEDS = 8;
+const int POT_PIN = A0;
+
+void setLEDs(int count) {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], i < count ? HIGH : LOW);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+    }
+    Serial.println("=== LED Bar Graph ===");
+}
+
+void loop() {
+    int raw = analogRead(POT_PIN);
+    float percent = raw * 100.0 / 1023.0;
+    
+    // Tính số LED sáng: 0% = 0LED, 20% = 1LED, 30% = 2LED, ...
+    int ledCount = 0;
+    if (percent >= 20) {
+        ledCount = min((int)((percent - 10) / 10), NUM_LEDS);
+    }
+    
+    setLEDs(ledCount);
+    
+    static unsigned long lastPrint = 0;
+    if (millis() - lastPrint > 500) {
+        lastPrint = millis();
+        Serial.print("Pot: ");
+        Serial.print(percent, 1);
+        Serial.print("% | LEDs: ");
+        Serial.println(ledCount);
+    }
+}
+```
+
+### 2.3 LED trang trí theo số lần nhấn
+
+```cpp
+/*
+ * Bài 5-3: LED trang trí theo số lần nhấn
+ * 
+ * - Nhấn 1 lần: chạy 1→8
+ * - Nhấn 2 lần: chạy 8→1
+ * - Nhấn 3 lần: như nhấn 1...
+ */
+
+const int LED_PINS[] = {2, 3, 4, 5, 6, 7, 8, 9};
+const int NUM_LEDS = 8;
+const int BUTTON_PIN = 10;
+
+int mode = 1;  // 1 hoặc 2
+int currentLed = 0;
+int pressCount = 0;
+
+bool lastButtonState = HIGH;
+unsigned long lastDebounce = 0;
+unsigned long lastLedUpdate = 0;
+
+void allOff() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], LOW);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+    }
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    allOff();
+    Serial.println("=== LED by Button Press ===");
+}
+
+void loop() {
+    // Đọc nút với debounce
+    bool buttonState = digitalRead(BUTTON_PIN);
+    if (buttonState != lastButtonState) {
+        lastDebounce = millis();
+    }
+    if (millis() - lastDebounce > 50) {
+        static bool stableState = HIGH;
+        if (buttonState != stableState) {
+            stableState = buttonState;
+            if (stableState == LOW) {
+                pressCount++;
+                mode = (pressCount % 2 == 1) ? 1 : 2;
+                Serial.print("Nhấn lần ");
+                Serial.print(pressCount);
+                Serial.print(" -> Mode ");
+                Serial.println(mode);
+            }
+        }
+    }
+    lastButtonState = buttonState;
+    
+    // Update LED
+    if (millis() - lastLedUpdate >= 200) {
+        lastLedUpdate = millis();
+        allOff();
+        
+        if (mode == 1) {
+            // Chạy 1→8
+            digitalWrite(LED_PINS[currentLed], HIGH);
+            currentLed++;
+            if (currentLed >= NUM_LEDS) currentLed = 0;
+        } else {
+            // Chạy 8→1
+            digitalWrite(LED_PINS[NUM_LEDS - 1 - currentLed], HIGH);
+            currentLed++;
+            if (currentLed >= NUM_LEDS) currentLed = 0;
+        }
+    }
+}
+```
+
+### 2.4 Hiển thị % pot trên 4 LED 7 đoạn
+
+```cpp
+/*
+ * Bài 5-4: Hiển thị % pot (00→99) bằng 4 LED 7 đoạn
+ * 
+ * Chỉ dùng 2 digit cuối để hiển thị 00-99%
+ */
+
+// Segment pins (a-g)
+const int SEG_PINS[] = {2, 3, 4, 5, 6, 7, 8};
+const int DIGIT_PINS[] = {9, 10, 11, 12};  // D1-D4
+const int NUM_SEGS = 7;
+const int NUM_DIGITS = 4;
+const int POT_PIN = A0;
+
+const byte DIGITS_CODE[] = {
+    0b00111111, 0b00000110, 0b01011011, 0b01001111, 0b01100110,
+    0b01101101, 0b01111101, 0b00000111, 0b01111111, 0b01101111
+};
+
+void setSegments(int num) {
+    byte pattern = DIGITS_CODE[num % 10];
+    for (int i = 0; i < NUM_SEGS; i++) {
+        digitalWrite(SEG_PINS[i], (pattern >> i) & 1);
+    }
+}
+
+void allDigitsOff() {
+    for (int i = 0; i < NUM_DIGITS; i++) {
+        digitalWrite(DIGIT_PINS[i], LOW);
+    }
+}
+
+void displayPercent(int percent) {
+    int d1 = percent / 10;  // Chục
+    int d2 = percent % 10;  // Đơn vị
+    
+    // Chỉ hiện 2 digit phải (digit 3 và 4)
+    for (int d = 2; d < 4; d++) {
+        allDigitsOff();
+        if (d == 2) setSegments(d1);
+        else setSegments(d2);
+        digitalWrite(DIGIT_PINS[d], HIGH);
+        delay(5);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    for (int i = 0; i < NUM_SEGS; i++) pinMode(SEG_PINS[i], OUTPUT);
+    for (int i = 0; i < NUM_DIGITS; i++) pinMode(DIGIT_PINS[i], OUTPUT);
+    allDigitsOff();
+    Serial.println("=== Pot % Display ===");
+}
+
+void loop() {
+    int raw = analogRead(POT_PIN);
+    int percent = map(raw, 0, 1023, 0, 99);
+    
+    displayPercent(percent);
+    
+    static unsigned long lastPrint = 0;
+    if (millis() - lastPrint > 500) {
+        lastPrint = millis();
+        Serial.print("Pot: ");
+        Serial.print(percent);
+        Serial.println("%");
+    }
+}
+```
+
+### 2.5 Hiển thị số lần nhấn trên 7-segment
+
+```cpp
+/*
+ * Bài 5-5: Hiển thị số lần nhấn (00→99) bằng 4 LED 7 đoạn
+ */
+
+const int SEG_PINS[] = {2, 3, 4, 5, 6, 7, 8};
+const int DIGIT_PINS[] = {9, 10, 11, 12};
+const int BUTTON_PIN = A0;  // Dùng A0 làm digital
+const int NUM_SEGS = 7;
+
+const byte DIGITS_CODE[] = {
+    0b00111111, 0b00000110, 0b01011011, 0b01001111, 0b01100110,
+    0b01101101, 0b01111101, 0b00000111, 0b01111111, 0b01101111
+};
+
+int pressCount = 0;
+bool lastButtonState = HIGH;
+unsigned long lastDebounce = 0;
+
+void setSegments(int num) {
+    byte pattern = DIGITS_CODE[num % 10];
+    for (int i = 0; i < NUM_SEGS; i++) {
+        digitalWrite(SEG_PINS[i], (pattern >> i) & 1);
+    }
+}
+
+void allDigitsOff() {
+    for (int i = 0; i < 4; i++) digitalWrite(DIGIT_PINS[i], LOW);
+}
+
+void displayNumber(int num) {
+    int d1 = (num / 10) % 10;
+    int d2 = num % 10;
+    
+    // Digit 3 (chục)
+    allDigitsOff();
+    setSegments(d1);
+    digitalWrite(DIGIT_PINS[2], HIGH);
+    delay(5);
+    
+    // Digit 4 (đơn vị)
+    allDigitsOff();
+    setSegments(d2);
+    digitalWrite(DIGIT_PINS[3], HIGH);
+    delay(5);
+}
+
+void setup() {
+    Serial.begin(9600);
+    for (int i = 0; i < NUM_SEGS; i++) pinMode(SEG_PINS[i], OUTPUT);
+    for (int i = 0; i < 4; i++) pinMode(DIGIT_PINS[i], OUTPUT);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    allDigitsOff();
+    Serial.println("=== Button Counter Display ===");
+}
+
+void loop() {
+    // Đọc nút
+    bool buttonState = digitalRead(BUTTON_PIN);
+    if (buttonState != lastButtonState) {
+        lastDebounce = millis();
+    }
+    if (millis() - lastDebounce > 50) {
+        static bool stableState = HIGH;
+        if (buttonState != stableState) {
+            stableState = buttonState;
+            if (stableState == LOW) {
+                pressCount++;
+                if (pressCount > 99) pressCount = 0;
+                Serial.print("Count: ");
+                Serial.println(pressCount);
+            }
+        }
+    }
+    lastButtonState = buttonState;
+    
+    // Hiển thị
+    displayNumber(pressCount);
+}
+```
+
+### 2.6 7-segment với 2 nút: đếm tăng/giảm
+
+```cpp
+/*
+ * Bài 5-6: 4 LED 7 đoạn theo nút
+ * - Nhấn 1 lần: đếm tăng 00→99
+ * - Nhấn 2 lần: đếm giảm 99→00
+ */
+
+const int SEG_PINS[] = {2, 3, 4, 5, 6, 7, 8};
+const int DIGIT_PINS[] = {9, 10, 11, 12};
+const int BUTTON_PIN = A0;
+const int NUM_SEGS = 7;
+
+const byte DIGITS_CODE[] = {
+    0b00111111, 0b00000110, 0b01011011, 0b01001111, 0b01100110,
+    0b01101101, 0b01111101, 0b00000111, 0b01111111, 0b01101111
+};
+
+int displayValue = 0;
+int mode = 1;  // 1=tăng, 2=giảm
+int pressCount = 0;
+
+bool lastButtonState = HIGH;
+unsigned long lastDebounce = 0;
+unsigned long lastCountUpdate = 0;
+
+void setSegments(int num) {
+    byte pattern = DIGITS_CODE[num % 10];
+    for (int i = 0; i < NUM_SEGS; i++) {
+        digitalWrite(SEG_PINS[i], (pattern >> i) & 1);
+    }
+}
+
+void allDigitsOff() {
+    for (int i = 0; i < 4; i++) digitalWrite(DIGIT_PINS[i], LOW);
+}
+
+void displayNumber(int num) {
+    int d1 = (num / 10) % 10;
+    int d2 = num % 10;
+    
+    allDigitsOff();
+    setSegments(d1);
+    digitalWrite(DIGIT_PINS[2], HIGH);
+    delay(5);
+    
+    allDigitsOff();
+    setSegments(d2);
+    digitalWrite(DIGIT_PINS[3], HIGH);
+    delay(5);
+}
+
+void setup() {
+    Serial.begin(9600);
+    for (int i = 0; i < NUM_SEGS; i++) pinMode(SEG_PINS[i], OUTPUT);
+    for (int i = 0; i < 4; i++) pinMode(DIGIT_PINS[i], OUTPUT);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    allDigitsOff();
+    Serial.println("=== Up/Down Counter ===");
+    Serial.println("Nhấn 1 lần: đếm tăng | Nhấn 2 lần: đếm giảm");
+}
+
+void loop() {
+    // Đọc nút đổi mode
+    bool buttonState = digitalRead(BUTTON_PIN);
+    if (buttonState != lastButtonState) {
+        lastDebounce = millis();
+    }
+    if (millis() - lastDebounce > 50) {
+        static bool stableState = HIGH;
+        if (buttonState != stableState) {
+            stableState = buttonState;
+            if (stableState == LOW) {
+                pressCount++;
+                mode = (pressCount % 2 == 1) ? 1 : 2;
+                Serial.print("Mode: ");
+                Serial.println(mode == 1 ? "Đếm tăng" : "Đếm giảm");
+            }
+        }
+    }
+    lastButtonState = buttonState;
+    
+    // Đếm tự động
+    if (millis() - lastCountUpdate >= 300) {
+        lastCountUpdate = millis();
+        
+        if (mode == 1) {
+            displayValue++;
+            if (displayValue > 99) displayValue = 0;
+        } else {
+            displayValue--;
+            if (displayValue < 0) displayValue = 99;
+        }
+    }
+    
+    // Hiển thị
+    displayNumber(displayValue);
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+
+### 3.1 Chương trình "đứng" khi tích hợp
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Dùng delay() trong loop | Chuyển sang millis() |
+| Vòng lặp vô hạn trong hàm | Thêm điều kiện thoát |
+| Blocking I/O | Đọc/ghi nhanh, không chờ |
+
+### 3.2 Nút nhấn không phản hồi
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| delay() chặn đọc nút | Dùng millis() |
+| Không debounce | Thêm debounce 50ms |
+| Sai logic INPUT_PULLUP | LOW = nhấn, HIGH = nhả |
+
+### 3.3 7-segment nhấp nháy
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| delay() quá dài | Giảm delay xuống 3-5ms |
+| Quét không đều | Đảm bảo quét liên tục |
+
+---
+
+## 🎓 Phần 4: Tóm tắt kiến thức
+
+### Key Points:
+
+1. **State Machine**: Tổ chức code theo trạng thái và sự kiện
+2. **Non-blocking**: Dùng millis() để không chặn
+3. **Modular code**: Mỗi chức năng 1 hàm riêng
+4. **Tách I/O**: Input → Logic → Output
+5. **Debug từng phần**: Test riêng trước khi ghép
+
+### Pattern quan trọng:
+
+```cpp
+// Multi-timing pattern
+unsigned long lastA = 0, lastB = 0;
+void loop() {
+    if (millis() - lastA >= INTERVAL_A) { lastA = millis(); taskA(); }
+    if (millis() - lastB >= INTERVAL_B) { lastB = millis(); taskB(); }
+}
+```
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-06-01', 'week-06', 1, 'Cảm biến trong Hệ thống Nhúng', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Đo khoảng cách với cảm biến siêu âm HC-SR04
+2. ✅ Đọc nhiệt độ và độ ẩm từ DHT11
+3. ✅ Phát hiện chuyển động với PIR
+4. ✅ Đọc cảm biến chạm TTP223
+5. ✅ Xây dựng hệ thống cảnh báo theo ngưỡng
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 Cảm biến siêu âm HC-SR04
+
+**HC-SR04** đo khoảng cách bằng sóng siêu âm (40kHz).
+
+#### Thông số kỹ thuật:
+| Thông số | Giá trị |
+|----------|---------|
+| Điện áp | 5V DC |
+| Dòng tiêu thụ | 15mA |
+| Tần số | 40kHz |
+| Khoảng đo | 2cm - 400cm |
+| Độ phân giải | 0.3cm |
+
+#### Nguyên lý hoạt động:
+```
+Arduino                HC-SR04
+   │                      │
+   │ ──── TRIG (10µs) ──► │ → Phát sóng siêu âm
+   │                      │   ↓ (phản xạ từ vật cản)
+   │ ◄─── ECHO (tPulse) ─ │ ← Nhận sóng phản hồi
+   │                      │
+   
+Khoảng cách = Tốc độ × Thời gian / 2
+           = 340 m/s × tPulse / 2
+           = 0.034 cm/µs × tPulse / 2
+```
+
+#### Sơ đồ kết nối:
+```
+HC-SR04        Arduino
+  VCC ──────── 5V
+  TRIG ─────── D9
+  ECHO ─────── D10
+  GND ──────── GND
+```
+
+### 1.2 Cảm biến nhiệt độ/độ ẩm DHT11
+
+**DHT11** đo nhiệt độ và độ ẩm, truyền data qua 1 dây (protocol riêng).
+
+#### Thông số kỹ thuật:
+| Thông số | Giá trị |
+|----------|---------|
+| Điện áp | 3.3V - 5.5V |
+| Nhiệt độ | 0°C - 50°C (±2°C) |
+| Độ ẩm | 20% - 90% RH (±5%) |
+| Thời gian đọc | ~2 giây |
+
+#### Sơ đồ kết nối:
+```
+DHT11          Arduino
+  VCC ──────── 5V
+  DATA ─┬───── D2
+        │
+      [10kΩ] ── 5V (Pull-up)
+  GND ──────── GND
+```
+
+> 💡 **Mẹo**: Không đọc DHT11 quá nhanh (tối thiểu 2 giây giữa các lần đọc)
+
+### 1.3 Cảm biến chuyển động PIR
+
+**PIR (Passive Infrared)** phát hiện chuyển động dựa trên nhiệt độ cơ thể.
+
+#### Thông số:
+| Thông số | Giá trị |
+|----------|---------|
+| Điện áp | 5V - 20V |
+| Góc phát hiện | 120° |
+| Khoảng cách | ~7m |
+| Output | HIGH khi phát hiện |
+
+#### Sơ đồ kết nối:
+```
+PIR            Arduino
+  VCC ──────── 5V
+  OUT ──────── D3
+  GND ──────── GND
+```
+
+### 1.4 Cảm biến chạm TTP223
+
+**TTP223** là cảm biến chạm điện dung, thay thế nút nhấn cơ khí.
+
+#### Thông số:
+| Thông số | Giá trị |
+|----------|---------|
+| Điện áp | 2V - 5.5V |
+| Output | HIGH khi chạm |
+| Thời gian phản hồi | 60ms |
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 HC-SR04 + 8 LED theo khoảng cách
+
+```cpp
+/*
+ * Bài 6-1: HC-SR04 + 8 LED theo khoảng cách
+ * 
+ * - <30cm: chạy led1→led8
+ * - >80cm: chạy led8→led1
+ * - 30–80cm: bật/tắt 8 led chu kỳ 1s
+ * 
+ * Serial: "Khoảng cách __ cm -> Chương trình __"
+ */
+
+const int TRIG_PIN = 9;
+const int ECHO_PIN = 10;
+const int LED_PINS[] = {2, 3, 4, 5, 6, 7, 8, A0};
+const int NUM_LEDS = 8;
+
+int currentLed = 0;
+int program = 1;
+bool ledsOn = false;
+unsigned long lastUpdate = 0;
+
+long readDistanceCM() {
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+    
+    long duration = pulseIn(ECHO_PIN, HIGH, 30000);  // Timeout 30ms
+    if (duration == 0) return -1;  // No echo
+    return duration * 0.034 / 2;
+}
+
+void allOff() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], LOW);
+    }
+}
+
+void allOn() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], HIGH);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(TRIG_PIN, OUTPUT);
+    pinMode(ECHO_PIN, INPUT);
+    
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+    }
+    allOff();
+    
+    Serial.println("=== HC-SR04 Distance LED Control ===");
+}
+
+void loop() {
+    long distance = readDistanceCM();
+    if (distance < 0) return;  // Error reading
+    
+    // Xác định chương trình
+    if (distance < 30) {
+        program = 1;
+    } else if (distance > 80) {
+        program = 2;
+    } else {
+        program = 3;
+    }
+    
+    // Thực hiện chương trình
+    if (millis() - lastUpdate >= 200) {
+        lastUpdate = millis();
+        allOff();
+        
+        if (program == 1) {
+            // Chạy 1→8
+            digitalWrite(LED_PINS[currentLed], HIGH);
+            currentLed = (currentLed + 1) % NUM_LEDS;
+        } else if (program == 2) {
+            // Chạy 8→1
+            digitalWrite(LED_PINS[NUM_LEDS - 1 - currentLed], HIGH);
+            currentLed = (currentLed + 1) % NUM_LEDS;
+        } else {
+            // Bật/tắt tất cả
+            static bool toggle = false;
+            if (millis() % 1000 < 500) {
+                allOn();
+            } else {
+                allOff();
+            }
+        }
+        
+        Serial.print("Khoảng cách ");
+        Serial.print(distance);
+        Serial.print(" cm -> Chương trình ");
+        Serial.println(program);
+    }
+}
+```
+
+### 2.2 HC-SR04 cảnh báo màu (xanh/vàng/đỏ)
+
+```cpp
+/*
+ * Bài 6-2: HC-SR04 cảnh báo 3 mức
+ * 
+ * - >60cm: an toàn → LED xanh
+ * - 30–60cm: cảnh báo → LED vàng
+ * - <30cm: nguy hiểm → LED đỏ
+ * 
+ * Serial: "Khoảng cách __ cm. trạng thái __"
+ */
+
+const int TRIG_PIN = 9;
+const int ECHO_PIN = 10;
+const int LED_GREEN = 2;
+const int LED_YELLOW = 3;
+const int LED_RED = 4;
+
+long readDistanceCM() {
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+    
+    long duration = pulseIn(ECHO_PIN, HIGH, 30000);
+    if (duration == 0) return -1;
+    return duration * 0.034 / 2;
+}
+
+void setLED(int green, int yellow, int red) {
+    digitalWrite(LED_GREEN, green);
+    digitalWrite(LED_YELLOW, yellow);
+    digitalWrite(LED_RED, red);
+}
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(TRIG_PIN, OUTPUT);
+    pinMode(ECHO_PIN, INPUT);
+    pinMode(LED_GREEN, OUTPUT);
+    pinMode(LED_YELLOW, OUTPUT);
+    pinMode(LED_RED, OUTPUT);
+    
+    Serial.println("=== Distance Warning System ===");
+}
+
+void loop() {
+    long distance = readDistanceCM();
+    if (distance < 0) return;
+    
+    String status;
+    
+    if (distance > 60) {
+        setLED(HIGH, LOW, LOW);
+        status = "an toàn";
+    } else if (distance >= 30) {
+        setLED(LOW, HIGH, LOW);
+        status = "cảnh báo";
+    } else {
+        setLED(LOW, LOW, HIGH);
+        status = "nguy hiểm";
+    }
+    
+    Serial.print("Khoảng cách ");
+    Serial.print(distance);
+    Serial.print(" cm. trạng thái ");
+    Serial.println(status);
+    
+    delay(200);
+}
+```
+
+### 2.3 HC-SR04 số LED bật theo khoảng cách
+
+```cpp
+/*
+ * Bài 6-3: Số LED bật theo khoảng cách
+ * 
+ * - 20cm bật 1 LED
+ * - Mỗi +10cm thêm 1 LED, tối đa 8
+ * 
+ * Serial: "Khoảng cách __ cm. Số led bật __"
+ */
+
+const int TRIG_PIN = 9;
+const int ECHO_PIN = 10;
+const int LED_PINS[] = {2, 3, 4, 5, 6, 7, 8, A0};
+const int NUM_LEDS = 8;
+
+long readDistanceCM() {
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+    
+    long duration = pulseIn(ECHO_PIN, HIGH, 30000);
+    if (duration == 0) return 100;  // Default far
+    return duration * 0.034 / 2;
+}
+
+void setLEDCount(int count) {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], i < count ? HIGH : LOW);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(TRIG_PIN, OUTPUT);
+    pinMode(ECHO_PIN, INPUT);
+    
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+    }
+    
+    Serial.println("=== Distance LED Bar ===");
+}
+
+void loop() {
+    long distance = readDistanceCM();
+    
+    // Tính số LED: 20cm=1, 30cm=2, 40cm=3, ...
+    int ledCount = 0;
+    if (distance >= 20) {
+        ledCount = min((int)((distance - 10) / 10), NUM_LEDS);
+    }
+    
+    setLEDCount(ledCount);
+    
+    Serial.print("Khoảng cách ");
+    Serial.print(distance);
+    Serial.print(" cm. Số led bật ");
+    Serial.println(ledCount);
+    
+    delay(200);
+}
+```
+
+### 2.4 DHT11 giám sát nhiệt độ/độ ẩm
+
+```cpp
+/*
+ * Bài 6-4: DHT11 giám sát theo ngưỡng
+ * 
+ * - 2 dưới ngưỡng → xanh
+ * - 1 vượt ngưỡng → vàng
+ * - 2 vượt ngưỡng → đỏ
+ * 
+ * Ngưỡng: Nhiệt độ > 30°C, Độ ẩm > 70%
+ * Serial: "Nhiệt độ: __ C. Độ ẩm: __ %. Màu led __"
+ */
+
+#include <DHT.h>
+
+const int DHT_PIN = 2;
+const int LED_GREEN = 3;
+const int LED_YELLOW = 4;
+const int LED_RED = 5;
+
+const float TEMP_THRESHOLD = 30.0;
+const float HUMID_THRESHOLD = 70.0;
+
+DHT dht(DHT_PIN, DHT11);
+
+void setLED(int green, int yellow, int red) {
+    digitalWrite(LED_GREEN, green);
+    digitalWrite(LED_YELLOW, yellow);
+    digitalWrite(LED_RED, red);
+}
+
+void setup() {
+    Serial.begin(9600);
+    dht.begin();
+    
+    pinMode(LED_GREEN, OUTPUT);
+    pinMode(LED_YELLOW, OUTPUT);
+    pinMode(LED_RED, OUTPUT);
+    
+    Serial.println("=== DHT11 Monitor ===");
+}
+
+void loop() {
+    delay(2000);  // DHT11 cần ít nhất 2s giữa các lần đọc
+    
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
+    
+    if (isnan(temperature) || isnan(humidity)) {
+        Serial.println("Lỗi đọc DHT11!");
+        return;
+    }
+    
+    // Đếm số ngưỡng vượt
+    int overCount = 0;
+    if (temperature > TEMP_THRESHOLD) overCount++;
+    if (humidity > HUMID_THRESHOLD) overCount++;
+    
+    String ledColor;
+    if (overCount == 0) {
+        setLED(HIGH, LOW, LOW);
+        ledColor = "xanh";
+    } else if (overCount == 1) {
+        setLED(LOW, HIGH, LOW);
+        ledColor = "vàng";
+    } else {
+        setLED(LOW, LOW, HIGH);
+        ledColor = "đỏ";
+    }
+    
+    Serial.print("Nhiệt độ: ");
+    Serial.print(temperature, 1);
+    Serial.print(" C. Độ ẩm: ");
+    Serial.print(humidity, 1);
+    Serial.print(" %. Màu led ");
+    Serial.println(ledColor);
+}
+```
+
+### 2.5 TTP223 tăng/giảm + 7-segment
+
+```cpp
+/*
+ * Bài 6-5: 2 TTP223 tăng/giảm (0..9) + hiển thị 7 đoạn
+ * 
+ * - Chạm A tăng, chạm B giảm
+ * - Chặn biên 0..9
+ * 
+ * Serial: "Đã chạm cảm biến: __, tổng số lần chạm: __ lần."
+ */
+
+const int TOUCH_A = 2;  // Tăng
+const int TOUCH_B = 3;  // Giảm
+
+const int SEG_PINS[] = {4, 5, 6, 7, 8, 9, 10};  // a-g
+const int NUM_SEGS = 7;
+
+const byte DIGITS[] = {
+    0b00111111, 0b00000110, 0b01011011, 0b01001111, 0b01100110,
+    0b01101101, 0b01111101, 0b00000111, 0b01111111, 0b01101111
+};
+
+int displayValue = 0;
+int totalTouches = 0;
+
+bool lastA = LOW, lastB = LOW;
+
+void displayDigit(int num) {
+    byte pattern = DIGITS[num % 10];
+    for (int i = 0; i < NUM_SEGS; i++) {
+        digitalWrite(SEG_PINS[i], (pattern >> i) & 1);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(TOUCH_A, INPUT);
+    pinMode(TOUCH_B, INPUT);
+    
+    for (int i = 0; i < NUM_SEGS; i++) {
+        pinMode(SEG_PINS[i], OUTPUT);
+    }
+    
+    displayDigit(0);
+    Serial.println("=== Touch Counter ===");
+}
+
+void loop() {
+    bool touchA = digitalRead(TOUCH_A);
+    bool touchB = digitalRead(TOUCH_B);
+    
+    // Phát hiện cạnh lên (chạm mới)
+    if (touchA && !lastA) {
+        if (displayValue < 9) displayValue++;
+        totalTouches++;
+        Serial.print("Đã chạm cảm biến: A, tổng số lần chạm: ");
+        Serial.print(totalTouches);
+        Serial.println(" lần.");
+    }
+    
+    if (touchB && !lastB) {
+        if (displayValue > 0) displayValue--;
+        totalTouches++;
+        Serial.print("Đã chạm cảm biến: B, tổng số lần chạm: ");
+        Serial.print(totalTouches);
+        Serial.println(" lần.");
+    }
+    
+    lastA = touchA;
+    lastB = touchB;
+    
+    displayDigit(displayValue);
+    delay(50);
+}
+```
+
+### 2.6 PIR kích hoạt báo động
+
+```cpp
+/*
+ * Bài 6-6: PIR kích hoạt LED + relay còi
+ * 
+ * - Có tín hiệu: "Có di chuyển trong phạm vi giám sát. Kích hoạt báo động"
+ * - Không: "An toàn"
+ */
+
+const int PIR_PIN = 2;
+const int LED_PIN = 13;
+const int RELAY_PIN = 3;  // Relay điều khiển còi
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(PIR_PIN, INPUT);
+    pinMode(LED_PIN, OUTPUT);
+    pinMode(RELAY_PIN, OUTPUT);
+    
+    digitalWrite(LED_PIN, LOW);
+    digitalWrite(RELAY_PIN, LOW);
+    
+    Serial.println("=== PIR Alarm System ===");
+    Serial.println("Đang khởi động... chờ 30s để PIR ổn định");
+    delay(30000);  // PIR cần thời gian warm-up
+    Serial.println("Sẵn sàng!");
+}
+
+void loop() {
+    bool motion = digitalRead(PIR_PIN);
+    
+    if (motion) {
+        digitalWrite(LED_PIN, HIGH);
+        digitalWrite(RELAY_PIN, HIGH);
+        Serial.println("Có di chuyển trong phạm vi giám sát. Kích hoạt báo động");
+        delay(2000);  // Giữ báo động 2s
+    } else {
+        digitalWrite(LED_PIN, LOW);
+        digitalWrite(RELAY_PIN, LOW);
+        Serial.println("An toàn");
+    }
+    
+    delay(200);
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+
+### 3.1 HC-SR04 đọc sai/không ổn định
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Timeout quá ngắn | Tăng timeout pulseIn() lên 30000 |
+| Vật cản góc lệch | Đặt vuông góc với vật cản |
+| Nhiễu | Thêm delay 50ms giữa các lần đọc |
+
+### 3.2 DHT11 trả về NaN
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Đọc quá nhanh | Chờ ít nhất 2s giữa các lần đọc |
+| Thiếu pull-up | Thêm điện trở 10kΩ từ DATA lên VCC |
+| Sai chân | Kiểm tra chân DATA |
+
+### 3.3 PIR báo động giả
+
+| Nguyên nhân | Cách sửa |
+|-------------|----------|
+| Chưa warm-up | Chờ 30-60s sau khi bật nguồn |
+| Góc quét rộng | Điều chỉnh sensitivity/time trên PIR |
+
+---
+
+## 🎓 Phần 4: Tóm tắt kiến thức
+
+### Key Points:
+
+1. **HC-SR04**: Đo khoảng cách = (pulseIn × 0.034) / 2
+2. **DHT11**: Cần 2s giữa các lần đọc, dùng thư viện DHT.h
+3. **PIR**: Cần warm-up 30-60s, output HIGH khi có chuyển động
+4. **TTP223**: Cảm biến chạm điện dung, thay thế nút nhấn
+
+### Công thức:
+```
+Khoảng cách (cm) = duration × 0.034 / 2
+```
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-07-01', 'week-07', 1, 'Giao thức Kết nối Nối tiếp (Serial UART)', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Hiểu giao thức UART và khái niệm baudrate
+2. ✅ Gửi dữ liệu từ Arduino lên PC qua Serial Monitor
+3. ✅ Nhận lệnh từ PC điều khiển Arduino
+4. ✅ Thiết kế giao thức lệnh đơn giản
+5. ✅ Giao tiếp UART giữa 2 Arduino
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 UART là gì?
+
+**UART (Universal Asynchronous Receiver/Transmitter)** là giao thức truyền thông nối tiếp **không đồng bộ**.
+
+```
+Arduino              PC/Arduino khác
+   TX ─────────────────── RX
+   RX ─────────────────── TX
+   GND ────────────────── GND
+```
+
+#### Đặc điểm UART:
+| Đặc điểm | Mô tả |
+|----------|-------|
+| Không đồng bộ | Không cần chân clock |
+| Full-duplex | Gửi và nhận đồng thời |
+| Baudrate | Phải giống nhau giữa 2 bên |
+| Point-to-point | Chỉ 2 thiết bị trên 1 bus |
+
+### 1.2 Cấu trúc Frame UART
+
+```
+   Start    Data bits (8)    Parity   Stop
+    ┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐
+────┤0│D0│D1│D2│D3│D4│D5│D6│D7│P│1│1├────
+    └─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┘
+```
+
+- **Start bit**: 1 bit LOW (0)
+- **Data bits**: Thường 8 bit
+- **Parity bit**: Tùy chọn (kiểm tra lỗi)
+- **Stop bits**: 1 hoặc 2 bit HIGH (1)
+
+### 1.3 Baudrate
+
+**Baudrate** = số bit truyền mỗi giây.
+
+| Baudrate | Thời gian/bit | Ứng dụng |
+|----------|---------------|----------|
+| 9600 | 104 µs | Phổ biến, debug |
+| 38400 | 26 µs | Trung bình |
+| 115200 | 8.7 µs | Nhanh, GPS, Bluetooth |
+
+```cpp
+Serial.begin(9600);  // Khởi tạo UART ở 9600 baud
+```
+
+> ⚠️ **Quan trọng**: Cả 2 bên PHẢI dùng cùng baudrate!
+
+### 1.4 Các hàm Serial Arduino
+
+#### Gửi dữ liệu:
+```cpp
+Serial.print("Hello");       // Gửi text, không xuống dòng
+Serial.println("World");     // Gửi text + xuống dòng
+Serial.print(123);           // Gửi số (dạng text)
+Serial.print(3.14, 2);       // Float với 2 chữ số thập phân
+Serial.write(65);            // Gửi byte raw (ASCII ''A'')
+```
+
+#### Nhận dữ liệu:
+```cpp
+if (Serial.available() > 0) {
+    char c = Serial.read();           // Đọc 1 byte
+    String s = Serial.readString();   // Đọc string (chờ timeout)
+    String s = Serial.readStringUntil(''\n'');  // Đọc đến ký tự newline
+    int n = Serial.parseInt();        // Đọc số nguyên
+    float f = Serial.parseFloat();    // Đọc số thực
+}
+```
+
+### 1.5 SoftwareSerial - Mở rộng cổng UART
+
+Arduino Uno chỉ có **1 cổng hardware UART** (D0-TX, D1-RX). Dùng **SoftwareSerial** để tạo thêm:
+
+```cpp
+#include <SoftwareSerial.h>
+
+// Tạo cổng UART mềm trên D10 (RX) và D11 (TX)
+SoftwareSerial mySerial(10, 11);  // RX, TX
+
+void setup() {
+    Serial.begin(9600);     // Hardware UART để debug
+    mySerial.begin(9600);   // Software UART để giao tiếp
+}
+```
+
+> 💡 **Lưu ý**: SoftwareSerial có tốc độ giới hạn (~57600 baud) và không thể nhận/gửi đồng thời nhiều cổng.
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 Đọc pot và gửi telemetry
+
+```cpp
+/*
+ * Bài 7.1: Đọc pot và hiển thị kết quả trên máy tính
+ * 
+ * Format: raw,voltage,percent
+ * Ví dụ: 512,2.50,50.0
+ */
+
+const int POT_PIN = A0;
+
+void setup() {
+    Serial.begin(9600);
+    Serial.println("=== Pot Telemetry ===");
+    Serial.println("Format: raw,voltage,percent");
+    Serial.println("------------------------");
+}
+
+void loop() {
+    int raw = analogRead(POT_PIN);
+    float voltage = raw * 5.0 / 1023.0;
+    float percent = raw * 100.0 / 1023.0;
+    
+    // Format CSV: raw,voltage,percent
+    Serial.print(raw);
+    Serial.print(",");
+    Serial.print(voltage, 2);  // 2 decimal places
+    Serial.print(",");
+    Serial.println(percent, 1);  // 1 decimal place
+    
+    delay(500);
+}
+```
+
+### 2.2 Điều khiển LED từ PC
+
+```cpp
+/*
+ * Bài 7.2: Gửi dữ liệu từ PC điều khiển Arduino
+ * 
+ * Giao thức lệnh:
+ * - LED1=ON / LED1=OFF: Bật/tắt LED 1
+ * - LED2=ON / LED2=OFF: Bật/tắt LED 2
+ * - PWM=0..255: Điều khiển độ sáng LED PWM
+ * - STATUS: Trả về trạng thái hiện tại
+ * 
+ * Response: OK hoặc ERR + message
+ */
+
+const int LED1_PIN = 13;
+const int LED2_PIN = 12;
+const int LED_PWM_PIN = 9;
+
+bool led1State = false;
+bool led2State = false;
+int pwmValue = 0;
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(LED1_PIN, OUTPUT);
+    pinMode(LED2_PIN, OUTPUT);
+    pinMode(LED_PWM_PIN, OUTPUT);
+    
+    Serial.println("=== Serial LED Control ===");
+    Serial.println("Commands:");
+    Serial.println("  LED1=ON / LED1=OFF");
+    Serial.println("  LED2=ON / LED2=OFF");
+    Serial.println("  PWM=0..255");
+    Serial.println("  STATUS");
+    Serial.println("==========================");
+}
+
+void printStatus() {
+    Serial.print("LED1=");
+    Serial.print(led1State ? "ON" : "OFF");
+    Serial.print(", LED2=");
+    Serial.print(led2State ? "ON" : "OFF");
+    Serial.print(", PWM=");
+    Serial.println(pwmValue);
+}
+
+void loop() {
+    if (Serial.available() > 0) {
+        String command = Serial.readStringUntil(''\n'');
+        command.trim();
+        command.toUpperCase();
+        
+        if (command == "LED1=ON") {
+            led1State = true;
+            digitalWrite(LED1_PIN, HIGH);
+            Serial.println("OK LED1 ON");
+        } 
+        else if (command == "LED1=OFF") {
+            led1State = false;
+            digitalWrite(LED1_PIN, LOW);
+            Serial.println("OK LED1 OFF");
+        }
+        else if (command == "LED2=ON") {
+            led2State = true;
+            digitalWrite(LED2_PIN, HIGH);
+            Serial.println("OK LED2 ON");
+        }
+        else if (command == "LED2=OFF") {
+            led2State = false;
+            digitalWrite(LED2_PIN, LOW);
+            Serial.println("OK LED2 OFF");
+        }
+        else if (command.startsWith("PWM=")) {
+            int value = command.substring(4).toInt();
+            if (value >= 0 && value <= 255) {
+                pwmValue = value;
+                analogWrite(LED_PWM_PIN, value);
+                Serial.print("OK PWM=");
+                Serial.println(value);
+            } else {
+                Serial.println("ERR PWM must be 0-255");
+            }
+        }
+        else if (command == "STATUS") {
+            printStatus();
+        }
+        else {
+            Serial.print("ERR Unknown command: ");
+            Serial.println(command);
+        }
+    }
+}
+```
+
+### 2.3 Giao tiếp 2 Arduino (Master-Slave)
+
+**Master Arduino:**
+```cpp
+/*
+ * Bài 7.3a: Arduino Master
+ * Gửi lệnh đến Slave, nhận phản hồi
+ * 
+ * Kết nối:
+ * - Master D10 (RX) <-> Slave D11 (TX)
+ * - Master D11 (TX) <-> Slave D10 (RX)
+ * - GND chung
+ */
+
+#include <SoftwareSerial.h>
+
+SoftwareSerial slaveSerial(10, 11);  // RX, TX
+
+void setup() {
+    Serial.begin(9600);      // PC
+    slaveSerial.begin(9600); // Slave
+    
+    Serial.println("=== MASTER Ready ===");
+    Serial.println("Type commands to send to Slave:");
+    Serial.println("  LED=ON / LED=OFF");
+}
+
+void loop() {
+    // Nhận lệnh từ PC, chuyển tiếp đến Slave
+    if (Serial.available()) {
+        String cmd = Serial.readStringUntil(''\n'');
+        slaveSerial.println(cmd);
+        Serial.print("[SENT] ");
+        Serial.println(cmd);
+    }
+    
+    // Nhận phản hồi từ Slave, hiện lên PC
+    if (slaveSerial.available()) {
+        String response = slaveSerial.readStringUntil(''\n'');
+        Serial.print("[RECV] ");
+        Serial.println(response);
+    }
+}
+```
+
+**Slave Arduino:**
+```cpp
+/*
+ * Bài 7.3b: Arduino Slave
+ * Nhận lệnh từ Master, thực hiện và phản hồi
+ */
+
+#include <SoftwareSerial.h>
+
+SoftwareSerial masterSerial(10, 11);  // RX, TX
+
+const int LED_PIN = 13;
+bool ledState = false;
+
+void setup() {
+    masterSerial.begin(9600);
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LOW);
+    
+    // Gửi ready signal
+    masterSerial.println("SLAVE READY");
+}
+
+void loop() {
+    if (masterSerial.available()) {
+        String cmd = masterSerial.readStringUntil(''\n'');
+        cmd.trim();
+        
+        if (cmd == "LED=ON") {
+            ledState = true;
+            digitalWrite(LED_PIN, HIGH);
+            masterSerial.println("OK LED=ON");
+        } 
+        else if (cmd == "LED=OFF") {
+            ledState = false;
+            digitalWrite(LED_PIN, LOW);
+            masterSerial.println("OK LED=OFF");
+        }
+        else if (cmd == "STATUS") {
+            masterSerial.print("LED=");
+            masterSerial.println(ledState ? "ON" : "OFF");
+        }
+        else {
+            masterSerial.print("ERR ");
+            masterSerial.println(cmd);
+        }
+    }
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+
+### 3.1 Bảng lỗi nhanh
+
+| Lỗi | Nguyên nhân | Cách sửa |
+|-----|-------------|----------|
+| Ký tự lạ (□▫▪) | Sai baudrate | Đặt giống nhau cả 2 bên |
+| Không nhận data | TX-RX đấu ngược | TX→RX, RX→TX, GND chung |
+| String bị cắt | Buffer timeout | Dùng `readStringUntil(''\n'')` |
+| Mất ký tự đầu | Buffer chưa ready | Thêm delay(100) sau Serial.begin() |
+
+### 3.2 Checklist debug Serial
+
+1. ✅ Baudrate giống nhau? (9600 phổ biến)
+2. ✅ TX nối RX và ngược lại?
+3. ✅ GND chung giữa 2 board?
+4. ✅ Serial Monitor đúng port?
+5. ✅ Có `Serial.begin()` trong setup()?
+6. ✅ Line ending trong Serial Monitor là "Newline"?
+
+---
+
+## 🎓 Phần 4: Tóm tắt kiến thức
+
+### Key Points:
+
+1. **UART**: Truyền nối tiếp không đồng bộ qua TX/RX
+2. **Baudrate**: Tốc độ truyền, phải giống nhau giữa 2 bên
+3. **Serial.print()**: Gửi dữ liệu
+4. **Serial.read()**: Nhận từng byte
+5. **Serial.readStringUntil()**: Nhận string đến ký tự kết thúc
+6. **SoftwareSerial**: Tạo thêm cổng UART trên pin bất kỳ
+
+### Thuật ngữ quan trọng:
+
+| Thuật ngữ | Ý nghĩa |
+|-----------|---------|
+| UART | Universal Asynchronous Receiver/Transmitter |
+| Baudrate | Tốc độ truyền (bit/s) |
+| TX | Transmit (gửi) |
+| RX | Receive (nhận) |
+| Full-duplex | Gửi và nhận đồng thời |
+| Buffer | Bộ nhớ đệm tạm |
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-08-01', 'week-08', 1, 'Giao thức Kết nối I2C', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Hiểu giao thức I2C: SDA, SCL, địa chỉ slave
+2. ✅ Quét và phát hiện địa chỉ thiết bị I2C
+3. ✅ Hiển thị nội dung lên LCD1602 qua I2C
+4. ✅ Giao tiếp I2C Master-Slave giữa 2 Arduino
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 I2C là gì?
+
+**I2C (Inter-Integrated Circuit)** là giao thức truyền thông **đồng bộ** 2 dây, phát minh bởi Philips.
+
+```
+Arduino (Master)     Thiết bị I2C (Slave)
+     SDA ◄──────────────► SDA
+     SCL ──────────────► SCL
+     GND ────────────────── GND
+     
+     (Pull-up 4.7kΩ)
+        ┌──── SDA
+        │
+       +5V
+        │
+        └──── SCL
+```
+
+### 1.2 Đặc điểm I2C
+
+| Đặc điểm | Mô tả |
+|----------|-------|
+| Số dây | 2 (SDA - Data, SCL - Clock) |
+| Đồng bộ | Có clock chung (SCL) |
+| Multi-device | Nhiều slave trên 1 bus |
+| Địa chỉ | Mỗi slave có địa chỉ 7-bit duy nhất |
+| Tốc độ | Standard 100kHz, Fast 400kHz |
+
+### 1.3 So sánh I2C vs UART vs SPI
+
+| Đặc điểm | I2C | UART | SPI |
+|----------|-----|------|-----|
+| Số dây | 2 | 2 | 4 |
+| Đồng bộ | Có | Không | Có |
+| Multi-device | Có | Không | Có (cần thêm SS) |
+| Tốc độ | Trung bình | Thấp | Cao |
+| Độ phức tạp | Trung bình | Đơn giản | Đơn giản-phức tạp |
+
+### 1.4 Địa chỉ I2C thường gặp
+
+| Thiết bị | Địa chỉ |
+|----------|---------|
+| LCD1602 I2C (PCF8574) | 0x27 hoặc 0x3F |
+| OLED SSD1306 | 0x3C hoặc 0x3D |
+| BMP180/BMP280 | 0x76 hoặc 0x77 |
+| MPU6050 | 0x68 hoặc 0x69 |
+| DS3231 RTC | 0x68 |
+
+### 1.5 Arduino Uno I2C Pins
+
+| Chân | Chức năng |
+|------|-----------|
+| A4 | SDA (Data) |
+| A5 | SCL (Clock) |
+
+> 💡 **Lưu ý**: Cần điện trở pull-up 4.7kΩ từ SDA và SCL lên VCC. Nhiều module I2C đã có sẵn.
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 I2C Scanner - Quét địa chỉ
+
+```cpp
+/*
+ * Bài 8-1: Quét và xác định địa chỉ thiết bị I2C
+ * 
+ * Kết quả: In ra tất cả địa chỉ thiết bị tìm thấy
+ */
+
+#include <Wire.h>
+
+void setup() {
+    Wire.begin();  // Khởi tạo I2C (Master mode)
+    Serial.begin(9600);
+    
+    Serial.println("=== I2C Scanner ===");
+    Serial.println("Scanning...\n");
+}
+
+void loop() {
+    int deviceCount = 0;
+    
+    for (byte address = 1; address < 127; address++) {
+        Wire.beginTransmission(address);
+        byte error = Wire.endTransmission();
+        
+        if (error == 0) {
+            Serial.print("Device found at address 0x");
+            if (address < 16) Serial.print("0");
+            Serial.print(address, HEX);
+            
+            // Nhận dạng thiết bị phổ biến
+            if (address == 0x27 || address == 0x3F) {
+                Serial.print(" (LCD1602 I2C)");
+            } else if (address == 0x3C || address == 0x3D) {
+                Serial.print(" (OLED SSD1306)");
+            } else if (address == 0x68) {
+                Serial.print(" (MPU6050 / DS3231)");
+            } else if (address == 0x76 || address == 0x77) {
+                Serial.print(" (BMP180/280)");
+            }
+            Serial.println();
+            deviceCount++;
+        }
+    }
+    
+    Serial.println();
+    if (deviceCount == 0) {
+        Serial.println("No I2C devices found!");
+        Serial.println("Check wiring: SDA=A4, SCL=A5");
+    } else {
+        Serial.print("Found ");
+        Serial.print(deviceCount);
+        Serial.println(" device(s)\n");
+    }
+    
+    delay(5000);  // Quét lại sau 5 giây
+}
+```
+
+### 2.2 LCD1602 I2C - Hiển thị cơ bản
+
+```cpp
+/*
+ * Bài 8-2: Hiển thị nội dung trên LCD1602 I2C
+ * 
+ * Thư viện: LiquidCrystal_I2C
+ * Cài: Sketch > Include Library > Manage Libraries > "LiquidCrystal I2C"
+ */
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Địa chỉ thường là 0x27 hoặc 0x3F (chạy I2C Scanner để xác định)
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // Địa chỉ, số cột, số hàng
+
+void setup() {
+    lcd.init();       // Khởi tạo LCD
+    lcd.backlight();  // Bật đèn nền
+    
+    lcd.setCursor(0, 0);  // Cột 0, hàng 0
+    lcd.print("Hello Arduino!");
+    
+    lcd.setCursor(0, 1);  // Cột 0, hàng 1
+    lcd.print("I2C LCD Demo");
+}
+
+void loop() {
+    // Đếm giây
+    static unsigned long lastUpdate = 0;
+    static int seconds = 0;
+    
+    if (millis() - lastUpdate >= 1000) {
+        lastUpdate = millis();
+        seconds++;
+        
+        lcd.setCursor(14, 1);  // Góc phải hàng 2
+        if (seconds < 10) lcd.print("0");
+        lcd.print(seconds % 60);
+    }
+}
+```
+
+### 2.3 LCD hiển thị sensor với nút đổi mode
+
+```cpp
+/*
+ * Bài 8-2b: LCD hiển thị pot với nút đổi mode
+ * 
+ * Mode 1: Hiển thị phần trăm
+ * Mode 2: Hiển thị giá trị raw
+ * Mode 3: Hiển thị điện áp
+ */
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+const int POT_PIN = A0;
+const int BUTTON_PIN = 2;
+
+int mode = 1;  // 1=Percent, 2=Raw, 3=Voltage
+
+bool lastButtonState = HIGH;
+unsigned long lastDebounce = 0;
+
+void setup() {
+    lcd.init();
+    lcd.backlight();
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    
+    Serial.begin(9600);
+    updateModeDisplay();
+}
+
+void updateModeDisplay() {
+    lcd.setCursor(0, 0);
+    lcd.print("Mode: ");
+    switch (mode) {
+        case 1: lcd.print("Percent   "); break;
+        case 2: lcd.print("Raw       "); break;
+        case 3: lcd.print("Voltage   "); break;
+    }
+}
+
+void loop() {
+    // Đọc nút đổi mode
+    bool buttonState = digitalRead(BUTTON_PIN);
+    if (buttonState != lastButtonState) {
+        lastDebounce = millis();
+    }
+    if ((millis() - lastDebounce) > 50) {
+        static bool stableState = HIGH;
+        if (buttonState != stableState) {
+            stableState = buttonState;
+            if (stableState == LOW) {
+                mode = (mode % 3) + 1;  // Xoay vòng 1→2→3→1
+                updateModeDisplay();
+                Serial.print("Mode changed to: ");
+                Serial.println(mode);
+            }
+        }
+    }
+    lastButtonState = buttonState;
+    
+    // Đọc pot và hiển thị
+    int raw = analogRead(POT_PIN);
+    float voltage = raw * 5.0 / 1023.0;
+    int percent = map(raw, 0, 1023, 0, 100);
+    
+    lcd.setCursor(0, 1);
+    lcd.print("Value: ");
+    
+    switch (mode) {
+        case 1:
+            lcd.print(percent);
+            lcd.print("%      ");
+            break;
+        case 2:
+            lcd.print(raw);
+            lcd.print("      ");
+            break;
+        case 3:
+            lcd.print(voltage, 2);
+            lcd.print("V    ");
+            break;
+    }
+    
+    delay(100);
+}
+```
+
+### 2.4 I2C Master-Slave giữa 2 Arduino
+
+**Master:**
+```cpp
+/*
+ * Bài 8-3a: I2C Master
+ * Gửi lệnh đến Slave, nhận phản hồi
+ */
+
+#include <Wire.h>
+
+const int SLAVE_ADDRESS = 8;
+
+void setup() {
+    Wire.begin();  // Master mode (không có địa chỉ)
+    Serial.begin(9600);
+    
+    Serial.println("=== I2C Master ===");
+    Serial.println("Commands: LED=ON, LED=OFF, STATUS");
+}
+
+void loop() {
+    if (Serial.available()) {
+        String cmd = Serial.readStringUntil(''\n'');
+        cmd.trim();
+        
+        // Gửi lệnh đến Slave
+        Wire.beginTransmission(SLAVE_ADDRESS);
+        Wire.write(cmd.c_str());
+        Wire.endTransmission();
+        
+        Serial.print("[SENT] ");
+        Serial.println(cmd);
+        
+        delay(10);  // Chờ Slave xử lý
+        
+        // Yêu cầu phản hồi từ Slave
+        Wire.requestFrom(SLAVE_ADDRESS, 16);  // Đọc tối đa 16 byte
+        String response = "";
+        while (Wire.available()) {
+            char c = Wire.read();
+            if (c != ''\0'') response += c;
+        }
+        
+        if (response.length() > 0) {
+            Serial.print("[RECV] ");
+            Serial.println(response);
+        }
+    }
+}
+```
+
+**Slave:**
+```cpp
+/*
+ * Bài 8-3b: I2C Slave
+ * Nhận lệnh từ Master, thực hiện và chuẩn bị phản hồi
+ */
+
+#include <Wire.h>
+
+const int SLAVE_ADDRESS = 8;
+const int LED_PIN = 13;
+
+bool ledState = false;
+String response = "";
+
+void receiveEvent(int howMany) {
+    String cmd = "";
+    while (Wire.available()) {
+        char c = Wire.read();
+        cmd += c;
+    }
+    cmd.trim();
+    
+    if (cmd == "LED=ON") {
+        ledState = true;
+        digitalWrite(LED_PIN, HIGH);
+        response = "OK LED=ON";
+    } 
+    else if (cmd == "LED=OFF") {
+        ledState = false;
+        digitalWrite(LED_PIN, LOW);
+        response = "OK LED=OFF";
+    }
+    else if (cmd == "STATUS") {
+        response = ledState ? "LED=ON" : "LED=OFF";
+    }
+    else {
+        response = "ERR";
+    }
+}
+
+void requestEvent() {
+    Wire.write(response.c_str());
+}
+
+void setup() {
+    Wire.begin(SLAVE_ADDRESS);  // Slave mode với địa chỉ
+    Wire.onReceive(receiveEvent);
+    Wire.onRequest(requestEvent);
+    
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LOW);
+}
+
+void loop() {
+    // Slave chỉ phản ứng qua interrupt
+    delay(100);
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+
+| Lỗi | Nguyên nhân | Cách sửa |
+|-----|-------------|----------|
+| Không tìm thấy device | Sai địa chỉ | Chạy I2C Scanner |
+| LCD chỉ hiện ô vuông | Sai contrast | Vặn biến trở trên module I2C |
+| "Không giao tiếp được" | Thiếu pull-up | Thêm 4.7kΩ từ SDA/SCL lên VCC |
+| LCD không sáng | Chưa gọi backlight() | Thêm `lcd.backlight();` |
+
+### Checklist debug I2C:
+1. ✅ Đã nối đúng SDA=A4, SCL=A5?
+2. ✅ GND chung giữa các thiết bị?
+3. ✅ Chạy I2C Scanner xác định địa chỉ?
+4. ✅ Có pull-up resistor? (nhiều module có sẵn)
+5. ✅ VCC đúng (3.3V hay 5V)?
+
+---
+
+## 🎓 Phần 4: Tóm tắt kiến thức
+
+### Key Points:
+
+1. **I2C**: 2 dây (SDA, SCL), đồng bộ, multi-slave
+2. **Wire.h**: Thư viện I2C của Arduino
+3. **Address**: Mỗi slave có địa chỉ 7-bit duy nhất
+4. **I2C Scanner**: Công cụ tìm địa chỉ thiết bị
+5. **LCD I2C**: Chỉ cần 2 dây data thay vì 6-8 dây
+
+### Thuật ngữ:
+
+| Thuật ngữ | Ý nghĩa |
+|-----------|---------|
+| SDA | Serial Data |
+| SCL | Serial Clock |
+| Master | Thiết bị điều khiển bus |
+| Slave | Thiết bị phản hồi |
+| Pull-up | Điện trở kéo lên VCC |
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-09-01', 'week-09', 1, 'Giao thức Kết nối SPI', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Hiểu giao thức SPI: MOSI, MISO, SCK, SS
+2. ✅ So sánh SPI với I2C và UART
+3. ✅ Điều khiển 74HC595 để mở rộng output
+4. ✅ Tạo pattern LED qua shift register
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 SPI là gì?
+
+**SPI (Serial Peripheral Interface)** là giao thức đồng bộ 4 dây, tốc độ cao.
+
+```
+Arduino (Master)     Thiết bị SPI (Slave)
+     MOSI ──────────────► MOSI (Data In)
+     MISO ◄────────────── MISO (Data Out)
+      SCK ──────────────► SCK  (Clock)
+       SS ──────────────► CS   (Chip Select)
+```
+
+### 1.2 Chân SPI của Arduino Uno
+
+| Chân | Tên | Chức năng |
+|------|-----|-----------|
+| D11 | MOSI | Master Out Slave In |
+| D12 | MISO | Master In Slave Out |
+| D13 | SCK | Serial Clock |
+| D10 | SS | Slave Select (có thể dùng pin khác) |
+
+### 1.3 So sánh SPI vs I2C vs UART
+
+| Đặc điểm | SPI | I2C | UART |
+|----------|-----|-----|------|
+| Số dây | 4 | 2 | 2 |
+| Tốc độ | Rất nhanh (MHz) | Trung bình (kHz) | Thấp |
+| Multi-slave | Cần thêm dây SS | Dùng địa chỉ | Không |
+| Full-duplex | Có | Không | Có |
+
+### 1.4 74HC595 - Shift Register
+
+**74HC595** là IC thanh ghi dịch 8-bit, mở rộng 3 chân thành 8 output.
+
+```
+Arduino            74HC595           LEDs
+   D11 ─────────── DS (14)           
+   D13 ─────────── SHCP (11)         Q0 ──[R]── LED0
+   D10 ─────────── STCP (12)         Q1 ──[R]── LED1
+                                     Q2 ──[R]── LED2
+   5V ──────────── VCC (16)          Q3 ──[R]── LED3
+   5V ──────────── MR (10)           Q4 ──[R]── LED4
+                                     Q5 ──[R]── LED5
+   GND ─────────── GND (8)           Q6 ──[R]── LED6
+   GND ─────────── OE (13)           Q7 ──[R]── LED7
+```
+
+| Chân 74HC595 | Chức năng |
+|--------------|-----------|
+| DS (14) | Data Serial Input |
+| SHCP (11) | Shift Register Clock |
+| STCP (12) | Storage Register Clock (Latch) |
+| OE (13) | Output Enable (nối GND để enable) |
+| MR (10) | Master Reset (nối VCC để không reset) |
+| Q0-Q7 | 8 Output pins |
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 Binary count 0→255 qua 74HC595
+
+```cpp
+/*
+ * Bài 9-A1: 8 LED binary count qua 74HC595
+ * Đếm nhị phân từ 0 đến 255
+ */
+
+const int DATA_PIN = 11;   // DS
+const int CLOCK_PIN = 13;  // SHCP
+const int LATCH_PIN = 10;  // STCP
+
+void setup() {
+    pinMode(DATA_PIN, OUTPUT);
+    pinMode(CLOCK_PIN, OUTPUT);
+    pinMode(LATCH_PIN, OUTPUT);
+    
+    Serial.begin(9600);
+    Serial.println("=== 74HC595 Binary Counter ===");
+}
+
+void shiftOutByte(byte data) {
+    // Latch LOW để chuẩn bị
+    digitalWrite(LATCH_PIN, LOW);
+    // Dịch data ra
+    shiftOut(DATA_PIN, CLOCK_PIN, MSBFIRST, data);
+    // Latch HIGH để cập nhật output
+    digitalWrite(LATCH_PIN, HIGH);
+}
+
+void loop() {
+    for (int i = 0; i <= 255; i++) {
+        shiftOutByte(i);
+        
+        // In ra dạng binary
+        Serial.print(i);
+        Serial.print(" = ");
+        for (int b = 7; b >= 0; b--) {
+            Serial.print((i >> b) & 1);
+        }
+        Serial.println();
+        
+        delay(200);
+    }
+    
+    Serial.println("=== Restart ===\n");
+    delay(1000);
+}
+```
+
+### 2.2 LED đuổi (Knight Rider)
+
+```cpp
+/*
+ * Bài 9-A2: LED chạy đuổi 1→8→1 qua 74HC595
+ */
+
+const int DATA_PIN = 11;
+const int CLOCK_PIN = 13;
+const int LATCH_PIN = 10;
+
+void shiftOutByte(byte data) {
+    digitalWrite(LATCH_PIN, LOW);
+    shiftOut(DATA_PIN, CLOCK_PIN, MSBFIRST, data);
+    digitalWrite(LATCH_PIN, HIGH);
+}
+
+void setup() {
+    pinMode(DATA_PIN, OUTPUT);
+    pinMode(CLOCK_PIN, OUTPUT);
+    pinMode(LATCH_PIN, OUTPUT);
+    
+    Serial.begin(9600);
+    Serial.println("=== Knight Rider LED ===");
+}
+
+void loop() {
+    // Forward: LED 0→7
+    for (int i = 0; i < 8; i++) {
+        byte pattern = 1 << i;  // Bit shift: 00000001, 00000010, ...
+        shiftOutByte(pattern);
+        Serial.println(pattern, BIN);
+        delay(100);
+    }
+    
+    // Backward: LED 6→1 (bỏ 2 đầu để không lặp)
+    for (int i = 6; i >= 1; i--) {
+        byte pattern = 1 << i;
+        shiftOutByte(pattern);
+        Serial.println(pattern, BIN);
+        delay(100);
+    }
+}
+```
+
+### 2.3 Đổi pattern qua Serial command
+
+```cpp
+/*
+ * Bài 9-A3: Lệnh Serial đổi pattern
+ * 
+ * Commands:
+ * PATTERN=1: Knight Rider
+ * PATTERN=2: Binary Count
+ * PATTERN=3: All Blink
+ * SPEED=50..500: Đổi tốc độ
+ */
+
+const int DATA_PIN = 11;
+const int CLOCK_PIN = 13;
+const int LATCH_PIN = 10;
+
+int pattern = 1;
+int speed = 100;
+int counter = 0;
+int direction = 1;
+
+void shiftOutByte(byte data) {
+    digitalWrite(LATCH_PIN, LOW);
+    shiftOut(DATA_PIN, CLOCK_PIN, MSBFIRST, data);
+    digitalWrite(LATCH_PIN, HIGH);
+}
+
+void setup() {
+    pinMode(DATA_PIN, OUTPUT);
+    pinMode(CLOCK_PIN, OUTPUT);
+    pinMode(LATCH_PIN, OUTPUT);
+    
+    Serial.begin(9600);
+    Serial.println("=== SPI Pattern Controller ===");
+    Serial.println("Commands: PATTERN=1/2/3, SPEED=50..500");
+}
+
+void loop() {
+    // Check Serial commands
+    if (Serial.available()) {
+        String cmd = Serial.readStringUntil(''\n'');
+        cmd.trim();
+        cmd.toUpperCase();
+        
+        if (cmd.startsWith("PATTERN=")) {
+            int p = cmd.substring(8).toInt();
+            if (p >= 1 && p <= 3) {
+                pattern = p;
+                counter = 0;
+                Serial.print("OK Pattern=");
+                Serial.println(pattern);
+            }
+        } 
+        else if (cmd.startsWith("SPEED=")) {
+            int s = cmd.substring(6).toInt();
+            if (s >= 50 && s <= 500) {
+                speed = s;
+                Serial.print("OK Speed=");
+                Serial.println(speed);
+            }
+        }
+    }
+    
+    // Execute pattern
+    byte output = 0;
+    
+    switch (pattern) {
+        case 1:  // Knight Rider
+            output = 1 << counter;
+            counter += direction;
+            if (counter >= 7) direction = -1;
+            if (counter <= 0) direction = 1;
+            break;
+            
+        case 2:  // Binary Count
+            output = counter % 256;
+            counter++;
+            break;
+            
+        case 3:  // All Blink
+            output = (counter % 2 == 0) ? 0xFF : 0x00;
+            counter++;
+            break;
+    }
+    
+    shiftOutByte(output);
+    delay(speed);
+}
+```
+
+### 2.4 Cascade 2 IC 74HC595 (16 LED)
+
+```cpp
+/*
+ * Nâng cao: 2 IC 74HC595 nối tiếp điều khiển 16 LED
+ * 
+ * IC1 Q7'' nối vào IC2 DS
+ */
+
+const int DATA_PIN = 11;
+const int CLOCK_PIN = 13;
+const int LATCH_PIN = 10;
+
+void shiftOut16(uint16_t data) {
+    digitalWrite(LATCH_PIN, LOW);
+    // Gửi byte cao trước (IC2)
+    shiftOut(DATA_PIN, CLOCK_PIN, MSBFIRST, data >> 8);
+    // Gửi byte thấp (IC1)
+    shiftOut(DATA_PIN, CLOCK_PIN, MSBFIRST, data & 0xFF);
+    digitalWrite(LATCH_PIN, HIGH);
+}
+
+void setup() {
+    pinMode(DATA_PIN, OUTPUT);
+    pinMode(CLOCK_PIN, OUTPUT);
+    pinMode(LATCH_PIN, OUTPUT);
+}
+
+void loop() {
+    // Knight Rider với 16 LED
+    for (int i = 0; i < 16; i++) {
+        shiftOut16(1 << i);
+        delay(50);
+    }
+    for (int i = 14; i > 0; i--) {
+        shiftOut16(1 << i);
+        delay(50);
+    }
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp
+
+| Lỗi | Nguyên nhân | Cách sửa |
+|-----|-------------|----------|
+| LED không sáng | OE không nối GND | Nối pin 13 xuống GND |
+| LED sáng lung tung | MR không nối VCC | Nối pin 10 lên 5V |
+| Pattern ngược | MSBFIRST/LSBFIRST sai | Đổi thứ tự bit |
+| Chỉ 1 LED sáng yếu | Thiếu điện trở | Thêm 220Ω mỗi LED |
+
+---
+
+## 🎓 Phần 4: Tóm tắt
+
+1. **SPI**: 4 dây, tốc độ cao, đồng bộ
+2. **74HC595**: Mở rộng 3 chân → 8 output
+3. **shiftOut()**: Hàm Arduino gửi byte ra shift register
+4. **MSBFIRST**: Bit cao nhất gửi trước
+5. **Cascade**: Nối nhiều IC để mở rộng thêm
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-10-01', 'week-10', 1, 'Giao thức 1-Wire (DS18B20)', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Hiểu giao thức 1-Wire: 1 dây data, nhiều thiết bị
+2. ✅ Đọc nhiệt độ từ DS18B20
+3. ✅ Xây dựng hệ thống cảnh báo nhiệt độ
+4. ✅ Sử dụng nhiều cảm biến trên 1 bus
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 1-Wire là gì?
+
+**1-Wire** là giao thức của Dallas Semiconductor (nay là Maxim), chỉ cần **1 dây data** + GND.
+
+```
+Arduino              DS18B20
+   D2 ──────┬──────── DQ (Data)
+            │
+          [4.7kΩ]    (Pull-up resistor)
+            │
+           +5V
+   GND ─────────────── GND
+   5V ──────────────── VCC
+```
+
+### 1.2 Đặc điểm 1-Wire
+
+| Đặc điểm | Mô tả |
+|----------|-------|
+| Số dây | 1 dây data (+ GND + VCC) |
+| Bus | Nhiều thiết bị trên 1 bus |
+| Địa chỉ | Mỗi thiết bị có ROM 64-bit duy nhất |
+| Parasite Power | Có thể cấp nguồn qua data line |
+
+### 1.3 DS18B20 - Cảm biến nhiệt độ
+
+| Thông số | Giá trị |
+|----------|---------|
+| Dải đo | -55°C đến +125°C |
+| Độ chính xác | ±0.5°C (ở -10°C đến +85°C) |
+| Độ phân giải | 9-12 bit (mặc định 12-bit) |
+| Thời gian đo | ~750ms (12-bit) |
+| Điện áp | 3.0V - 5.5V |
+
+### 1.4 Sơ đồ chân DS18B20
+
+```
+      ┌─────┐
+      │ DS  │
+      │18B20│
+      └┬─┬─┬┘
+       │ │ │
+      GND DQ VCC
+       1  2  3
+```
+
+> 💡 **Mẹo phân biệt**: Mặt phẳng hướng về bạn, từ trái sang: GND, DQ, VCC
+
+### 1.5 Thư viện cần thiết
+
+```cpp
+#include <OneWire.h>
+#include <DallasTemperature.h>
+```
+
+Cài đặt: Sketch > Include Library > Manage Libraries > Tìm "OneWire" và "DallasTemperature"
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 Đọc nhiệt độ cơ bản
+
+```cpp
+/*
+ * Bài 10-1: Đọc nhiệt độ DS18B20
+ * 
+ * Serial format: "T=__°C"
+ */
+
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+const int ONE_WIRE_BUS = 2;  // Data pin
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+
+void setup() {
+    Serial.begin(9600);
+    sensors.begin();
+    
+    Serial.println("=== DS18B20 Temperature Sensor ===");
+    Serial.print("Found ");
+    Serial.print(sensors.getDeviceCount());
+    Serial.println(" sensor(s)");
+    Serial.println();
+}
+
+void loop() {
+    // Yêu cầu đọc nhiệt độ
+    sensors.requestTemperatures();
+    
+    // Lấy nhiệt độ của sensor đầu tiên (index 0)
+    float tempC = sensors.getTempCByIndex(0);
+    
+    // Kiểm tra lỗi (-127 = lỗi đọc)
+    if (tempC == DEVICE_DISCONNECTED_C) {
+        Serial.println("Error: Sensor disconnected!");
+        delay(1000);
+        return;
+    }
+    
+    // In kết quả
+    Serial.print("T=");
+    Serial.print(tempC, 1);  // 1 số thập phân
+    Serial.println("°C");
+    
+    delay(1000);  // Đọc mỗi giây
+}
+```
+
+### 2.2 Cảnh báo 3 mức nhiệt độ
+
+```cpp
+/*
+ * Bài 10-2: 3 mức LED theo nhiệt độ
+ * 
+ * <25°C: LED xanh (lạnh)
+ * 25-35°C: LED vàng (bình thường)
+ * >35°C: LED đỏ (nóng)
+ */
+
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+const int ONE_WIRE_BUS = 2;
+const int LED_GREEN = 3;
+const int LED_YELLOW = 4;
+const int LED_RED = 5;
+
+const float COLD_THRESHOLD = 25.0;
+const float HOT_THRESHOLD = 35.0;
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+
+void setLED(int g, int y, int r) {
+    digitalWrite(LED_GREEN, g);
+    digitalWrite(LED_YELLOW, y);
+    digitalWrite(LED_RED, r);
+}
+
+void setup() {
+    Serial.begin(9600);
+    sensors.begin();
+    
+    pinMode(LED_GREEN, OUTPUT);
+    pinMode(LED_YELLOW, OUTPUT);
+    pinMode(LED_RED, OUTPUT);
+    
+    Serial.println("=== Temperature Warning System ===");
+    Serial.print("Cold: <");
+    Serial.print(COLD_THRESHOLD);
+    Serial.print("°C | Hot: >");
+    Serial.print(HOT_THRESHOLD);
+    Serial.println("°C");
+    Serial.println();
+}
+
+void loop() {
+    sensors.requestTemperatures();
+    float temp = sensors.getTempCByIndex(0);
+    
+    if (temp == DEVICE_DISCONNECTED_C) {
+        setLED(LOW, LOW, LOW);
+        Serial.println("Sensor Error!");
+        delay(1000);
+        return;
+    }
+    
+    String status;
+    
+    if (temp < COLD_THRESHOLD) {
+        setLED(HIGH, LOW, LOW);
+        status = "COLD";
+    } else if (temp <= HOT_THRESHOLD) {
+        setLED(LOW, HIGH, LOW);
+        status = "NORMAL";
+    } else {
+        setLED(LOW, LOW, HIGH);
+        status = "HOT!";
+    }
+    
+    Serial.print("Temp: ");
+    Serial.print(temp, 1);
+    Serial.print("°C - ");
+    Serial.println(status);
+    
+    delay(1000);
+}
+```
+
+### 2.3 Nhiều cảm biến trên 1 bus
+
+```cpp
+/*
+ * Bài 10-3: Đọc nhiều DS18B20 trên 1 bus
+ * 
+ * Mỗi sensor có địa chỉ ROM 64-bit duy nhất
+ */
+
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+const int ONE_WIRE_BUS = 2;
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+
+// Mảng lưu địa chỉ các sensor
+DeviceAddress sensorAddresses[8];
+int sensorCount = 0;
+
+void printAddress(DeviceAddress addr) {
+    for (int i = 0; i < 8; i++) {
+        if (addr[i] < 16) Serial.print("0");
+        Serial.print(addr[i], HEX);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    sensors.begin();
+    
+    sensorCount = sensors.getDeviceCount();
+    
+    Serial.println("=== Multi-Sensor System ===");
+    Serial.print("Found ");
+    Serial.print(sensorCount);
+    Serial.println(" sensor(s):\n");
+    
+    // Lấy địa chỉ của tất cả sensor
+    for (int i = 0; i < sensorCount; i++) {
+        if (sensors.getAddress(sensorAddresses[i], i)) {
+            Serial.print("Sensor ");
+            Serial.print(i);
+            Serial.print(": ");
+            printAddress(sensorAddresses[i]);
+            Serial.println();
+        }
+    }
+    Serial.println();
+}
+
+void loop() {
+    sensors.requestTemperatures();
+    
+    Serial.println("--- Readings ---");
+    for (int i = 0; i < sensorCount; i++) {
+        float temp = sensors.getTempC(sensorAddresses[i]);
+        
+        Serial.print("Sensor ");
+        Serial.print(i);
+        Serial.print(": ");
+        
+        if (temp == DEVICE_DISCONNECTED_C) {
+            Serial.println("DISCONNECTED");
+        } else {
+            Serial.print(temp, 1);
+            Serial.println("°C");
+        }
+    }
+    Serial.println();
+    
+    delay(2000);
+}
+```
+
+### 2.4 Hiển thị nhiệt độ lên LCD I2C
+
+```cpp
+/*
+ * Nâng cao: DS18B20 + LCD I2C
+ */
+
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+const int ONE_WIRE_BUS = 2;
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// Ký tự độ C custom
+byte degreeSymbol[] = {
+    B00110,
+    B01001,
+    B01001,
+    B00110,
+    B00000,
+    B00000,
+    B00000,
+    B00000
+};
+
+void setup() {
+    sensors.begin();
+    lcd.init();
+    lcd.backlight();
+    lcd.createChar(0, degreeSymbol);
+    
+    lcd.setCursor(0, 0);
+    lcd.print("Temperature:");
+}
+
+void loop() {
+    sensors.requestTemperatures();
+    float temp = sensors.getTempCByIndex(0);
+    
+    lcd.setCursor(0, 1);
+    if (temp == DEVICE_DISCONNECTED_C) {
+        lcd.print("Error!        ");
+    } else {
+        lcd.print(temp, 1);
+        lcd.write(0);  // Ký tự độ
+        lcd.print("C       ");
+    }
+    
+    delay(500);
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp
+
+| Lỗi | Nguyên nhân | Cách sửa |
+|-----|-------------|----------|
+| Đọc -127°C | Sensor không kết nối | Kiểm tra dây, pull-up |
+| Đọc 85°C | Sensor chưa sẵn sàng | Chờ 750ms sau requestTemperatures |
+| Không tìm thấy sensor | Thiếu pull-up 4.7kΩ | Thêm resistor từ DQ lên VCC |
+| Nhiệt độ sai | Chân nối sai | Kiểm tra GND-DQ-VCC |
+
+### Checklist debug:
+1. ✅ Có điện trở pull-up 4.7kΩ?
+2. ✅ Đúng chân: GND (flat side left), DQ (middle), VCC (right)?
+3. ✅ Đã cài thư viện OneWire và DallasTemperature?
+4. ✅ Chờ đủ thời gian sau requestTemperatures()?
+
+---
+
+## 🎓 Phần 4: Tóm tắt
+
+1. **1-Wire**: 1 dây data, nhiều thiết bị trên 1 bus
+2. **DS18B20**: Cảm biến nhiệt độ chính xác ±0.5°C
+3. **Pull-up**: Bắt buộc điện trở 4.7kΩ từ DQ lên VCC
+4. **ROM Address**: Mỗi sensor có mã 64-bit duy nhất
+5. **requestTemperatures()**: Yêu cầu đọc, chờ 750ms
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-11-01', 'week-11', 1, 'Giao tiếp WiFi - Chế độ WebServer', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Hiểu WiFi Station vs Access Point mode
+2. ✅ Tạo WebServer cơ bản điều khiển LED
+3. ✅ Thiết kế giao diện web ON/OFF đẹp mắt
+4. ✅ Xử lý HTTP request/response
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 Lưu ý phần cứng
+
+> ⚠️ **Arduino Uno KHÔNG có WiFi**. Cần dùng **ESP8266** hoặc **ESP32**.
+
+| Board | WiFi | Giá | Phổ biến |
+|-------|------|-----|----------|
+| ESP8266 (NodeMCU) | Có | Rẻ | Rất phổ biến |
+| ESP32 | Có + BLE | Trung bình | Mạnh hơn |
+| Arduino Uno + Shield | Cần module | Đắt | Ít dùng |
+
+### 1.2 ESP8266 Pinout (NodeMCU)
+
+```
+        ┌─────USB─────┐
+     D0 │ 16 ●   ● A0 │ ADC
+     D1 │  5 ●   ● GND│
+     D2 │  4 ●   ● VV │ 3.3V
+     D3 │  0 ●   ● S3 │ D8-10
+     D4 │  2 ●   ● S2 │ D8-9-10
+    3V3 │    ●   ● S1 │ D8-9-10-MISO
+    GND │    ●   ● SC │ SCK
+     D5 │ 14 ●   ● S0 │ MOSI
+     D6 │ 12 ●   ● G  │ GND
+     D7 │ 13 ●   ● 3V │ 3.3V
+     D8 │ 15 ●   ● EN │
+     RX │  3 ●   ● RST│
+     TX │  1 ●   ● GND│
+        └─────────────┘
+```
+
+### 1.3 WiFi Modes
+
+| Mode | Mô tả |
+|------|-------|
+| Station (STA) | Kết nối vào WiFi có sẵn |
+| Access Point (AP) | Tạo WiFi riêng |
+| STA + AP | Cả hai đồng thời |
+
+### 1.4 HTTP Request/Response
+
+```
+Browser                     ESP8266
+   │                           │
+   │ ── GET /led/on ─────────► │  Request
+   │                           │  Process: digitalWrite(LED, HIGH)
+   │ ◄────── 200 OK ────────── │  Response + HTML
+   │                           │
+```
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 WebServer điều khiển 1 LED
+
+```cpp
+/*
+ * Bài 11.1: WebServer bật/tắt 1 LED
+ * 
+ * Tiêu đề: "Hệ thống bật / tắt Led – WebServer cấu hình cơ bản"
+ * 
+ * Board: ESP8266 (NodeMCU/Wemos D1)
+ */
+
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+
+// ========== CẤU HÌNH WIFI ==========
+const char* ssid = "TEN_WIFI_CUA_BAN";
+const char* password = "MAT_KHAU_WIFI";
+
+// ========== HARDWARE ==========
+const int LED_PIN = LED_BUILTIN;  // GPIO2, active LOW
+bool ledState = false;
+
+ESP8266WebServer server(80);
+
+// ========== HTML PAGE ==========
+String getHTML() {
+    String html = R"(
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=''UTF-8''>
+    <meta name=''viewport'' content=''width=device-width, initial-scale=1''>
+    <title>LED Control</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: ''Segoe UI'', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: #fff;
+        }
+        h1 {
+            color: #00d4ff;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .status {
+            font-size: 28px;
+            margin: 30px 0;
+            padding: 20px 40px;
+            border-radius: 15px;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .status-on {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
+        }
+        .status-off {
+            background: #555;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        .btn-container { margin-top: 20px; }
+        .btn {
+            padding: 18px 50px;
+            font-size: 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .btn-on {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        .btn-off {
+            background: linear-gradient(135deg, #f44336, #da190b);
+            color: white;
+        }
+        .ip-info {
+            margin-top: 40px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hệ thống bật / tắt Led<br>WebServer cấu hình cơ bản</h1>
+    
+    <div class=''status )";
+    
+    html += ledState ? "status-on''>LED ĐANG BẬT" : "status-off''>LED ĐANG TẮT";
+    html += R"(</div>
+    
+    <div class=''btn-container''>
+        <a href=''/on'' class=''btn btn-on''>ON</a>
+        <a href=''/off'' class=''btn btn-off''>OFF</a>
+    </div>
+    
+    <div class=''ip-info''>
+        IP: )";
+    html += WiFi.localIP().toString();
+    html += R"(
+    </div>
+</body>
+</html>
+)";
+    return html;
+}
+
+// ========== HANDLERS ==========
+void handleRoot() {
+    server.send(200, "text/html", getHTML());
+}
+
+void handleOn() {
+    ledState = true;
+    digitalWrite(LED_PIN, LOW);  // LED_BUILTIN active LOW
+    Serial.println("LED ON");
+    server.send(200, "text/html", getHTML());
+}
+
+void handleOff() {
+    ledState = false;
+    digitalWrite(LED_PIN, HIGH);
+    Serial.println("LED OFF");
+    server.send(200, "text/html", getHTML());
+}
+
+// ========== SETUP ==========
+void setup() {
+    Serial.begin(115200);
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, HIGH);  // OFF
+    
+    // Kết nối WiFi
+    Serial.println();
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+    
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    
+    Serial.println();
+    Serial.println("WiFi connected!");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+    
+    // Setup routes
+    server.on("/", handleRoot);
+    server.on("/on", handleOn);
+    server.on("/off", handleOff);
+    
+    server.begin();
+    Serial.println("HTTP server started!");
+    Serial.println("Open browser and go to: http://" + WiFi.localIP().toString());
+}
+
+// ========== LOOP ==========
+void loop() {
+    server.handleClient();
+}
+```
+
+### 2.2 WebServer điều khiển 2 LED
+
+```cpp
+/*
+ * Bài 11.2: WebServer bật/tắt 2 LED
+ * 
+ * Tiêu đề: "Hệ thống bật / tắt 2 Led – WebServer cấu hình cơ bản"
+ * Nút hiển thị BAT/TAT đúng trạng thái
+ */
+
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+
+const char* ssid = "TEN_WIFI";
+const char* password = "MAT_KHAU";
+
+const int LED1_PIN = D1;  // GPIO5
+const int LED2_PIN = D2;  // GPIO4
+bool led1State = false;
+bool led2State = false;
+
+ESP8266WebServer server(80);
+
+String getHTML() {
+    String html = R"(
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=''UTF-8''>
+    <meta name=''viewport'' content=''width=device-width, initial-scale=1''>
+    <title>2 LED Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            color: #fff;
+        }
+        h1 { color: #00d4ff; margin-bottom: 30px; text-align: center; }
+        .led-box {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            margin: 15px;
+            border-radius: 20px;
+            width: 280px;
+            text-align: center;
+        }
+        .led-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        .ind-on { background: #4CAF50; box-shadow: 0 0 15px #4CAF50; }
+        .ind-off { background: #555; }
+        .btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 100px;
+            font-weight: bold;
+        }
+        .btn-bat { background: #4CAF50; color: white; }
+        .btn-tat { background: #f44336; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Hệ thống bật / tắt 2 Led<br>WebServer cấu hình cơ bản</h1>
+    
+    <div class=''led-box''>
+        <div class=''led-title''>
+            LED 1 <span class=''indicator )";
+    html += led1State ? "ind-on" : "ind-off";
+    html += R"(''></span>
+        </div>
+        <a href=''/led1/toggle'' class=''btn )";
+    html += led1State ? "btn-tat''>TAT" : "btn-bat''>BAT";
+    html += R"(''></a>
+    </div>
+    
+    <div class=''led-box''>
+        <div class=''led-title''>
+            LED 2 <span class=''indicator )";
+    html += led2State ? "ind-on" : "ind-off";
+    html += R"(''></span>
+        </div>
+        <a href=''/led2/toggle'' class=''btn )";
+    html += led2State ? "btn-tat''>TAT" : "btn-bat''>BAT";
+    html += R"(''></a>
+    </div>
+</body>
+</html>
+)";
+    return html;
+}
+
+void handleRoot() {
+    server.send(200, "text/html", getHTML());
+}
+
+void handleLed1Toggle() {
+    led1State = !led1State;
+    digitalWrite(LED1_PIN, led1State);
+    Serial.print("LED1: ");
+    Serial.println(led1State ? "ON" : "OFF");
+    server.send(200, "text/html", getHTML());
+}
+
+void handleLed2Toggle() {
+    led2State = !led2State;
+    digitalWrite(LED2_PIN, led2State);
+    Serial.print("LED2: ");
+    Serial.println(led2State ? "ON" : "OFF");
+    server.send(200, "text/html", getHTML());
+}
+
+void setup() {
+    Serial.begin(115200);
+    pinMode(LED1_PIN, OUTPUT);
+    pinMode(LED2_PIN, OUTPUT);
+    digitalWrite(LED1_PIN, LOW);
+    digitalWrite(LED2_PIN, LOW);
+    
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println();
+    Serial.println(WiFi.localIP());
+    
+    server.on("/", handleRoot);
+    server.on("/led1/toggle", handleLed1Toggle);
+    server.on("/led2/toggle", handleLed2Toggle);
+    
+    server.begin();
+}
+
+void loop() {
+    server.handleClient();
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp
+
+| Lỗi | Nguyên nhân | Cách sửa |
+|-----|-------------|----------|
+| Không kết nối WiFi | Sai SSID/password | Kiểm tra và sửa |
+| Không truy cập được web | Sai IP | Xem Serial Monitor để lấy IP |
+| Trang trắng | HTML lỗi | Kiểm tra cặp tag |
+| LED không sáng | Sai chân hoặc logic | Kiểm tra GPIO và active HIGH/LOW |
+
+### Checklist:
+1. ✅ Cài board ESP8266/ESP32 trong Arduino IDE?
+2. ✅ SSID và password đúng?
+3. ✅ Cùng mạng WiFi với máy tính/điện thoại?
+4. ✅ Đúng GPIO (D1=GPIO5, D2=GPIO4)?
+
+---
+
+## 🎓 Phần 4: Tóm tắt
+
+1. **ESP8266/ESP32**: Board WiFi thay thế Arduino cho IoT
+2. **WebServer**: Lắng nghe HTTP request, trả HTML
+3. **Route**: server.on("/path", handler)
+4. **handleClient()**: Phải gọi trong loop()
+
+---', 
+ 30, 1, unixepoch());
+
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
+('lesson-12-01', 'week-12', 1, 'Giao tiếp WiFi - Chế độ Asynchronous WebServer', 
+ '## 🎯 Mục tiêu học tập
+
+Sau khi hoàn thành tuần này, bạn sẽ:
+
+1. ✅ Hiểu sự khác biệt giữa Sync và Async WebServer
+2. ✅ Sử dụng ESPAsyncWebServer library
+3. ✅ Tạo API endpoint trả JSON cho JavaScript
+4. ✅ Xây dựng dashboard IoT với auto-refresh
+
+---
+
+## 📚 Phần 1: Lý thuyết cốt lõi
+
+### 1.1 Sync vs Async WebServer
+
+| Đặc điểm | Sync (ESP8266WebServer) | Async (ESPAsyncWebServer) |
+|----------|------------------------|---------------------------|
+| Xử lý request | Từng cái một, blocking | Đồng thời, non-blocking |
+| handleClient() | Phải gọi trong loop() | KHÔNG cần |
+| Performance | Thấp | Cao |
+| Nhiều client | Chậm | Nhanh |
+
+### 1.2 Kiến trúc Async
+
+```
+Client 1 ─► ┌─────────────┐
+            │   Async     │ ─► LED Control
+Client 2 ─► │  WebServer  │ ─► Send JSON
+            │             │ ─► Sensor Read
+Client 3 ─► └─────────────┘
+                  ↑
+          Event-driven (không block)
+```
+
+### 1.3 Thư viện cần cài
+
+**ESP8266:**
+- ESPAsyncWebServer
+- ESPAsyncTCP
+
+**ESP32:**
+- ESPAsyncWebServer
+- AsyncTCP
+
+### 1.4 JSON API Pattern
+
+```
+Browser                     ESP8266
+   │                           │
+   │ ── fetch(''/api/state'') ─► │  GET request
+   │ ◄─ {"led1":true,"led2": ─ │  JSON response
+   │     false}                │
+   │                           │
+   │ (JavaScript cập nhật UI)  │
+```
+
+---
+
+## 💻 Phần 2: Code mẫu hoàn chỉnh
+
+### 2.1 Async WebServer điều khiển 1 LED
+
+```cpp
+/*
+ * Bài 12.1: Async WebServer bật/tắt 1 LED
+ * 
+ * Tiêu đề: "Hệ thống bật / tắt Led – WebServer cấu hình không đồng bộ"
+ */
+
+#ifdef ESP8266
+  #include <ESP8266WiFi.h>
+  #include <ESPAsyncTCP.h>
+#else
+  #include <WiFi.h>
+  #include <AsyncTCP.h>
+#endif
+
+#include <ESPAsyncWebServer.h>
+
+const char* ssid = "TEN_WIFI";
+const char* password = "MAT_KHAU";
+
+const int LED_PIN = LED_BUILTIN;
+bool ledState = false;
+
+AsyncWebServer server(80);
+
+// ========== HTML với JavaScript Fetch ==========
+const char index_html[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Async LED Control</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: ''Segoe UI'', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+        }
+        h1 {
+            color: #00d4ff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            font-size: 32px;
+            font-weight: bold;
+            padding: 25px 50px;
+            border-radius: 20px;
+            margin: 30px 0;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        .status-on {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            box-shadow: 0 0 40px rgba(76, 175, 80, 0.5);
+        }
+        .status-off {
+            background: #444;
+        }
+        .btn-container { margin-top: 20px; }
+        .btn {
+            padding: 20px 60px;
+            font-size: 24px;
+            margin: 10px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .btn:active { transform: scale(0.98); }
+        .btn-on { background: #4CAF50; color: white; }
+        .btn-off { background: #f44336; color: white; }
+        .auto-status {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hệ thống bật / tắt Led<br>WebServer cấu hình không đồng bộ</h1>
+    
+    <div id="status" class="status status-off">LED ĐANG TẮT</div>
+    
+    <div class="btn-container">
+        <button class="btn btn-on" onclick="setLED(''on'')">ON</button>
+        <button class="btn btn-off" onclick="setLED(''off'')">OFF</button>
+    </div>
+    
+    <div class="auto-status">Tự động cập nhật mỗi 2 giây</div>
+
+    <script>
+        function setLED(state) {
+            fetch(''/led/'' + state)
+                .then(response => response.json())
+                .then(data => updateUI(data.state))
+                .catch(err => console.error(''Error:'', err));
+        }
+        
+        function updateUI(isOn) {
+            const statusEl = document.getElementById(''status'');
+            statusEl.className = ''status '' + (isOn ? ''status-on'' : ''status-off'');
+            statusEl.textContent = ''LED ĐANG '' + (isOn ? ''BẬT'' : ''TẮT'');
+        }
+        
+        // Auto refresh every 2 seconds
+        setInterval(() => {
+            fetch(''/state'')
+                .then(r => r.json())
+                .then(d => updateUI(d.state))
+                .catch(err => console.error(''Fetch error:'', err));
+        }, 2000);
+        
+        // Initial fetch
+        fetch(''/state'').then(r => r.json()).then(d => updateUI(d.state));
+    </script>
+</body>
+</html>
+)rawliteral";
+
+// ========== SETUP ==========
+void setup() {
+    Serial.begin(115200);
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, HIGH);  // OFF (active LOW)
+    
+    // Connect WiFi
+    WiFi.begin(ssid, password);
+    Serial.print("Connecting");
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println();
+    Serial.print("IP: ");
+    Serial.println(WiFi.localIP());
+    
+    // Route: Serve HTML page
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send_P(200, "text/html", index_html);
+    });
+    
+    // API: Get current state
+    server.on("/state", HTTP_GET, [](AsyncWebServerRequest *request) {
+        String json = "{\"state\":" + String(ledState ? "true" : "false") + "}";
+        request->send(200, "application/json", json);
+    });
+    
+    // API: Turn ON
+    server.on("/led/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+        ledState = true;
+        digitalWrite(LED_PIN, LOW);  // Active LOW
+        Serial.println("LED ON");
+        request->send(200, "application/json", "{\"state\":true}");
+    });
+    
+    // API: Turn OFF
+    server.on("/led/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+        ledState = false;
+        digitalWrite(LED_PIN, HIGH);
+        Serial.println("LED OFF");
+        request->send(200, "application/json", "{\"state\":false}");
+    });
+    
+    server.begin();
+    Serial.println("Async WebServer started!");
+}
+
+// ========== LOOP ==========
+void loop() {
+    // Không cần handleClient()!
+    // Có thể làm việc khác ở đây
+    
+    // Ví dụ: đọc sensor, xử lý logic khác...
+}
+```
+
+### 2.2 Async WebServer điều khiển 2 LED
+
+```cpp
+/*
+ * Bài 12.2: Async WebServer 2 LED với UI realtime
+ * 
+ * Tiêu đề: "Hệ thống bật / tắt 2 Led – WebServer cấu hình không đồng bộ"
+ */
+
+#ifdef ESP8266
+  #include <ESP8266WiFi.h>
+  #include <ESPAsyncTCP.h>
+#else
+  #include <WiFi.h>
+  #include <AsyncTCP.h>
+#endif
+
+#include <ESPAsyncWebServer.h>
+
+const char* ssid = "TEN_WIFI";
+const char* password = "MAT_KHAU";
+
+const int LED1_PIN = D1;  // GPIO5
+const int LED2_PIN = D2;  // GPIO4
+bool led1State = false;
+bool led2State = false;
+
+AsyncWebServer server(80);
+
+const char index_html[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>2 LED Async Control</title>
+    <style>
+        body {
+            font-family: ''Segoe UI'', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e);
+            min-height: 100vh;
+            margin: 0;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+        }
+        h1 { color: #00d4ff; margin-bottom: 30px; text-align: center; }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; }
+        .led-card {
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            margin: 15px;
+            border-radius: 20px;
+            width: 260px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s;
+        }
+        .led-card:hover { transform: translateY(-5px); }
+        .led-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-left: 12px;
+            transition: all 0.3s;
+        }
+        .ind-on { 
+            background: #4CAF50; 
+            box-shadow: 0 0 20px #4CAF50; 
+        }
+        .ind-off { background: #555; }
+        .btn {
+            padding: 18px 0;
+            width: 100%;
+            font-size: 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+        .btn:hover { transform: scale(1.03); }
+        .btn-bat { background: #4CAF50; color: white; }
+        .btn-tat { background: #f44336; color: white; }
+        .info { margin-top: 30px; font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <h1>Hệ thống bật / tắt 2 Led<br>WebServer cấu hình không đồng bộ</h1>
+    
+    <div class="container">
+        <div class="led-card">
+            <div class="led-title">
+                LED 1 <span id="ind1" class="indicator ind-off"></span>
+            </div>
+            <button id="btn1" class="btn btn-bat" onclick="toggle(1)">BAT</button>
+        </div>
+        
+        <div class="led-card">
+            <div class="led-title">
+                LED 2 <span id="ind2" class="indicator ind-off"></span>
+            </div>
+            <button id="btn2" class="btn btn-bat" onclick="toggle(2)">BAT</button>
+        </div>
+    </div>
+    
+    <div class="info">Auto-sync mỗi 2 giây • Không mất trạng thái khi refresh</div>
+
+    <script>
+        function toggle(led) {
+            fetch(''/toggle/'' + led)
+                .then(r => r.json())
+                .then(d => updateUI(d));
+        }
+        
+        function updateUI(data) {
+            // LED 1
+            document.getElementById(''btn1'').textContent = data.led1 ? ''TAT'' : ''BAT'';
+            document.getElementById(''btn1'').className = ''btn '' + (data.led1 ? ''btn-tat'' : ''btn-bat'');
+            document.getElementById(''ind1'').className = ''indicator '' + (data.led1 ? ''ind-on'' : ''ind-off'');
+            
+            // LED 2
+            document.getElementById(''btn2'').textContent = data.led2 ? ''TAT'' : ''BAT'';
+            document.getElementById(''btn2'').className = ''btn '' + (data.led2 ? ''btn-tat'' : ''btn-bat'');
+            document.getElementById(''ind2'').className = ''indicator '' + (data.led2 ? ''ind-on'' : ''ind-off'');
+        }
+        
+        // Auto refresh
+        setInterval(() => {
+            fetch(''/state'').then(r => r.json()).then(d => updateUI(d));
+        }, 2000);
+        
+        // Initial state
+        fetch(''/state'').then(r => r.json()).then(d => updateUI(d));
+    </script>
+</body>
+</html>
+)rawliteral";
+
+void setup() {
+    Serial.begin(115200);
+    pinMode(LED1_PIN, OUTPUT);
+    pinMode(LED2_PIN, OUTPUT);
+    digitalWrite(LED1_PIN, LOW);
+    digitalWrite(LED2_PIN, LOW);
+    
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+    }
+    Serial.println(WiFi.localIP());
+    
+    // Serve HTML
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send_P(200, "text/html", index_html);
+    });
+    
+    // Get state
+    server.on("/state", HTTP_GET, [](AsyncWebServerRequest *request) {
+        String json = "{\"led1\":" + String(led1State ? "true" : "false");
+        json += ",\"led2\":" + String(led2State ? "true" : "false") + "}";
+        request->send(200, "application/json", json);
+    });
+    
+    // Toggle LED1
+    server.on("/toggle/1", HTTP_GET, [](AsyncWebServerRequest *request) {
+        led1State = !led1State;
+        digitalWrite(LED1_PIN, led1State);
+        String json = "{\"led1\":" + String(led1State ? "true" : "false");
+        json += ",\"led2\":" + String(led2State ? "true" : "false") + "}";
+        request->send(200, "application/json", json);
+    });
+    
+    // Toggle LED2
+    server.on("/toggle/2", HTTP_GET, [](AsyncWebServerRequest *request) {
+        led2State = !led2State;
+        digitalWrite(LED2_PIN, led2State);
+        String json = "{\"led1\":" + String(led1State ? "true" : "false");
+        json += ",\"led2\":" + String(led2State ? "true" : "false") + "}";
+        request->send(200, "application/json", json);
+    });
+    
+    server.begin();
+}
+
+void loop() {
+    // Free for other tasks!
+    // Đọc sensor, xử lý logic khác không bị block bởi WebServer
+}
+```
+
+---
+
+## ⚠️ Phần 3: Lỗi thường gặp
+
+| Lỗi | Nguyên nhân | Cách sửa |
+|-----|-------------|----------|
+| Compile error | Thiếu thư viện ESPAsync | Cài từ GitHub hoặc PlatformIO |
+| Crash/reset | Quá nhiều request | Tối ưu HTML, cache |
+| CORS error | Cross-origin request | Thêm header CORS nếu cần |
+| JSON parse error | Escape character sai | Kiểm tra chuỗi JSON |
+
+### Cách cài ESPAsyncWebServer:
+1. Vào https://github.com/me-no-dev/ESPAsyncWebServer
+2. Download ZIP → Sketch > Include Library > Add .ZIP Library
+
+---
+
+## 🎓 Phần 4: Tóm tắt
+
+1. **Async WebServer**: Non-blocking, không cần handleClient()
+2. **JSON API**: Trả data cho JavaScript xử lý
+3. **fetch()**: JavaScript gọi API không reload trang
+4. **setInterval()**: Auto-refresh UI định kỳ
+5. **PROGMEM**: Lưu HTML trong Flash, tiết kiệm RAM
+
+---', 
+ 30, 1, unixepoch());
+
+-- ==========================================
+-- LABS (from curriculum)
+-- ==========================================
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-01-01', 'week-01', 1, 'Thực hành tuần 1', 
+ 'Áp dụng kiến thức tuần 1', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 1.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-02-01', 'week-02', 1, 'Thực hành tuần 2', 
+ 'Áp dụng kiến thức tuần 2', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 2.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-03-01', 'week-03', 1, 'Thực hành tuần 3', 
+ 'Áp dụng kiến thức tuần 3', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 3.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-04-01', 'week-04', 1, 'Thực hành tuần 4', 
+ 'Áp dụng kiến thức tuần 4', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 4.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-05-01', 'week-05', 1, 'Thực hành tuần 5', 
+ 'Áp dụng kiến thức tuần 5', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 5.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-06-01', 'week-06', 1, 'Thực hành tuần 6', 
+ 'Áp dụng kiến thức tuần 6', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 6.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-07-01', 'week-07', 1, 'Thực hành tuần 7', 
+ 'Áp dụng kiến thức tuần 7', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 7.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-08-01', 'week-08', 1, 'Thực hành tuần 8', 
+ 'Áp dụng kiến thức tuần 8', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 8.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-09-01', 'week-09', 1, 'Thực hành tuần 9', 
+ 'Áp dụng kiến thức tuần 9', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 9.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-10-01', 'week-10', 1, 'Thực hành tuần 10', 
+ 'Áp dụng kiến thức tuần 10', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 10.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-11-01', 'week-11', 1, 'Thực hành tuần 11', 
+ 'Áp dụng kiến thức tuần 11', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 11.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
+
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
+('lab-12-01', 'week-12', 1, 'Thực hành tuần 12', 
+ 'Áp dụng kiến thức tuần 12', 
+ '# Bài thực hành
+
+Áp dụng kiến thức đã học trong tuần 12.', 
+ 'Xem sơ đồ trong hướng dẫn', 
+ '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
+ '', 
+ '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
+ 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
+
+-- ==========================================
+-- QUIZZES & QUESTIONS
+-- ==========================================
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-01', 'week-01', 'Quiz Tuần 1: Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)', 
+ 'Kiểm tra kiến thức tuần 1', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-01-01', 'quiz-01', 1, 'single', 'Câu hỏi 1 tuần 1?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-01-02', 'quiz-01', 2, 'single', 'Câu hỏi 2 tuần 1?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-01-03', 'quiz-01', 3, 'single', 'Câu hỏi 3 tuần 1?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-02', 'week-02', 'Quiz Tuần 2: Thiết kế Hệ thống Nhúng & LED 7 Đoạn', 
+ 'Kiểm tra kiến thức tuần 2', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-02-01', 'quiz-02', 1, 'single', 'Câu hỏi 1 tuần 2?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-02-02', 'quiz-02', 2, 'single', 'Câu hỏi 2 tuần 2?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-02-03', 'quiz-02', 3, 'single', 'Câu hỏi 3 tuần 2?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-03', 'week-03', 'Quiz Tuần 3: Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad', 
+ 'Kiểm tra kiến thức tuần 3', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-03-01', 'quiz-03', 1, 'single', 'Câu hỏi 1 tuần 3?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-03-02', 'quiz-03', 2, 'single', 'Câu hỏi 2 tuần 3?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-03-03', 'quiz-03', 3, 'single', 'Câu hỏi 3 tuần 3?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-04', 'week-04', 'Quiz Tuần 4: Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)', 
+ 'Kiểm tra kiến thức tuần 4', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-04-01', 'quiz-04', 1, 'single', 'Câu hỏi 1 tuần 4?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-04-02', 'quiz-04', 2, 'single', 'Câu hỏi 2 tuần 4?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-04-03', 'quiz-04', 3, 'single', 'Câu hỏi 3 tuần 4?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-05', 'week-05', 'Quiz Tuần 5: Thực hành Tích hợp I/O', 
+ 'Kiểm tra kiến thức tuần 5', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-05-01', 'quiz-05', 1, 'single', 'Câu hỏi 1 tuần 5?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-05-02', 'quiz-05', 2, 'single', 'Câu hỏi 2 tuần 5?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-05-03', 'quiz-05', 3, 'single', 'Câu hỏi 3 tuần 5?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-06', 'week-06', 'Quiz Tuần 6: Cảm biến trong Hệ thống Nhúng', 
+ 'Kiểm tra kiến thức tuần 6', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-06-01', 'quiz-06', 1, 'single', 'Câu hỏi 1 tuần 6?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-06-02', 'quiz-06', 2, 'single', 'Câu hỏi 2 tuần 6?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-06-03', 'quiz-06', 3, 'single', 'Câu hỏi 3 tuần 6?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-07', 'week-07', 'Quiz Tuần 7: Giao thức Kết nối Nối tiếp (Serial UART)', 
+ 'Kiểm tra kiến thức tuần 7', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-07-01', 'quiz-07', 1, 'single', 'Câu hỏi 1 tuần 7?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-07-02', 'quiz-07', 2, 'single', 'Câu hỏi 2 tuần 7?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-07-03', 'quiz-07', 3, 'single', 'Câu hỏi 3 tuần 7?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-08', 'week-08', 'Quiz Tuần 8: Giao thức Kết nối I2C', 
+ 'Kiểm tra kiến thức tuần 8', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-08-01', 'quiz-08', 1, 'single', 'Câu hỏi 1 tuần 8?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-08-02', 'quiz-08', 2, 'single', 'Câu hỏi 2 tuần 8?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-08-03', 'quiz-08', 3, 'single', 'Câu hỏi 3 tuần 8?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-09', 'week-09', 'Quiz Tuần 9: Giao thức Kết nối SPI', 
+ 'Kiểm tra kiến thức tuần 9', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-09-01', 'quiz-09', 1, 'single', 'Câu hỏi 1 tuần 9?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-09-02', 'quiz-09', 2, 'single', 'Câu hỏi 2 tuần 9?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-09-03', 'quiz-09', 3, 'single', 'Câu hỏi 3 tuần 9?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-10', 'week-10', 'Quiz Tuần 10: Giao thức 1-Wire (DS18B20)', 
+ 'Kiểm tra kiến thức tuần 10', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-10-01', 'quiz-10', 1, 'single', 'Câu hỏi 1 tuần 10?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-10-02', 'quiz-10', 2, 'single', 'Câu hỏi 2 tuần 10?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-10-03', 'quiz-10', 3, 'single', 'Câu hỏi 3 tuần 10?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-11', 'week-11', 'Quiz Tuần 11: Giao tiếp WiFi - Chế độ WebServer', 
+ 'Kiểm tra kiến thức tuần 11', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-11-01', 'quiz-11', 1, 'single', 'Câu hỏi 1 tuần 11?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-11-02', 'quiz-11', 2, 'single', 'Câu hỏi 2 tuần 11?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-11-03', 'quiz-11', 3, 'single', 'Câu hỏi 3 tuần 11?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
+('quiz-12', 'week-12', 'Quiz Tuần 12: Giao tiếp WiFi - Chế độ Asynchronous WebServer', 
+ 'Kiểm tra kiến thức tuần 12', 15, 60, 1, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-12-01', 'quiz-12', 1, 'single', 'Câu hỏi 1 tuần 12?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-12-02', 'quiz-12', 2, 'single', 'Câu hỏi 2 tuần 12?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-12-03', 'quiz-12', 3, 'single', 'Câu hỏi 3 tuần 12?', 
+ '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
+ '', 10, unixepoch());
+
+-- ==========================================
+-- EXAM DRILLS (one per week)
+-- ==========================================
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-01', 'week-01', 'Exam Drill Tuần 1', 
+ 'Ôn tập kiến thức tuần 1 - Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)',
+ '# Bài thi thực hành Tuần 1\n\n## Đề bài\nÁp dụng kiến thức tuần 1: Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-02', 'week-02', 'Exam Drill Tuần 2', 
+ 'Ôn tập kiến thức tuần 2 - Thiết kế Hệ thống Nhúng & LED 7 Đoạn',
+ '# Bài thi thực hành Tuần 2\n\n## Đề bài\nÁp dụng kiến thức tuần 2: Thiết kế Hệ thống Nhúng & LED 7 Đoạn\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-03', 'week-03', 'Exam Drill Tuần 3', 
+ 'Ôn tập kiến thức tuần 3 - Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad',
+ '# Bài thi thực hành Tuần 3\n\n## Đề bài\nÁp dụng kiến thức tuần 3: Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-04', 'week-04', 'Exam Drill Tuần 4', 
+ 'Ôn tập kiến thức tuần 4 - Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)',
+ '# Bài thi thực hành Tuần 4\n\n## Đề bài\nÁp dụng kiến thức tuần 4: Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-05', 'week-05', 'Exam Drill Tuần 5', 
+ 'Ôn tập kiến thức tuần 5 - Thực hành Tích hợp I/O',
+ '# Bài thi thực hành Tuần 5\n\n## Đề bài\nÁp dụng kiến thức tuần 5: Thực hành Tích hợp I/O\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-06', 'week-06', 'Exam Drill Tuần 6', 
+ 'Ôn tập kiến thức tuần 6 - Cảm biến trong Hệ thống Nhúng',
+ '# Bài thi thực hành Tuần 6\n\n## Đề bài\nÁp dụng kiến thức tuần 6: Cảm biến trong Hệ thống Nhúng\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-07', 'week-07', 'Exam Drill Tuần 7', 
+ 'Ôn tập kiến thức tuần 7 - Giao thức Kết nối Nối tiếp (Serial UART)',
+ '# Bài thi thực hành Tuần 7\n\n## Đề bài\nÁp dụng kiến thức tuần 7: Giao thức Kết nối Nối tiếp (Serial UART)\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-08', 'week-08', 'Exam Drill Tuần 8', 
+ 'Ôn tập kiến thức tuần 8 - Giao thức Kết nối I2C',
+ '# Bài thi thực hành Tuần 8\n\n## Đề bài\nÁp dụng kiến thức tuần 8: Giao thức Kết nối I2C\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-09', 'week-09', 'Exam Drill Tuần 9', 
+ 'Ôn tập kiến thức tuần 9 - Giao thức Kết nối SPI',
+ '# Bài thi thực hành Tuần 9\n\n## Đề bài\nÁp dụng kiến thức tuần 9: Giao thức Kết nối SPI\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-10', 'week-10', 'Exam Drill Tuần 10', 
+ 'Ôn tập kiến thức tuần 10 - Giao thức 1-Wire (DS18B20)',
+ '# Bài thi thực hành Tuần 10\n\n## Đề bài\nÁp dụng kiến thức tuần 10: Giao thức 1-Wire (DS18B20)\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-11', 'week-11', 'Exam Drill Tuần 11', 
+ 'Ôn tập kiến thức tuần 11 - Giao tiếp WiFi - Chế độ WebServer',
+ '# Bài thi thực hành Tuần 11\n\n## Đề bài\nÁp dụng kiến thức tuần 11: Giao tiếp WiFi - Chế độ WebServer\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
+
+INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
+('drill-12', 'week-12', 'Exam Drill Tuần 12', 
+ 'Ôn tập kiến thức tuần 12 - Giao tiếp WiFi - Chế độ Asynchronous WebServer',
+ '# Bài thi thực hành Tuần 12\n\n## Đề bài\nÁp dụng kiến thức tuần 12: Giao tiếp WiFi - Chế độ Asynchronous WebServer\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
+ '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
+ 30, 1, unixepoch());
 

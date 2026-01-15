@@ -38,6 +38,7 @@ export default function LessonPage() {
     const navigate = useNavigate();
     const [lesson, setLesson] = useState<LessonDetail | null>(null);
     const [week, setWeek] = useState<WeekInfo | null>(null);
+    const [siblings, setSiblings] = useState<{ prev: string | null; next: string | null }>({ prev: null, next: null });
     const [loading, setLoading] = useState(true);
     const [completed, setCompleted] = useState(false);
     const [readingProgress, setReadingProgress] = useState(0);
@@ -58,6 +59,18 @@ export default function LessonPage() {
                 const data = await res.json();
                 setLesson(data.lesson);
                 setWeek(data.week);
+                // Calculate prev/next lesson IDs
+                if (data.lesson && data.week) {
+                    const currentOrder = data.lesson.orderIndex;
+                    const weekNum = data.week.weekNumber;
+                    const weekPadded = String(weekNum).padStart(2, '0');
+                    const prevOrder = currentOrder - 1;
+                    const nextOrder = currentOrder + 1;
+                    setSiblings({
+                        prev: prevOrder >= 1 ? `lesson-${weekPadded}-${String(prevOrder).padStart(2, '0')}` : (weekNum > 1 ? `lesson-${String(weekNum - 1).padStart(2, '0')}-01` : null),
+                        next: `lesson-${weekPadded}-${String(nextOrder).padStart(2, '0')}`
+                    });
+                }
             } catch (error) {
                 console.error('Failed to fetch lesson:', error);
             } finally {
@@ -236,14 +249,21 @@ export default function LessonPage() {
 
                     {/* Navigation */}
                     <div className="flex items-center justify-between border-t border-slate-700 mt-6 pt-6">
-                        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all">
-                            <ChevronLeft className="w-5 h-5" />
-                            Bài trước
-                        </button>
-                        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all">
+                        {siblings.prev ? (
+                            <Link to={`/lessons/${siblings.prev}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all">
+                                <ChevronLeft className="w-5 h-5" />
+                                Bài trước
+                            </Link>
+                        ) : (
+                            <Link to={week ? `/weeks/${week.id}` : '/dashboard'} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-all">
+                                <ChevronLeft className="w-5 h-5" />
+                                Về tuần học
+                            </Link>
+                        )}
+                        <Link to={`/lessons/${siblings.next}`} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:from-teal-400 hover:to-cyan-400 transition-all shadow-lg">
                             Bài sau
                             <ChevronRight className="w-5 h-5" />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </main>
@@ -254,150 +274,110 @@ export default function LessonPage() {
     );
 }
 
-// Enhanced Markdown Renderer Component
-function MarkdownRenderer({ content }: { content: string }) {
-    const renderContent = () => {
-        const lines = content.split('\n');
-        const elements: React.ReactNode[] = [];
-        let inCodeBlock = false;
-        let codeContent = '';
-        let codeLanguage = '';
+// Professional Markdown Renderer using react-markdown
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
-        lines.forEach((line, index) => {
-            // Code block detection
-            if (line.startsWith('```')) {
-                if (!inCodeBlock) {
-                    inCodeBlock = true;
-                    codeLanguage = line.slice(3).trim() || 'cpp';
-                    codeContent = '';
-                } else {
-                    inCodeBlock = false;
-                    elements.push(
-                        <div key={index} className="my-6 rounded-xl overflow-hidden border border-slate-700/50 shadow-lg">
+function MarkdownRenderer({ content }: { content: string }) {
+    return (
+        <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+                // Headings
+                h1: ({ children }) => (
+                    <h1 className="text-3xl font-black bg-gradient-to-r from-white via-teal-200 to-cyan-300 bg-clip-text text-transparent mt-10 mb-6 pb-3 border-b border-slate-700/50">
+                        {children}
+                    </h1>
+                ),
+                h2: ({ children }) => (
+                    <h2 className="text-2xl font-bold text-white mt-8 mb-4 flex items-center gap-3">
+                        <span className="w-1.5 h-8 bg-gradient-to-b from-teal-400 to-cyan-500 rounded-full" />
+                        {children}
+                    </h2>
+                ),
+                h3: ({ children }) => (
+                    <h3 className="text-xl font-semibold text-slate-200 mt-6 mb-3">{children}</h3>
+                ),
+                h4: ({ children }) => (
+                    <h4 className="text-lg font-semibold text-slate-300 mt-4 mb-2">{children}</h4>
+                ),
+                // Paragraphs
+                p: ({ children }) => (
+                    <p className="text-slate-300 my-3 leading-relaxed text-base">{children}</p>
+                ),
+                // Lists
+                ul: ({ children }) => <ul className="my-4 space-y-2">{children}</ul>,
+                ol: ({ children }) => <ol className="my-4 space-y-2">{children}</ol>,
+                li: ({ children }) => (
+                    <li className="text-slate-300 ml-6 flex items-start gap-3">
+                        <span className="w-2 h-2 mt-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 shrink-0" />
+                        <span>{children}</span>
+                    </li>
+                ),
+                // Blockquote
+                blockquote: ({ children }) => (
+                    <blockquote className="my-4 pl-4 border-l-4 border-teal-500 bg-teal-500/5 py-3 pr-4 rounded-r-lg text-slate-300 italic">
+                        {children}
+                    </blockquote>
+                ),
+                // Code
+                code: ({ className, children }) => {
+                    const isInline = !className;
+                    if (isInline) {
+                        return (
+                            <code className="px-2 py-1 bg-slate-800 rounded-md text-teal-300 text-sm font-mono border border-slate-700">
+                                {children}
+                            </code>
+                        );
+                    }
+                    const language = className?.replace('language-', '') || 'cpp';
+                    return (
+                        <div className="my-6 rounded-xl overflow-hidden border border-slate-700/50 shadow-lg">
                             <div className="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
                                 <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-full bg-red-500" />
                                     <div className="w-3 h-3 rounded-full bg-yellow-500" />
                                     <div className="w-3 h-3 rounded-full bg-green-500" />
                                 </div>
-                                <span className="text-xs text-slate-500 font-mono">{codeLanguage}</span>
+                                <span className="text-xs text-slate-500 font-mono">{language}</span>
                             </div>
                             <pre className="bg-slate-900 p-4 overflow-x-auto">
-                                <code className={`language-${codeLanguage} text-sm text-slate-300 font-mono leading-relaxed`}>
-                                    {codeContent.trim()}
+                                <code className="text-sm text-slate-300 font-mono leading-relaxed whitespace-pre">
+                                    {children}
                                 </code>
                             </pre>
                         </div>
                     );
-                }
-                return;
-            }
-
-            if (inCodeBlock) {
-                codeContent += line + '\n';
-                return;
-            }
-
-            // Headers with gradient styling
-            if (line.startsWith('# ')) {
-                elements.push(
-                    <h1 key={index} className="text-3xl font-black bg-gradient-to-r from-white via-teal-200 to-cyan-300 bg-clip-text text-transparent mt-10 mb-6 pb-3 border-b border-slate-700/50">
-                        {line.slice(2)}
-                    </h1>
-                );
-            } else if (line.startsWith('## ')) {
-                elements.push(
-                    <h2 key={index} className="text-2xl font-bold text-white mt-8 mb-4 flex items-center gap-3">
-                        <span className="w-1.5 h-8 bg-gradient-to-b from-teal-400 to-cyan-500 rounded-full" />
-                        {line.slice(3)}
-                    </h2>
-                );
-            } else if (line.startsWith('### ')) {
-                elements.push(
-                    <h3 key={index} className="text-xl font-semibold text-slate-200 mt-6 mb-3">
-                        {line.slice(4)}
-                    </h3>
-                );
-            }
-            // Blockquote / Important notes
-            else if (line.startsWith('> ')) {
-                elements.push(
-                    <blockquote key={index} className="my-4 pl-4 border-l-4 border-teal-500 bg-teal-500/5 py-3 pr-4 rounded-r-lg text-slate-300 italic">
-                        {line.slice(2)}
-                    </blockquote>
-                );
-            }
-            // List items
-            else if (line.startsWith('- ')) {
-                elements.push(
-                    <li key={index} className="text-slate-300 ml-6 list-none flex items-start gap-3 my-2">
-                        <span className="w-2 h-2 mt-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 shrink-0" />
-                        <span>{line.slice(2)}</span>
-                    </li>
-                );
-            }
-            // Numbered list
-            else if (/^\d+\. /.test(line)) {
-                const match = line.match(/^(\d+)\. (.*)$/);
-                if (match) {
-                    elements.push(
-                        <li key={index} className="text-slate-300 ml-6 list-none flex items-start gap-3 my-2">
-                            <span className="w-6 h-6 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm font-bold shrink-0">
-                                {match[1]}
-                            </span>
-                            <span>{match[2]}</span>
-                        </li>
-                    );
-                }
-            }
-            // Inline code
-            else if (line.includes('`')) {
-                const parts = line.split(/(`[^`]+`)/);
-                elements.push(
-                    <p key={index} className="text-slate-300 my-3 leading-relaxed">
-                        {parts.map((part, i) =>
-                            part.startsWith('`') && part.endsWith('`') ? (
-                                <code key={i} className="px-2 py-1 bg-slate-800 rounded-md text-teal-300 text-sm font-mono border border-slate-700">
-                                    {part.slice(1, -1)}
-                                </code>
-                            ) : (
-                                part
-                            )
-                        )}
-                    </p>
-                );
-            }
-            // Bold text
-            else if (line.includes('**')) {
-                const parts = line.split(/(\*\*[^*]+\*\*)/);
-                elements.push(
-                    <p key={index} className="text-slate-300 my-3 leading-relaxed">
-                        {parts.map((part, i) =>
-                            part.startsWith('**') && part.endsWith('**') ? (
-                                <strong key={i} className="text-white font-semibold">{part.slice(2, -2)}</strong>
-                            ) : (
-                                part
-                            )
-                        )}
-                    </p>
-                );
-            }
-            // Regular paragraph
-            else if (line.trim()) {
-                elements.push(
-                    <p key={index} className="text-slate-300 my-3 leading-relaxed text-base">
-                        {line}
-                    </p>
-                );
-            }
-            // Empty line = spacing
-            else {
-                elements.push(<div key={index} className="h-3" />);
-            }
-        });
-
-        return elements;
-    };
-
-    return <div className="space-y-1">{renderContent()}</div>;
+                },
+                pre: ({ children }) => <>{children}</>,
+                // Tables (GFM)
+                table: ({ children }) => (
+                    <div className="my-6 overflow-x-auto rounded-xl border border-slate-700/50">
+                        <table className="w-full text-sm">{children}</table>
+                    </div>
+                ),
+                thead: ({ children }) => (
+                    <thead className="bg-slate-800 text-slate-200 font-semibold">{children}</thead>
+                ),
+                tbody: ({ children }) => <tbody className="divide-y divide-slate-700/50">{children}</tbody>,
+                tr: ({ children }) => <tr className="hover:bg-slate-800/50 transition-colors">{children}</tr>,
+                th: ({ children }) => <th className="px-4 py-3 text-left">{children}</th>,
+                td: ({ children }) => <td className="px-4 py-3 text-slate-300">{children}</td>,
+                // Links
+                a: ({ href, children }) => (
+                    <a href={href} className="text-teal-400 hover:text-teal-300 underline underline-offset-2" target="_blank" rel="noopener noreferrer">
+                        {children}
+                    </a>
+                ),
+                // Strong/Bold
+                strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
+                // Emphasis/Italic
+                em: ({ children }) => <em className="text-slate-200 italic">{children}</em>,
+                // Horizontal Rule
+                hr: () => <hr className="my-8 border-t border-slate-700/50" />,
+            }}
+        >
+            {content}
+        </ReactMarkdown>
+    );
 }
