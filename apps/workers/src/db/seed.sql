@@ -260,7 +260,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, starter
 - LED1/LED2; nút `BAT/TAT` theo trạng thái.', 'See instructions', '// Write your code here', '{"total":10}', 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
 
 -- EXAM DRILLS
-INSERT INTO exam_drills (id, week_id, title, description, content, sample_solution, simulator_url, difficulty, passing_score, time_limit, is_published, created_at) VALUES 
+INSERT INTO exam_drills (id, week_id, title, description, content, sample_solution, time_limit, is_published, created_at) VALUES 
 ('drill-01', 'week-01', 'Kiểm tra LED cơ bản', 'Kiểm tra khả năng điều khiển LED của bạn!', 
 '## Đề bài
 
@@ -274,5 +274,5 @@ Viết chương trình điều khiển 5 LED (D2-D6):
 - Code sạch, có comment
 - Sử dụng hàm riêng cho mỗi hiệu ứng
 - Chạy vòng lặp vô hạn',
-'// Sample solution code', 'https://wokwi.com/projects/new/arduino-uno', 'easy', 60, 30, 1, unixepoch());
+'// Sample solution code', 30, 1, unixepoch());
 
