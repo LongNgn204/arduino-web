@@ -6,7 +6,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { PageLoading } from './components/LoadingSpinner';
 import UpdatePopup from './components/UpdatePopup';
 import Sidebar from './components/Sidebar';
-import AiChatPopup from './components/AiChatPopup';
+import AiChatSidebar from './components/chat/AiChatSidebar';
 import ContextualAiAssistant from './components/ContextualAiAssistant';
 import { useAuthStore } from './stores/authStore';
 
@@ -110,8 +110,11 @@ function AppContent() {
         </Routes>
       </Suspense>
 
-      {/* AI Chat Popup - Global on all pages */}
-      <AiChatPopup />
+      {/* AI Chat Sidebar - Global */}
+      <AiChatSidebar />
+
+      {/* Legacy/Floating AI Chat Popup - Can be removed later or toggled via settings */}
+      {/* <AiChatPopup /> */}
 
       {/* Global Text Selection Handler for Real-time AI */}
       <ContextualAiAssistant onOpenFullChat={(text) => {
