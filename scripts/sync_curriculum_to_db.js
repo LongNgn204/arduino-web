@@ -9,32 +9,17 @@ function escapeSql(str) {
     return "'" + str.replace(/'/g, "''") + "'";
 }
 
+
 const STATIC_SQL = `-- Generated Seed Data
 -- Date: ${new Date().toISOString()}
 
--- RESET TABLES
-DELETE FROM lab_submissions;
-DELETE FROM quiz_attempts;
-DELETE FROM progress;
-DELETE FROM ai_chat_logs;
-DELETE FROM questions;
-DELETE FROM quizzes;
-DELETE FROM exam_drills;
-DELETE FROM labs;
-DELETE FROM lessons;
-DELETE FROM weeks;
-DELETE FROM topics;
-DELETE FROM sessions;
-DELETE FROM courses;
-DELETE FROM users;
-
 -- USERS
-INSERT INTO users (id, username, password_hash, role, display_name, created_at, updated_at) VALUES 
+INSERT OR REPLACE INTO users (id, username, password_hash, role, display_name, created_at, updated_at) VALUES 
 ('admin-001', 'admin', 'pbkdf2$100000$c2FsdF9hZG1pbl90ZXN0$WkYxR2FEbG1iSEZ3WVhOemQyOXlaQT09', 'admin', 'Administrator', unixepoch(), unixepoch()),
 ('student-001', 'sinhvien', 'pbkdf2$100000$c2FsdF9zdHVkZW50X3Rlc3Q$dGVzdHBhc3N3b3JkMTIz', 'student', 'Nguyen Hoang Long', unixepoch(), unixepoch());
 
 -- TOPICS
-INSERT INTO topics (id, name, slug, description) VALUES
+INSERT OR REPLACE INTO topics (id, name, slug, description) VALUES
 ('topic-01', 'Nhập môn', 'intro', 'Kiến thức cơ bản'),
 ('topic-02', 'GPIO', 'gpio', 'Input/Output'),
 ('topic-03', 'Cảm biến', 'sensors', 'Đọc dữ liệu môi trường'),
@@ -42,7 +27,7 @@ INSERT INTO topics (id, name, slug, description) VALUES
 ('topic-05', 'IoT', 'iot', 'Internet of Things');
 
 -- COURSE
-INSERT INTO courses (id, code, title, description, total_weeks, is_published, created_at) VALUES 
+INSERT OR REPLACE INTO courses (id, code, title, description, total_weeks, is_published, created_at) VALUES 
 ('course-01', 'IOT101', 'Lập trình hệ thống nhúng & IoT', 'Khóa học Arduino/ESP32 toàn diện.', 13, 1, unixepoch());
 `;
 
@@ -100,8 +85,14 @@ function parseFile(content) {
     return { title, overview, ...sections };
 }
 
+
+const OUT_BASE = path.join(__dirname, '../apps/workers/src/db');
+
 function main() {
-    let sql = STATIC_SQL;
+    let sqlWeeks = `-- Weeks Seed\n`;
+    let sqlLessons = `-- Lessons Seed\n`;
+    let sqlLabs = `-- Labs Seed\n`;
+    let sqlBase = STATIC_SQL; // Users, Topics, Courses
 
     try {
         const files = fs.readdirSync(DIR).filter(f => f.endsWith('.md')).sort();
@@ -110,37 +101,35 @@ function main() {
         files.forEach((file, idx) => {
             const content = fs.readFileSync(path.join(DIR, file), 'utf-8');
             const match = file.match(/week-(\d+)/);
-            // Default to index if no number found, but files are named week-00, week-01...
             const weekNum = match ? parseInt(match[1]) : idx;
             const weekId = `week-${String(weekNum).padStart(2, '0')}`;
             const topicId = getTopicId(weekNum);
 
             console.log(`Processing Week ${weekNum}: ${file}`);
-
             const data = parseFile(content);
 
-            // Generate SQL
-            sql += `\n-- WEEK ${weekNum}: ${data.title}\n`;
-            sql += `INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
-('${weekId}', 'course-01', ${weekNum}, '${topicId}', ${escapeSql(data.title)}, ${escapeSql(data.overview)}, 1);\n`;
+            // Weeks
+            sqlWeeks += `INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES ('${weekId}', 'course-01', ${weekNum}, '${topicId}', ${escapeSql(data.title)}, ${escapeSql(data.overview)}, 1);\n`;
 
-            // ONE LESSON containing all theory
+            // Lessons
             const lId = `l-${String(weekNum).padStart(2, '0')}-01`;
             const theoryContent = data.theory.join('\n').trim();
-            sql += `INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
-('${lId}', '${weekId}', 1, 'Lý thuyết & Bài học', ${escapeSql(theoryContent)}, 1);\n`;
+            sqlLessons += `INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES ('${lId}', '${weekId}', 1, 'Lý thuyết & Bài học', ${escapeSql(theoryContent)}, 1);\n`;
 
-            // LABS
+            // Labs
             data.labs.forEach((lab, i) => {
                 const labId = `lab-${String(weekNum).padStart(2, '0')}-${i + 1}`;
                 const instructions = lab.content.join('\n').trim();
-                sql += `INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
-('${labId}', '${weekId}', ${i + 1}, ${escapeSql(lab.title)}, ${escapeSql(instructions)}, 'See instructions', 1);\n`;
+                sqlLabs += `INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES ('${labId}', '${weekId}', ${i + 1}, ${escapeSql(lab.title)}, ${escapeSql(instructions)}, 'See instructions', 1);\n`;
             });
         });
 
-        fs.writeFileSync(OUT, sql);
-        console.log('Successfully generated seed_lms_2026.sql');
+        fs.writeFileSync(path.join(OUT_BASE, 'seed_base.sql'), sqlBase);
+        fs.writeFileSync(path.join(OUT_BASE, 'seed_weeks.sql'), sqlWeeks);
+        fs.writeFileSync(path.join(OUT_BASE, 'seed_lessons.sql'), sqlLessons);
+        fs.writeFileSync(path.join(OUT_BASE, 'seed_labs.sql'), sqlLabs);
+
+        console.log('Successfully generated split seed files.');
 
     } catch (e) {
         console.error('Error generating seed:', e);

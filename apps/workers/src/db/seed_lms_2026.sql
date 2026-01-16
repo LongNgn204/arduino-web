@@ -1,29 +1,13 @@
 -- Generated Seed Data
--- Date: 2026-01-16T13:52:24.277Z
-
--- RESET TABLES
-DELETE FROM lab_submissions;
-DELETE FROM quiz_attempts;
-DELETE FROM progress;
-DELETE FROM ai_chat_logs;
-DELETE FROM questions;
-DELETE FROM quizzes;
-DELETE FROM exam_drills;
-DELETE FROM labs;
-DELETE FROM lessons;
-DELETE FROM weeks;
-DELETE FROM topics;
-DELETE FROM sessions;
-DELETE FROM courses;
-DELETE FROM users;
+-- Date: 2026-01-16T13:56:13.920Z
 
 -- USERS
-INSERT INTO users (id, username, password_hash, role, display_name, created_at, updated_at) VALUES 
+INSERT OR REPLACE INTO users (id, username, password_hash, role, display_name, created_at, updated_at) VALUES 
 ('admin-001', 'admin', 'pbkdf2$100000$c2FsdF9hZG1pbl90ZXN0$WkYxR2FEbG1iSEZ3WVhOemQyOXlaQT09', 'admin', 'Administrator', unixepoch(), unixepoch()),
 ('student-001', 'sinhvien', 'pbkdf2$100000$c2FsdF9zdHVkZW50X3Rlc3Q$dGVzdHBhc3N3b3JkMTIz', 'student', 'Nguyen Hoang Long', unixepoch(), unixepoch());
 
 -- TOPICS
-INSERT INTO topics (id, name, slug, description) VALUES
+INSERT OR REPLACE INTO topics (id, name, slug, description) VALUES
 ('topic-01', 'Nhập môn', 'intro', 'Kiến thức cơ bản'),
 ('topic-02', 'GPIO', 'gpio', 'Input/Output'),
 ('topic-03', 'Cảm biến', 'sensors', 'Đọc dữ liệu môi trường'),
@@ -31,13 +15,13 @@ INSERT INTO topics (id, name, slug, description) VALUES
 ('topic-05', 'IoT', 'iot', 'Internet of Things');
 
 -- COURSE
-INSERT INTO courses (id, code, title, description, total_weeks, is_published, created_at) VALUES 
+INSERT OR REPLACE INTO courses (id, code, title, description, total_weeks, is_published, created_at) VALUES 
 ('course-01', 'IOT101', 'Lập trình hệ thống nhúng & IoT', 'Khóa học Arduino/ESP32 toàn diện.', 13, 1, unixepoch());
 
 -- WEEK 0: Tuần 0: Nhập môn Điện tử & Linh kiện cơ bản
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-00', 'course-01', 0, 'topic-01', 'Tuần 0: Nhập môn Điện tử & Linh kiện cơ bản', '**Thời lượng**: 2 tiết lý thuyết + 1 tiết thực hành **Mục tiêu**: Hiểu kiến thức điện tử cơ bản trước khi bắt đầu lập trình Arduino **💡 Mẹo nhớ**: Dùng **tam giác VIR** - che đại lượng cần tìm, còn lại là công thức! **"Bà Nâu Đi Ra Cầu Vàng Xem Xanh Tím Xám Trắng"** **"Bad Boys Ravish Our Young Girls But Violet Gives Willingly"** ⚠️ **CẢNH BÁO**: LED LUÔN CẦN ĐIỆN TRỞ HẠN DÒNG! Không có điện trở → LED cháy! **Tuần tiếp theo**: Arduino Uno & GPIO - Điều khiển LED bằng code!', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-00-01', 'week-00', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 2 tiết lý thuyết + 1 tiết thực hành  
 > **Mục tiêu**: Hiểu kiến thức điện tử cơ bản trước khi bắt đầu lập trình Arduino
 
@@ -274,7 +258,7 @@ graph LR
 | **Rãnh giữa** | KHÔNG nối | Chia đôi board |
 
 ---', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-00-1', 'week-00', 1, 'Lab 0-1: Tính điện trở cho LED', '**Bài toán thực tế:**
 Bạn có:
 - Nguồn Arduino 5V
@@ -290,7 +274,7 @@ R = (5V - 2V) / 0.02A = 150Ω
 → Chọn 220Ω (gần nhất, an toàn hơn 150Ω)
 → Dòng thực tế: I = 3V / 220Ω = 13.6mA ✓
 ```', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-00-2', 'week-00', 2, 'Lab 0-2: Đọc giá trị điện trở', '**Bài tập:** Đọc giá trị các điện trở sau:
 
 1. Vàng - Tím - Đỏ - Vàng kim = ?
@@ -308,9 +292,9 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 ---', 'See instructions', 1);
 
 -- WEEK 1: Tuần 1: Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-01', 'course-01', 1, 'topic-01', 'Tuần 1: Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Làm quen Arduino Uno, hiểu cấu trúc chương trình, điều khiển LED cơ bản **Tuần tiếp theo**: LED 7 đoạn & Thiết kế hệ thống nhúng', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-01-01', 'week-01', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Làm quen Arduino Uno, hiểu cấu trúc chương trình, điều khiển LED cơ bản
 
@@ -726,7 +710,7 @@ R = (Vnguồn - Vled) / Iled
 | OUTPUT/INPUT | Chế độ xuất / nhập tín hiệu |
 
 ---', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-01-1', 'week-01', 1, 'Lab 1-1: Điều khiển LED theo quy luật thời gian', '**Mục tiêu**: Viết hàm tái sử dụng để nháy LED
 
 **Yêu cầu**:
@@ -744,7 +728,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Serial log theo dõi được | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-01-2', 'week-01', 2, 'Lab 1-2: Điều khiển 5 LED tuần tự', '**Mục tiêu**: Sử dụng mảng và vòng lặp để quản lý nhiều LED
 
 **Yêu cầu**:
@@ -762,7 +746,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Code sạch, có comment | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-01-3', 'week-01', 3, 'Lab 1-3: Hiệu ứng LED đuổi (Knight Rider)', '**Mục tiêu**: Tạo hiệu ứng "duy nhất 1 LED sáng"
 
 **Yêu cầu**:
@@ -852,9 +836,9 @@ void loop() {
 > **Tuần tiếp theo**: LED 7 đoạn & Thiết kế hệ thống nhúng', 'See instructions', 1);
 
 -- WEEK 2: Tuần 2: Thiết kế Hệ thống Nhúng & LED 7 Đoạn
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-02', 'course-01', 2, 'topic-02', 'Tuần 2: Thiết kế Hệ thống Nhúng & LED 7 Đoạn', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Hiểu phương pháp thiết kế, điều khiển LED 7 đoạn đơn và module 4 số ⚠️ **Quan trọng**: Khi mua LED 7 đoạn, hãy kiểm tra loại CC hay CA để viết code đúng logic! 💡 **Mẹo nhớ**: Số 8 bật tất cả (0x7F), số 1 chỉ bật b và c (0x06) **Tuần tiếp theo**: Tuần 3 - Nút nhấn & Keypad (INPUT_PULLUP, Debounce, Edge Detection)', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-02-01', 'week-02', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Hiểu phương pháp thiết kế, điều khiển LED 7 đoạn đơn và module 4 số
 
@@ -1559,7 +1543,7 @@ Số 4 chữ số từ int:
 | Latch | Chốt dữ liệu ra output |
 
 ---', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-02-1', 'week-02', 1, 'Lab 2-1: LED 7 đoạn (1 số)', '**Mục tiêu**: Điều khiển LED 7 đoạn đơn hiển thị số
 
 **Yêu cầu**:
@@ -1590,7 +1574,7 @@ Arduino          LED 7 đoạn (CC)
 | Serial log theo dõi được | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-02-2', 'week-02', 2, 'Lab 2-2: Mô đun 4 LED 7 đoạn', '**Mục tiêu**: Điều khiển module 4 số bằng kỹ thuật multiplexing
 
 **Yêu cầu**:
@@ -1607,7 +1591,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Code sạch, có hàm refreshDisplay() | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-02-3', 'week-02', 3, 'Lab 2-3: Module 4 LED 7 đoạn + 74HC595', '**Mục tiêu**: Sử dụng shift register để giảm số chân điều khiển
 
 **Yêu cầu**:
@@ -1736,9 +1720,9 @@ void loop() {
 > **Tuần tiếp theo**: Tuần 3 - Nút nhấn & Keypad (INPUT_PULLUP, Debounce, Edge Detection)', 'See instructions', 1);
 
 -- WEEK 3: Tuần 3: Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-03', 'course-01', 3, 'topic-02', 'Tuần 3: Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Đọc nút nhấn chính xác, xử lý debounce, điều khiển bằng keypad ⚠️ **Lưu ý**: Logic **đảo ngược** so với trực giác! HIGH = không nhấn, LOW = nhấn. **Tuần tiếp theo**: Tuần 4 - Analog Input/Output (ADC & PWM)', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-03-01', 'week-03', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Đọc nút nhấn chính xác, xử lý debounce, điều khiển bằng keypad
 
@@ -2378,7 +2362,7 @@ lastState = currentState;
 | Rising Edge | Cạnh lên (LOW→HIGH) |
 
 ---', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-03-1', 'week-03', 1, 'Lab 3-1: Nhấn → LED bật, nhả → LED tắt', '**Mục tiêu**: Đọc nút nhấn và điều khiển LED trực tiếp
 
 **Yêu cầu**:
@@ -2395,7 +2379,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Code có comment | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-03-2', 'week-03', 2, 'Lab 3-2: Đếm số lần nhấn, lẻ bật, chẵn tắt', '**Mục tiêu**: Áp dụng edge detection và debounce
 
 **Yêu cầu**:
@@ -2413,7 +2397,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Code có comment | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-03-3', 'week-03', 3, 'Lab 3-3: Keypad đọc 1 ký tự', '**Mục tiêu**: Sử dụng thư viện Keypad
 
 **Yêu cầu**:
@@ -2429,7 +2413,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Code sạch | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-03-4', 'week-03', 4, 'Lab 3-4: Keypad điều khiển 5 LED', '**Mục tiêu**: Mapping phím với chức năng
 
 **Yêu cầu**:
@@ -2446,7 +2430,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Code modular (switch/case) | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-03-5', 'week-03', 5, 'Lab 3-5: Keypad password', '**Mục tiêu**: Xây dựng hệ thống mật khẩu
 
 **Yêu cầu**:
@@ -2604,9 +2588,9 @@ void loop() {
 > **Tuần tiếp theo**: Tuần 4 - Analog Input/Output (ADC & PWM)', 'See instructions', 1);
 
 -- WEEK 4: Tuần 4: Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-04', 'course-01', 4, 'topic-02', 'Tuần 4: Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Đọc tín hiệu analog từ potentiometer, điều khiển LED bằng PWM **Tuần tiếp theo**: Tuần 5 - Thực hành tích hợp I/O (Ghép nút + pot + LED + 7-seg)', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-04-01', 'week-04', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Đọc tín hiệu analog từ potentiometer, điều khiển LED bằng PWM
 
@@ -3102,7 +3086,7 @@ PWM từ raw = map(raw, 0, 1023, 0, 255)
 | Potentiometer | Biến trở xoay |
 
 ---', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-04-1', 'week-04', 1, 'Lab 4-1: Đọc điện áp pot — 3 dạng', '**Mục tiêu**: Đọc và chuyển đổi giá trị analog
 
 **Yêu cầu**:
@@ -3119,7 +3103,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Code có comment | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-04-2', 'week-04', 2, 'Lab 4-2: PWM độ sáng LED theo pot', '**Mục tiêu**: Điều khiển LED bằng PWM
 
 **Yêu cầu**:
@@ -3135,7 +3119,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Dùng map() đúng cách | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-04-3', 'week-04', 3, 'Lab 4-3: Điều khiển tốc độ nháy theo pot', '**Mục tiêu**: Thay đổi timing theo analog input
 
 **Yêu cầu**:
@@ -3152,7 +3136,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Code sạch | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-04-4', 'week-04', 4, 'Lab 4-4: 7 LED theo pot, 3 chế độ', '**Mục tiêu**: Điều khiển pattern LED theo ngưỡng
 
 **Yêu cầu**:
@@ -3266,9 +3250,9 @@ void loop() {
 > **Tuần tiếp theo**: Tuần 5 - Thực hành tích hợp I/O (Ghép nút + pot + LED + 7-seg)', 'See instructions', 1);
 
 -- WEEK 5: Tuần 5: Thực hành Tích hợp I/O
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-05', 'course-01', 5, 'topic-03', 'Tuần 5: Thực hành Tích hợp I/O', '**Thời lượng**: 2 tiết lý thuyết + 3 tiết thực hành **Mục tiêu**: Ghép nối pot + nút + LED + 7-seg thành hệ thống hoàn chỉnh **Tuần tiếp theo**: Tuần 6 - Cảm biến trong Hệ thống Nhúng', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-05-01', 'week-05', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 2 tiết lý thuyết + 3 tiết thực hành  
 > **Mục tiêu**: Ghép nối pot + nút + LED + 7-seg thành hệ thống hoàn chỉnh
 
@@ -3892,17 +3876,17 @@ void loop() {
 ```
 
 ---', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-05-1', 'week-05', 1, 'Lab 5-1: LED trang trí theo pot', '**Rubric**: Đúng 3 chế độ (40%), chuyển mượt (30%), Serial log (20%), code sạch (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-05-2', 'week-05', 2, 'Lab 5-2: LED bar theo pot', '**Rubric**: Đúng số LED (40%), ngưỡng 10% (30%), Serial (20%), code (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-05-3', 'week-05', 3, 'Lab 5-3: LED theo số lần nhấn', '**Rubric**: Đếm đúng (30%), 2 mode (40%), debounce (20%), code (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-05-4', 'week-05', 4, 'Lab 5-4: Hiển thị % pot', '**Rubric**: Display đúng (40%), quét mượt (30%), pot phản hồi (20%), code (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-05-5', 'week-05', 5, 'Lab 5-5: Hiển thị số lần nhấn', '**Rubric**: Đếm đúng (30%), display đúng (40%), debounce (20%), code (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-05-6', 'week-05', 6, 'Lab 5-6: Đếm tăng/giảm theo nút', '**Rubric**: 2 mode (40%), auto count (30%), display (20%), code (10%)
 
 ---
@@ -3929,9 +3913,9 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 > **Tuần tiếp theo**: Tuần 6 - Cảm biến trong Hệ thống Nhúng', 'See instructions', 1);
 
 -- WEEK 6: Tuần 6: Cảm biến trong Hệ thống Nhúng
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-06', 'course-01', 6, 'topic-03', 'Tuần 6: Cảm biến trong Hệ thống Nhúng', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Đọc và xử lý dữ liệu từ các cảm biến phổ biến 💡 **Mẹo**: Không đọc DHT11 quá nhanh (tối thiểu 2 giây giữa các lần đọc) **Tuần tiếp theo**: Tuần 7 - Serial UART (Giao tiếp nối tiếp)', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-06-01', 'week-06', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Đọc và xử lý dữ liệu từ các cảm biến phổ biến
 
@@ -4539,7 +4523,7 @@ Khoảng cách (cm) = duration × 0.034 / 2
 ```
 
 ---', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-06-1', 'week-06', 1, 'Lab 6-1 đến 6-6:', '*(Rubric cho mỗi bài như trong code mẫu)*
 
 ---
@@ -4568,9 +4552,9 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 > **Tuần tiếp theo**: Tuần 7 - Serial UART (Giao tiếp nối tiếp)', 'See instructions', 1);
 
 -- WEEK 7: Tuần 7: Giao thức Kết nối Nối tiếp (Serial UART)
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-07', 'course-01', 7, 'topic-04', 'Tuần 7: Giao thức Kết nối Nối tiếp (Serial UART)', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Giao tiếp UART giữa Arduino và PC, Arduino với Arduino ⚠️ **Quan trọng**: Cả 2 bên PHẢI dùng cùng baudrate! 💡 **Lưu ý**: SoftwareSerial có tốc độ giới hạn (~57600 baud) và không thể nhận/gửi đồng thời nhiều cổng. **Tuần tiếp theo**: Tuần 8 - Giao thức I2C', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-07-01', 'week-07', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Giao tiếp UART giữa Arduino và PC, Arduino với Arduino
 
@@ -4652,7 +4636,7 @@ Serial.write(65);            // Gửi byte raw (ASCII ''A'')
 
 #### Nhận dữ liệu:
 ```cpp', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-07-1', 'week-07', 1, 'Lab 7-1: Đọc pot và hiển thị trên PC', '**Mục tiêu**: Gửi telemetry từ Arduino lên PC
 
 **Yêu cầu**:
@@ -4669,7 +4653,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Code có comment | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-07-2', 'week-07', 2, 'Lab 7-2: Điều khiển LED từ PC', '**Mục tiêu**: Nhận lệnh từ Serial Monitor điều khiển LED
 
 **Yêu cầu**:
@@ -4687,7 +4671,7 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 | Xử lý lỗi (lệnh sai) | 10% |
 
 ---', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-07-3', 'week-07', 3, 'Lab 7-3: Giao tiếp 2 Arduino', '**Mục tiêu**: Master gửi lệnh, Slave thực hiện và phản hồi
 
 **Yêu cầu**:
@@ -4794,9 +4778,9 @@ void loop() {
 > **Tuần tiếp theo**: Tuần 8 - Giao thức I2C', 'See instructions', 1);
 
 -- WEEK 8: Tuần 8: Giao thức Kết nối I2C
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-08', 'course-01', 8, 'topic-04', 'Tuần 8: Giao thức Kết nối I2C', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Sử dụng I2C để giao tiếp với LCD và các thiết bị khác 💡 **Lưu ý**: Cần điện trở pull-up 4.7kΩ từ SDA và SCL lên VCC. Nhiều module I2C đã có sẵn. **Tuần tiếp theo**: Tuần 9 - Giao thức SPI', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-08-01', 'week-08', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Sử dụng I2C để giao tiếp với LCD và các thiết bị khác
 
@@ -5091,11 +5075,11 @@ void setup() {
 }
 
 void loop() {', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-08-1', 'week-08', 1, 'Lab 8-1: I2C Scanner', '**Rubric**: Tìm đúng địa chỉ (50%), format output (30%), nhận dạng thiết bị (20%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-08-2', 'week-08', 2, 'Lab 8-2: LCD hiển thị', '**Rubric**: LCD hiện đúng (40%), 2 dòng (30%), đếm giây (20%), code (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-08-3', 'week-08', 3, 'Lab 8-3: Master-Slave', '**Rubric**: Gửi lệnh (30%), Slave thực hiện (30%), Phản hồi (30%), code (10%)
 
 ---
@@ -5117,9 +5101,9 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 > **Tuần tiếp theo**: Tuần 9 - Giao thức SPI', 'See instructions', 1);
 
 -- WEEK 9: Tuần 9: Giao thức Kết nối SPI
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-09', 'course-01', 9, 'topic-05', 'Tuần 9: Giao thức Kết nối SPI', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Hiểu SPI và điều khiển thiết bị qua shift register **Tuần tiếp theo**: Tuần 10 - Giao thức 1-Wire', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-09-01', 'week-09', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Hiểu SPI và điều khiển thiết bị qua shift register
 
@@ -5333,11 +5317,11 @@ void setup() {
 
 void loop() {
     // Check Serial commands', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-09-1', 'week-09', 1, 'Lab 9-1: Binary Count', '**Rubric**: Đếm đúng 0-255 (40%), hiển thị binary (30%), timing (20%), code (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-09-2', 'week-09', 2, 'Lab 9-2: Knight Rider', '**Rubric**: Pattern đúng (40%), tốc độ (30%), không lặp đầu cuối (20%), code (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-09-3', 'week-09', 3, 'Lab 9-3: Serial Pattern Selector', '**Rubric**: 3 pattern (40%), lệnh Serial (30%), Speed control (20%), code (10%)
 
 ---
@@ -5359,9 +5343,9 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 > **Tuần tiếp theo**: Tuần 10 - Giao thức 1-Wire', 'See instructions', 1);
 
 -- WEEK 10: Tuần 10: Giao thức 1-Wire (DS18B20)
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-10', 'course-01', 10, 'topic-05', 'Tuần 10: Giao thức 1-Wire (DS18B20)', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Đọc cảm biến nhiệt độ DS18B20 qua giao thức 1-Wire 💡 **Mẹo phân biệt**: Mặt phẳng hướng về bạn, từ trái sang: GND, DQ, VCC **Tuần tiếp theo**: Tuần 11 - WiFi WebServer', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-10-01', 'week-10', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Đọc cảm biến nhiệt độ DS18B20 qua giao thức 1-Wire
 
@@ -5734,11 +5718,11 @@ void loop() {
 5. **requestTemperatures()**: Yêu cầu đọc, chờ 750ms
 
 ---', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-10-1', 'week-10', 1, 'Lab 10-1: Đọc nhiệt độ', '**Rubric**: Đọc đúng (40%), Serial output (30%), xử lý lỗi (20%), code (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-10-2', 'week-10', 2, 'Lab 10-2: Cảnh báo 3 mức', '**Rubric**: 3 mức LED (40%), ngưỡng đúng (30%), Serial log (20%), code (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-10-3', 'week-10', 3, 'Lab 10-3: Multi-sensor', '**Rubric**: Đọc nhiều sensor (40%), hiện địa chỉ (30%), format output (20%), code (10%)
 
 ---
@@ -5760,9 +5744,9 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 > **Tuần tiếp theo**: Tuần 11 - WiFi WebServer', 'See instructions', 1);
 
 -- WEEK 11: Tuần 11: Giao tiếp WiFi - Chế độ WebServer
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-11', 'course-01', 11, 'topic-05', 'Tuần 11: Giao tiếp WiFi - Chế độ WebServer', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Điều khiển LED từ xa qua web browser ⚠️ **Arduino Uno KHÔNG có WiFi**. Cần dùng **ESP8266** hoặc **ESP32**. **Tuần tiếp theo**: Tuần 12 - Async WebServer', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-11-01', 'week-11', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Điều khiển LED từ xa qua web browser
 
@@ -6199,9 +6183,9 @@ void loop() {
 4. **handleClient()**: Phải gọi trong loop()
 
 ---', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-11-1', 'week-11', 1, 'Lab 11-1: 1 LED WebServer', '**Rubric**: Web hoạt động (40%), LED đúng (30%), UI đẹp (20%), Serial log (10%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-11-2', 'week-11', 2, 'Lab 11-2: 2 LED WebServer', '**Rubric**: 2 LED độc lập (40%), nút BAT/TAT đúng (30%), UI đẹp (20%), code (10%)
 
 ---
@@ -6223,9 +6207,9 @@ INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_publ
 > **Tuần tiếp theo**: Tuần 12 - Async WebServer', 'See instructions', 1);
 
 -- WEEK 12: Tuần 12: Giao tiếp WiFi - Chế độ Asynchronous WebServer
-INSERT INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
+INSERT OR REPLACE INTO weeks (id, course_id, week_number, topic_id, title, overview, is_published) VALUES
 ('week-12', 'course-01', 12, 'topic-05', 'Tuần 12: Giao tiếp WiFi - Chế độ Asynchronous WebServer', '**Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành **Mục tiêu**: Xây dựng WebServer không đồng bộ, responsive và realtime **Chúc bạn thành công trong hành trình IoT!** 🌟', 1);
-INSERT INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES
 ('l-12-01', 'week-12', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Xây dựng WebServer không đồng bộ, responsive và realtime
 
@@ -6724,9 +6708,9 @@ void loop() {
 5. **PROGMEM**: Lưu HTML trong Flash, tiết kiệm RAM
 
 ---', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-12-1', 'week-12', 1, 'Lab 12-1: Async 1 LED', '**Rubric**: Không cần handleClient() (30%), JSON API (30%), Auto-refresh (25%), UI đẹp (15%)', 'See instructions', 1);
-INSERT INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
+INSERT OR REPLACE INTO labs (id, week_id, order_index, title, instructions, wiring, is_published) VALUES
 ('lab-12-2', 'week-12', 2, 'Lab 12-2: Async 2 LED', '**Rubric**: 2 LED độc lập (30%), JSON state (25%), Real-time update (25%), UI đẹp (20%)
 
 ---
