@@ -7,13 +7,11 @@ import {
     Beaker,
     FileQuestion,
     Clock,
-    ChevronRight,
     CheckCircle2,
-    Circle,
-    Cpu,
     Target,
     Sparkles,
-    Play
+    Play,
+    Loader2
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -49,6 +47,7 @@ interface WeekDetail {
     labs: Lab[];
 }
 
+// Premium Grade Week Detail Component
 export default function WeekDetailPage() {
     const { weekId } = useParams<{ weekId: string }>();
     const { isAuthenticated } = useAuthStore();
@@ -57,19 +56,29 @@ export default function WeekDetailPage() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'overview' | 'lessons' | 'labs'>('overview');
 
+    // Fallback overviews
+    const WEEK_OVERVIEWS: Record<string, string> = {
+        'week-01': 'Chào mừng bạn đến với tuần đầu tiên của khóa học! Trong tuần này, chúng ta sẽ làm quen với Arduino Uno - "bộ não" của hàng triệu dự án IoT trên toàn cầu. Bạn sẽ học cách thiết lập môi trường lập trình, hiểu về cấu trúc chân GPIO (General Purpose Input/Output) và viết chương trình đầu tiên để điều khiển đèn LED.',
+        'week-02': 'Nâng cấp độ khó với LED 7 đoạn (7-Segment Display). Bạn sẽ học tư duy thiết kế hệ thống, kỹ thuật Multiplexing (quét led) để tiết kiệm chân vi điều khiển, và sử dụng IC ghi dịch 74HC595.',
+        'week-03': 'Hệ thống nhúng không chỉ có "xuất" tín hiệu mà còn phải biết "đọc" tín hiệu. Tuần này tập trung vào xử lý đầu vào (Input) thông qua Nút nhấn và Bàn phím ma trận (Keypad 4x4).',
+        'week-04': 'Khám phá bộ chuyển đổi tương tự sang số (ADC) để đọc cảm biến biến trở, và kỹ thuật PWM (Pulse Width Modulation) để giả lập tín hiệu Analog xuất ra (điều khiển độ sáng LED).',
+    };
+
+    const getOverview = () => {
+        if (week?.overview && week.overview.trim()) return week.overview;
+        // Mock fallback for current weekId if explicit mock missing
+        return WEEK_OVERVIEWS[weekId || ''] || `Nội dung tổng quan cho ${week?.title || 'tuần học này'} đang được cập nhật bởi giảng viên.`;
+    };
+
     useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('/login');
-        }
+        if (!isAuthenticated) navigate('/login');
     }, [isAuthenticated, navigate]);
 
     useEffect(() => {
         async function fetchWeek() {
             if (!weekId) return;
             try {
-                const res = await fetch(`${API_BASE}/api/weeks/${weekId}`, {
-                    credentials: 'include',
-                });
+                const res = await fetch(`${API_BASE}/api/weeks/${weekId}`, { credentials: 'include' });
                 const data = await res.json();
                 setWeek(data.week);
             } catch (error) {
@@ -83,10 +92,10 @@ export default function WeekDetailPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-arduino-base flex items-center justify-center">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-arduino-teal border-t-transparent rounded-full animate-spin" />
-                    <p className="text-arduino-text-secondary animate-pulse">Đang tải nội dung tuần học...</p>
+                    <Loader2 className="w-10 h-10 text-arduino-teal animate-spin" />
+                    <p className="text-gray-500 font-medium animate-pulse">Đang tải dữ liệu...</p>
                 </div>
             </div>
         );
@@ -94,273 +103,289 @@ export default function WeekDetailPage() {
 
     if (!week) {
         return (
-            <div className="min-h-screen bg-arduino-base flex items-center justify-center">
-                <Card className="text-center p-8 border-dashed">
-                    <p className="text-arduino-text-muted mb-4">Không tìm thấy tuần học này.</p>
-                    <Link to="/dashboard" className="text-arduino-teal hover:underline font-medium">
-                        ← Quay lại Dashboard
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <Card className="text-center p-8 max-w-md mx-auto">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <BookOpen className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Không tìm thấy tuần học</h3>
+                    <Link to="/dashboard">
+                        <Button variant="secondary">Quay lại Dashboard</Button>
                     </Link>
                 </Card>
             </div>
         );
     }
 
+    const currentWeekNum = parseInt(weekId?.replace('week-', '') || '1');
+
     return (
-        <div className="min-h-screen bg-arduino-base text-arduino-text-primary font-sans">
-            {/* Hero Header */}
-            <header className="relative overflow-hidden bg-white shadow-soft pt-6 md:pt-8 pb-12 md:pb-16 lg:pb-24">
-                {/* Background Decor */}
-                <div className="absolute top-0 right-0 w-1/2 md:w-1/3 h-full bg-arduino-mint/30 rounded-bl-[100px] -z-0" />
-                <div className="absolute bottom-0 left-0 w-1/3 md:w-1/4 h-1/2 bg-arduino-yellow/20 rounded-tr-[80px] -z-0" />
+        <div className="min-h-screen bg-gray-50 font-sans pb-20">
+            {/* Glassmorphic Hero Headers */}
+            <div className="relative bg-arduino-teal overflow-hidden pb-16 lg:pb-24 pt-8 text-white">
+                {/* Abstract Background Mesh */}
+                <div className="absolute inset-0 bg-gradient-to-br from-teal-600 via-arduino-teal to-teal-400 opacity-90" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-yellow-400 opacity-10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
 
+                {/* Content Container */}
                 <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Back Button */}
-                    <Link
-                        to="/dashboard"
-                        className="inline-flex items-center gap-2 text-arduino-text-secondary hover:text-arduino-teal transition-colors mb-6 md:mb-8 font-medium"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        <span className="text-sm">Quay lại Dashboard</span>
-                    </Link>
+                    {/* Breadcrumb / Back */}
+                    <div className="flex items-center gap-2 mb-8 text-teal-100 text-sm font-medium">
+                        <Link to="/dashboard" className="hover:text-white transition-colors flex items-center gap-1">
+                            <ArrowLeft className="w-4 h-4" /> Dashboard
+                        </Link>
+                        <span>/</span>
+                        <span className="text-white">Tuần {week.weekNumber}</span>
+                    </div>
 
-                    {/* Week Info */}
-                    <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8">
-                        {/* Week Number Badge */}
-                        <div className="relative shrink-0 mx-auto md:mx-0">
-                            <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl md:rounded-3xl bg-gradient-to-br from-arduino-teal to-teal-600 flex items-center justify-center text-white text-3xl md:text-4xl font-black shadow-lg shadow-arduino-teal/20">
-                                {week.weekNumber}
-                            </div>
-                            <div className="absolute -bottom-2 md:-bottom-3 -right-2 md:-right-3 w-7 h-7 md:w-8 md:h-8 bg-white rounded-full flex items-center justify-center border-2 border-arduino-teal shadow-sm">
-                                <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-arduino-teal" />
-                            </div>
-                        </div>
+                    {/* Timeline Navigator */}
+                    <div className="mb-10">
+                        <div className="flex items-center justify-between relative">
+                            {/* Connecting Line */}
+                            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/20 -z-0 rounded-full" />
 
-                        <div className="flex-1 text-center md:text-left">
-                            <Badge variant="mint" className="mb-3">Tuần {week.weekNumber}</Badge>
-                            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-                                {week.title}
-                            </h1>
-                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-4 text-xs md:text-sm text-arduino-text-secondary">
-                                <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
-                                    <BookOpen className="w-4 h-4 text-arduino-teal" />
-                                    <span className="font-medium text-gray-700">{(week.lessons || []).length}</span> bài giảng
-                                </span>
-                                <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
-                                    <Beaker className="w-4 h-4 text-amber-500" />
-                                    <span className="font-medium text-gray-700">{(week.labs || []).length}</span> thực hành
-                                </span>
-                                <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
-                                    <Target className="w-4 h-4 text-indigo-500" />
-                                    <span className="font-medium text-gray-700">{(week.objectives || []).length}</span> mục tiêu
-                                </span>
+                            {/* Steps */}
+                            <div className="flex items-center justify-between w-full overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 mask-fade-sides">
+                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => {
+                                    const isActive = currentWeekNum === num;
+                                    const isPast = currentWeekNum > num;
+
+                                    return (
+                                        <Link
+                                            key={num}
+                                            to={`/weeks/week-${num.toString().padStart(2, '0')}`}
+                                            className="relative z-10 group flex-shrink-0 mx-1 first:ml-0 last:mr-0"
+                                        >
+                                            <div className={`
+                                                w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-2
+                                                ${isActive
+                                                    ? 'bg-white text-arduino-teal border-white scale-110 shadow-lg shadow-black/10'
+                                                    : isPast
+                                                        ? 'bg-teal-700 text-white border-teal-600 hover:bg-teal-600'
+                                                        : 'bg-teal-800/50 text-teal-300 border-transparent hover:bg-teal-700 hover:text-white'
+                                                }
+                                            `}>
+                                                {isPast ? <CheckCircle2 className="w-5 h-5" /> : num}
+                                            </div>
+                                            {isActive && (
+                                                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold uppercase tracking-wider text-white whitespace-nowrap">
+                                                    HIỆN TẠI
+                                                </div>
+                                            )}
+                                        </Link>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
-                </div>
-            </header>
 
-            {/* Tab Navigation (Sticky) */}
-            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+                    {/* Hero Info */}
+                    <div className="flex flex-col md:flex-row gap-8 items-start">
+                        <div className="flex-1">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-teal-50 text-xs font-bold uppercase tracking-wider mb-4">
+                                <Sparkles className="w-3 h-3 text-yellow-300" />
+                                Fundamental Module
+                            </div>
+                            <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight shadow-md-text">
+                                {week.title}
+                            </h1>
+                            <p className="text-teal-50 text-lg md:text-xl max-w-2xl leading-relaxed">
+                                {getOverview().split('.')[0] + '.'}
+                            </p>
+                        </div>
+
+                        {/* Progress Stats Circle */}
+                        <div className="hidden md:flex flex-col items-center justify-center w-32 h-32 bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-inner">
+                            <span className="text-3xl font-black text-white">0%</span>
+                            <span className="text-xs text-teal-200 mt-1 font-medium">Hoàn thành</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Sticky Tabs */}
+            <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-gray-100 shadow-sm transition-all duration-300">
                 <div className="max-w-5xl mx-auto px-4">
-                    <div className="flex gap-2 py-3 overflow-x-auto no-scrollbar">
-                        <TabButton
+                    <div className="flex items-center gap-1 py-1">
+                        <TabPill
                             active={activeTab === 'overview'}
                             onClick={() => setActiveTab('overview')}
-                            icon={<Cpu className="w-4 h-4" />}
+                            icon={<BookOpen className="w-4 h-4" />}
                         >
                             Tổng quan
-                        </TabButton>
-                        <TabButton
+                        </TabPill>
+                        <TabPill
                             active={activeTab === 'lessons'}
                             onClick={() => setActiveTab('lessons')}
-                            icon={<BookOpen className="w-4 h-4" />}
+                            icon={<Play className="w-4 h-4" />}
                             count={(week.lessons || []).length}
                         >
                             Bài giảng
-                        </TabButton>
-                        <TabButton
+                        </TabPill>
+                        <TabPill
                             active={activeTab === 'labs'}
                             onClick={() => setActiveTab('labs')}
                             icon={<Beaker className="w-4 h-4" />}
                             count={(week.labs || []).length}
                         >
-                            Thực hành
-                        </TabButton>
+                            Lab Thực hành
+                        </TabPill>
                     </div>
                 </div>
             </div>
 
-            {/* Main Content */}
-            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            {/* Content Body */}
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 animate-slide-up">
                 {activeTab === 'overview' && (
-                    <div className="space-y-8 animate-fade-in">
-                        {/* Overview Card */}
-                        <Card className="p-8 border-l-4 border-l-arduino-teal">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <Cpu className="w-5 h-5 text-arduino-teal" />
-                                Giới thiệu tuần học
-                            </h2>
-                            <div className="text-arduino-text-secondary leading-relaxed whitespace-pre-wrap text-lg">
-                                {week.overview}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="lg:col-span-2 space-y-8">
+                            <div className="prose prose-lg prose-teal max-w-none text-gray-600">
+                                <h3 className="text-gray-900 font-bold text-2xl mb-4">Giới thiệu</h3>
+                                <div className="whitespace-pre-wrap leading-relaxed">{getOverview()}</div>
                             </div>
-                        </Card>
 
-                        <div className="grid md:grid-cols-2 gap-6">
-                            {/* Objectives */}
-                            {week.objectives && week.objectives.length > 0 && (
-                                <Card className="p-6 bg-gradient-to-br from-white to-arduino-mint/20 border-arduino-mint/30 h-full">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
-                                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-arduino-teal">
-                                            <CheckCircle2 className="w-5 h-5" />
-                                        </div>
-                                        Mục tiêu học tập
+                            {/* Objectives List */}
+                            {week.objectives?.length > 0 && (
+                                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                                    <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <Target className="w-5 h-5 text-arduino-teal" />
+                                        Mục tiêu cần đạt
                                     </h3>
                                     <ul className="space-y-3">
                                         {week.objectives.map((obj, i) => (
-                                            <li key={i} className="flex items-start gap-4 group">
-                                                <span className="w-6 h-6 shrink-0 rounded-full bg-arduino-teal/10 text-arduino-teal flex items-center justify-center text-xs font-bold mt-0.5">
+                                            <li key={i} className="flex gap-3 items-start">
+                                                <div className="w-6 h-6 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                                                     {i + 1}
-                                                </span>
-                                                <span className="text-gray-600 group-hover:text-gray-900 transition-colors">{obj}</span>
+                                                </div>
+                                                <span className="text-gray-600">{obj}</span>
                                             </li>
                                         ))}
                                     </ul>
-                                </Card>
-                            )}
-
-                            {/* Exam Checklist */}
-                            {week.examChecklist && week.examChecklist.length > 0 && (
-                                <Card className="p-6 bg-gradient-to-br from-white to-arduino-yellow/20 border-arduino-yellow/30 h-full">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
-                                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-amber-500">
-                                            <FileQuestion className="w-5 h-5" />
-                                        </div>
-                                        Checklist ôn thi
-                                    </h3>
-                                    <ul className="space-y-3">
-                                        {week.examChecklist.map((item, i) => (
-                                            <li key={i} className="flex items-start gap-3">
-                                                <Circle className="w-2 h-2 mt-2.5 text-amber-400 shrink-0 fill-amber-400" />
-                                                <span className="text-gray-600">{item}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </Card>
+                                </div>
                             )}
                         </div>
 
-                        {/* Quick Start */}
-                        <Card className="p-8 bg-arduino-text-primary text-white relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-
-                            <div className="relative z-10">
-                                <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                    🚀 Bắt đầu học ngay
+                        {/* Sidebar / Checklist */}
+                        <div className="space-y-6">
+                            <Card className="p-6 border-t-4 border-t-amber-400">
+                                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                    <FileQuestion className="w-5 h-5 text-amber-500" />
+                                    Checklist Quan Trọng
                                 </h3>
-                                <div className="flex flex-wrap gap-4">
-                                    {week.lessons && week.lessons.length > 0 && (
-                                        <Link to={`/lessons/${week.lessons[0].id}`}>
-                                            <Button size="lg" className="shadow-xl bg-white text-arduino-teal hover:bg-gray-100">
-                                                <Play className="w-4 h-4 mr-2 fill-current" />
-                                                Bắt đầu Bài 1
-                                            </Button>
-                                        </Link>
-                                    )}
-                                    {week.labs && week.labs.length > 0 && (
-                                        <Link to={`/labs/${week.labs[0].id}`}>
-                                            <Button variant="secondary" size="lg" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
-                                                <Beaker className="w-4 h-4 mr-2" />
-                                                Thực hành đầu tiên
-                                            </Button>
-                                        </Link>
-                                    )}
+                                {(week.examChecklist?.length > 0 ? week.examChecklist : ['Hoàn thành bài giảng', 'Làm bài Quiz tuần', 'Nộp bài Lab thực hành']).map((item, i) => (
+                                    <div key={i} className="flex items-center gap-3 py-2 border-b last:border-0 border-gray-50">
+                                        <div className={`w-5 h-5 rounded border flex items-center justify-center ${i === 0 ? 'bg-green-50 border-green-200' : 'border-gray-200'}`}>
+                                            {i === 0 && <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />}
+                                        </div>
+                                        <span className={`text-sm ${i === 0 ? 'text-gray-800 line-through decoration-gray-300' : 'text-gray-600'}`}>{item}</span>
+                                    </div>
+                                ))}
+                            </Card>
+
+                            {/* CTA */}
+                            <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-6 text-white text-center shadow-lg shadow-indigo-200">
+                                <h4 className="font-bold text-lg mb-2">Sẵn sàng chưa?</h4>
+                                <p className="text-indigo-100 text-sm mb-4">Bắt đầu bài học đầu tiên ngay bây giờ!</p>
+                                {week.lessons?.[0]?.id && (
+                                    <Link to={`/lessons/${week.lessons[0].id}`}>
+                                        <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 border-0 shadow-md font-bold">
+                                            Vào học ngay <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
+                                        </Button>
+                                    </Link>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Lesson & Lab Lists - Enhanced Cards */}
+                {(activeTab === 'lessons' || activeTab === 'labs') && (
+                    <div className="max-w-3xl mx-auto space-y-4">
+                        {(activeTab === 'lessons' ? week.lessons : week.labs)?.length === 0 ? (
+                            <div className="text-center py-20">
+                                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 grayscale opacity-50">
+                                    {activeTab === 'lessons' ? <BookOpen className="w-10 h-10" /> : <Beaker className="w-10 h-10" />}
                                 </div>
-                            </div>
-                        </Card>
-                    </div>
-                )}
-
-                {activeTab === 'lessons' && (
-                    <div className="space-y-4 animate-slide-up">
-                        {!week.lessons || week.lessons.length === 0 ? (
-                            <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
-                                <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                                <p className="text-arduino-text-secondary">Chưa có bài giảng nào.</p>
+                                <h3 className="text-gray-900 font-bold text-lg">Chưa có nội dung</h3>
+                                <p className="text-gray-500">Giảng viên đang cập nhật phần này.</p>
                             </div>
                         ) : (
-                            week.lessons.map((lesson, index) => (
-                                <ContentCard
-                                    key={lesson.id}
-                                    type="lesson"
-                                    index={index + 1}
-                                    title={lesson.title}
-                                    duration={lesson.duration}
-                                    href={`/lessons/${lesson.id}`}
-                                    completed={index === 0} // Mock completion logic
-                                />
+                            (activeTab === 'lessons' ? week.lessons : week.labs)?.map((item, idx) => (
+                                <Link
+                                    key={item.id}
+                                    to={`/${activeTab}/${item.id}`}
+                                    className="group block"
+                                >
+                                    <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-5 relative overflow-hidden">
+                                        <div className={`absolute top-0 left-0 w-1 h-full transition-colors ${idx === 0 ? 'bg-green-500' : 'bg-transparent group-hover:bg-arduino-teal'}`} />
+
+                                        {/* Status Icon */}
+                                        <div className={`
+                                            w-12 h-12 rounded-xl flex items-center justify-center shrink-0 font-bold text-lg transition-colors
+                                            ${idx === 0
+                                                ? 'bg-green-100 text-green-600'
+                                                : 'bg-gray-50 text-gray-400 group-hover:text-arduino-teal group-hover:bg-teal-50'}
+                                        `}>
+                                            {idx === 0 ? <CheckCircle2 className="w-6 h-6" /> : idx + 1}
+                                        </div>
+
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Badge variant="outline" className={`
+                                                    text-xs border-0 px-2 py-0.5 
+                                                    ${activeTab === 'lessons'
+                                                        ? 'bg-teal-50 text-teal-700'
+                                                        : 'bg-amber-50 text-amber-700'}
+                                                `}>
+                                                    {activeTab === 'lessons' ? 'Lý thuyết' : 'Thực hành LAB'}
+                                                </Badge>
+                                                {/* @ts-ignore */}
+                                                {item.simulatorUrl && (
+                                                    <Badge className="bg-cyan-50 text-cyan-700 border-0 text-xs px-2 py-0.5">Simulator</Badge>
+                                                )}
+                                            </div>
+                                            <h4 className="font-bold text-gray-800 text-lg group-hover:text-arduino-teal transition-colors truncate">
+                                                {item.title}
+                                            </h4>
+                                            {item.duration && (
+                                                <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
+                                                    <Clock className="w-3 h-3" /> {item.duration} phút
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-arduino-teal group-hover:text-white transition-all opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0">
+                                            <ArrowLeft className="w-5 h-5 rotate-180" />
+                                        </div>
+                                    </div>
+                                </Link>
                             ))
                         )}
                     </div>
                 )}
-
-                {activeTab === 'labs' && (
-                    <div className="space-y-4 animate-slide-up">
-                        {!week.labs || week.labs.length === 0 ? (
-                            <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
-                                <Beaker className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                                <p className="text-arduino-text-secondary">Chưa có bài thực hành nào.</p>
-                            </div>
-                        ) : (
-                            week.labs.map((lab, index) => (
-                                <ContentCard
-                                    key={lab.id}
-                                    type="lab"
-                                    index={index + 1}
-                                    title={lab.title}
-                                    duration={lab.duration}
-                                    href={`/labs/${lab.id}`}
-                                    hasSimulator={!!lab.simulatorUrl}
-                                />
-                            ))
-                        )}
-                    </div>
-                )}
-            </main>
+            </div>
         </div>
     );
 }
 
-function TabButton({
-    active,
-    onClick,
-    children,
-    icon,
-    count
-}: {
-    active: boolean;
-    onClick: () => void;
-    children: React.ReactNode;
-    icon: React.ReactNode;
-    count?: number;
-}) {
+// Micro-component for Pill Tabs
+function TabPill({ active, onClick, children, icon, count }: any) {
     return (
         <button
             onClick={onClick}
             className={`
-                flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-full transition-all whitespace-nowrap
-                ${active
-                    ? 'bg-arduino-teal text-white shadow-md shadow-arduino-teal/20'
-                    : 'text-arduino-text-secondary hover:bg-gray-100 hover:text-arduino-teal'
-                }
+                relative px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2
+                ${active ? 'text-arduino-teal' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'}
             `}
         >
+            {active && (
+                <div className="absolute inset-0 bg-teal-50 rounded-full border border-teal-100 -z-10 animate-fade-in" />
+            )}
             {icon}
             {children}
-            {count !== undefined && (
-                <span className={`
-                    ml-1 px-2 py-0.5 text-xs rounded-full font-bold
-                    ${active ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'}
-                `}>
+            {count > 0 && (
+                <span className={`ml-1 text-xs px-1.5 py-0.5 rounded-full ${active ? 'bg-teal-200 text-teal-800' : 'bg-gray-200 text-gray-600'}`}>
                     {count}
                 </span>
             )}
@@ -368,73 +393,3 @@ function TabButton({
     );
 }
 
-function ContentCard({
-    type,
-    index,
-    title,
-    duration,
-    href,
-    completed,
-    hasSimulator
-}: {
-    type: 'lesson' | 'lab';
-    index: number;
-    title: string;
-    duration: number | null;
-    href: string;
-    completed?: boolean;
-    hasSimulator?: boolean;
-}) {
-    const isLesson = type === 'lesson';
-
-    return (
-        <Link to={href} className="block group">
-            <Card className={`
-                flex items-center gap-5 p-5 transition-all duration-300 border-l-4 
-                ${completed ? 'border-l-green-500 bg-green-50/30' : 'border-l-transparent hover:border-l-arduino-teal'}
-                hover:shadow-hover hover:-translate-y-1
-            `}>
-                {/* Index Badge */}
-                <div className={`
-                    w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all font-bold text-lg
-                    ${completed
-                        ? 'bg-green-100 text-green-600'
-                        : isLesson
-                            ? 'bg-arduino-mint/50 text-arduino-teal group-hover:bg-arduino-teal group-hover:text-white'
-                            : 'bg-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white'
-                    }
-                `}>
-                    {completed ? <CheckCircle2 className="w-6 h-6" /> : index}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1.5">
-                        <Badge variant={isLesson ? 'mint' : 'yellow'} className={!isLesson ? 'bg-amber-100 text-amber-700' : ''}>
-                            {isLesson ? 'Bài giảng' : 'Thực hành'}
-                        </Badge>
-                        {hasSimulator && (
-                            <Badge variant="outline" className="text-cyan-600 border-cyan-200 bg-cyan-50">
-                                🔧 Simulator
-                            </Badge>
-                        )}
-                    </div>
-                    <h4 className="font-bold text-gray-800 text-lg mb-1 group-hover:text-arduino-teal transition-colors">
-                        {title}
-                    </h4>
-                    {duration && (
-                        <div className="flex items-center gap-1.5 text-sm text-gray-500">
-                            <Clock className="w-3.5 h-3.5" />
-                            {duration} phút
-                        </div>
-                    )}
-                </div>
-
-                {/* Arrow */}
-                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-arduino-teal group-hover:text-white transition-all">
-                    <ChevronRight className="w-5 h-5" />
-                </div>
-            </Card>
-        </Link>
-    );
-}

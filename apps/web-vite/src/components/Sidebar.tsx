@@ -35,19 +35,16 @@ export default function Sidebar({ children }: SidebarProps) {
         navigate('/login');
     };
 
-    // Navigation Items
+    // Navigation Items - Consolidated
     const navItems = [
         { icon: Home, label: 'Dashboard', href: '/dashboard' },
-        { icon: BookOpen, label: 'Tuần 1', href: '/weeks/week-01' },
-        { icon: BookOpen, label: 'Tuần 2', href: '/weeks/week-02' },
-        { icon: BookOpen, label: 'Tuần 3', href: '/weeks/week-03' },
-        { icon: BookOpen, label: 'Tuần 4', href: '/weeks/week-04' },
+        { icon: BookOpen, label: 'TECH476 Lập trình nhúng', href: '/weeks/week-01', color: 'teal' },
+        { type: 'divider' },
+        { icon: ClipboardCheck, label: 'Quiz', href: '/quizzes', color: 'orange' },
+        { icon: Zap, label: 'Exam Drills', href: '/drills', color: 'cyan' },
         { type: 'divider' },
         { icon: Bookmark, label: 'Đã lưu', href: '/saved', color: 'purple' },
-        { icon: Cpu, label: 'Thư viện dự án', href: '/projects', color: 'blue' },
         { icon: Terminal, label: 'Web IDE', href: '/ide', color: 'green' },
-        { icon: Zap, label: 'Exam Drill', href: '/drills/drill-01', color: 'cyan' },
-        { icon: ClipboardCheck, label: 'Quiz Tuần 1', href: '/quizzes/quiz-01', color: 'orange' },
         { icon: Trophy, label: 'Bảng xếp hạng', href: '/leaderboard', color: 'yellow' },
         { icon: Award, label: 'Chứng nhận', href: '/certificate', color: 'purple' },
     ];

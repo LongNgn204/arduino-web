@@ -11,11 +11,13 @@ import {
     Trophy,
     Target,
     Cpu,
-    Award
+    Award,
+    Sparkles,
+    PlayCircle
 } from 'lucide-react';
-import { Card } from '../components/ui/Card'; // Use new UI component
-import { cn } from '../components/ui/Card';
+import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { cn } from '../components/ui/Card'; // Importing cn from Card for utility
 
 // API Base URL
 const API_BASE = import.meta.env.PROD
@@ -52,28 +54,21 @@ export default function DashboardPage() {
 
     // Redirect if not authenticated
     useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('/login');
-        }
+        if (!isAuthenticated) navigate('/login');
     }, [isAuthenticated, navigate]);
 
     // Fetch courses and progress
     useEffect(() => {
         async function fetchData() {
             if (!isAuthenticated) return;
-
             try {
                 // Fetch courses
-                const coursesRes = await fetch(`${API_BASE}/api/courses`, {
-                    credentials: 'include',
-                });
+                const coursesRes = await fetch(`${API_BASE}/api/courses`, { credentials: 'include' });
                 const coursesData = await coursesRes.json();
                 setCourses(coursesData.courses || []);
 
                 // Fetch progress
-                const progressRes = await fetch(`${API_BASE}/api/progress`, {
-                    credentials: 'include',
-                });
+                const progressRes = await fetch(`${API_BASE}/api/progress`, { credentials: 'include' });
                 if (progressRes.ok) {
                     const progressData = await progressRes.json();
                     setProgress(progressData.progress || progress);
@@ -93,277 +88,238 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className="min-h-screen bg-arduino-base pb-12">
-            {/* Header - Mobile Only (Desktop is in Sidebar) */}
+        <div className="min-h-screen bg-gray-50 pb-20 font-sans">
+            {/* Header - Mobile Only */}
             <header className="lg:hidden sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
-                        {/* Logo */}
                         <Link to="/" className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-lg bg-arduino-teal flex items-center justify-center">
                                 <Cpu className="w-5 h-5 text-white" />
                             </div>
-                            <span className="text-lg font-bold text-gray-800">
-                                ArduinoHub
-                            </span>
+                            <span className="text-lg font-bold text-gray-800">ArduinoHub</span>
                         </Link>
-
-                        {/* User Menu */}
-                        <div className="flex items-center gap-3">
-                            <button
-                                onClick={handleLogout}
-                                className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-red-500 transition-colors"
-                                title="Đăng xuất"
-                            >
-                                <LogOut className="w-5 h-5" />
-                            </button>
-                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-red-500 transition-colors"
+                        >
+                            <LogOut className="w-5 h-5" />
+                        </button>
                     </div>
                 </div>
             </header>
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-0 py-8">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Welcome Section */}
-                <div className="mb-8 p-6 md:p-10 rounded-3xl bg-gradient-to-r from-arduino-teal to-teal-600 text-white shadow-xl relative overflow-hidden animate-slide-up">
-                    {/* Decorative Elements */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-arduino-yellow opacity-20 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4" />
-
-                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div>
-                            <h1 className="text-3xl md:text-4xl font-bold mb-3">
-                                Chào mừng trở lại, {user?.displayName || user?.username || 'bạn'}! 👋
-                            </h1>
-                            <p className="text-teal-100 text-lg max-w-xl">
-                                Hôm nay là một ngày tuyệt vời để tiếp tục hành trình chinh phục Arduino. Bạn đã sẵn sàng chưa?
-                            </p>
-                        </div>
-                        <div className="hidden md:block">
-                            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30 shadow-inner rotate-3 hover:rotate-0 transition-transform">
-                                <Cpu className="w-10 h-10 text-white" />
-                            </div>
-                        </div>
-                    </div>
+                <div className="mb-10 text-center md:text-left">
+                    <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-2 tracking-tight">
+                        Xin chào, {user?.displayName || user?.username || 'bạn hiền'}! 👋
+                    </h1>
+                    <p className="text-lg text-gray-500 max-w-2xl">
+                        Sẵn sàng cho bài học hôm nay chưa? Hãy tiếp tục hành trình chinh phục IoT.
+                    </p>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
                     <StatCard
-                        icon={<BookOpen className="w-5 h-5 md:w-6 md:h-6" />}
+                        icon={<BookOpen className="w-6 h-6" />}
                         label="Bài học"
                         value={`${progress.lessons.completed}/${progress.lessons.total}`}
-                        color="bg-blue-50 text-blue-500"
-                        delay={0}
+                        color="blue"
                     />
                     <StatCard
-                        icon={<Zap className="w-5 h-5 md:w-6 md:h-6" />}
-                        label="Bài thực hành"
+                        icon={<Zap className="w-6 h-6" />}
+                        label="Labs"
                         value={`${progress.labs.completed}/${progress.labs.total}`}
-                        color="bg-orange-50 text-orange-500"
-                        delay={100}
+                        color="orange"
                     />
                     <StatCard
-                        icon={<Trophy className="w-5 h-5 md:w-6 md:h-6" />}
-                        label="Điểm Quiz TB"
+                        icon={<Trophy className="w-6 h-6" />}
+                        label="Điểm TB"
                         value={`${progress.avgQuizScore ?? '--'}%`}
-                        color="bg-purple-50 text-purple-500"
-                        delay={200}
+                        color="purple"
                     />
                     <StatCard
-                        icon={<Target className="w-5 h-5 md:w-6 md:h-6" />}
+                        icon={<Target className="w-6 h-6" />}
                         label="Tiến độ"
                         value={`${progress.overall}%`}
-                        color="bg-teal-50 text-teal-500"
-                        delay={300}
+                        color="teal"
                     />
                 </div>
 
-                {/* Course Section */}
-                <section className="mb-12 animate-slide-up" style={{ animationDelay: '0.4s' }}>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
-                        <div className="bg-arduino-teal/10 p-2 rounded-lg">
-                            <GraduationCap className="w-6 h-6 text-arduino-teal" />
-                        </div>
-                        Khóa học của bạn
-                    </h2>
-
-                    {loading ? (
-                        <div className="flex items-center justify-center h-60 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                            <div className="w-10 h-10 border-4 border-arduino-teal border-t-transparent rounded-full animate-spin" />
-                        </div>
-                    ) : courses.length === 0 ? (
-                        <div className="text-center py-16 bg-white rounded-3xl border border-dashed border-gray-200 shadow-sm">
-                            <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <BookOpen className="w-10 h-10 text-gray-300" />
-                            </div>
-                            <h3 className="text-xl font-bold text-gray-800">Chưa có khóa học nào</h3>
-                            <p className="text-gray-500 mt-2 max-w-sm mx-auto mb-6">Hãy bắt đầu bằng việc đăng ký khóa học đầu tiên để mở khóa toàn bộ nội dung.</p>
-                            <Button className="rounded-full">Đăng ký ngay</Button>
-                        </div>
-                    ) : (
-                        <div className="space-y-6">
-                            {courses.map((course) => (
-                                <CourseCard key={course.id} course={course} progress={progress.overall} />
-                            ))}
-                        </div>
-                    )}
-                </section>
-
+                {/* Main Dashboard Layout */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Challenge Section */}
-                    <section className="lg:col-span-2 animate-slide-up" style={{ animationDelay: '0.5s' }}>
-                        <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                            <Trophy className="w-6 h-6 text-yellow-500" />
-                            Thử thách & Xếp hạng
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <QuickLinkCard
-                                title="Kiểm tra áp lực"
-                                subtitle="Exam Drill 60 phút"
-                                href="/drills/drill-01"
-                                icon={<Zap className="w-5 h-5" />}
-                                color="cyan"
-                            />
-                            <QuickLinkCard
-                                title="Bảng xếp hạng"
-                                subtitle="Top 10 tuần này"
-                                href="/leaderboard"
-                                icon={<Trophy className="w-5 h-5" />}
-                                color="yellow"
-                            />
-                            <div className="md:col-span-2">
-                                <QuickLinkCard
-                                    title="Chứng nhận Completion"
-                                    subtitle="Hoàn thành 80% để nhận bằng"
-                                    href="/certificate"
+                    {/* Left Column: Courses */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <section>
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                    <GraduationCap className="w-6 h-6 text-arduino-teal" />
+                                    Khóa học đang diễn ra
+                                </h2>
+                            </div>
+
+                            {loading ? (
+                                <div className="animate-pulse space-y-4">
+                                    <div className="h-48 bg-gray-200 rounded-2xl"></div>
+                                </div>
+                            ) : courses.length === 0 ? (
+                                <Card className="p-10 text-center border-dashed border-2 border-gray-200 bg-gray-50/50">
+                                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-gray-400">
+                                        <BookOpen className="w-8 h-8" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900">Chưa đăng ký khóa học nào</h3>
+                                    <p className="text-gray-500 mb-6">Hãy bắt đầu hành trình của bạn ngay hôm nay.</p>
+                                    <Button>Khám phá khóa học</Button>
+                                </Card>
+                            ) : (
+                                <div className="space-y-6">
+                                    {courses.map((course) => (
+                                        <CourseCard key={course.id} course={course} progress={progress.overall} />
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    </div>
+
+                    {/* Right Column: Quick Actions & Leaderboard */}
+                    <div className="space-y-8">
+                        {/* Make Learning a Habit */}
+                        <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg shadow-indigo-200 overflow-hidden relative">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+                            <div className="relative z-10 p-6">
+                                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
+                                    <Sparkles className="w-6 h-6 text-white" />
+                                </div>
+                                <h3 className="text-xl font-bold mb-2">Thử thách tuần này</h3>
+                                <p className="text-indigo-100 text-sm mb-4">Hoàn thành 3 bài Lab để nhận huy hiệu "Kỹ sư tập sự".</p>
+                                <div className="w-full bg-black/20 rounded-full h-2 mb-4">
+                                    <div className="bg-white rounded-full h-full w-2/3" />
+                                </div>
+                                <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 border-0 font-bold">
+                                    Tiếp tục ngay <ChevronRight className="w-4 h-4 ml-1" />
+                                </Button>
+                            </div>
+                        </Card>
+
+                        {/* Quick Links */}
+                        <section>
+                            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <Zap className="w-5 h-5 text-amber-500" />
+                                Truy cập nhanh
+                            </h2>
+                            <div className="space-y-3">
+                                <QuickLink
+                                    icon={<Trophy className="w-5 h-5" />}
+                                    label="Bảng xếp hạng"
+                                    href="/leaderboard"
+                                    color="yellow"
+                                />
+                                <QuickLink
+                                    icon={<Zap className="w-5 h-5" />}
+                                    label="Luyện tập (Exam Drills)"
+                                    href="/drills"
+                                    color="orange"
+                                />
+                                <QuickLink
+                                    icon={<Clock className="w-5 h-5" />}
+                                    label="Lịch sử Quiz"
+                                    href="/history"
+                                    color="blue"
+                                />
+                                <QuickLink
                                     icon={<Award className="w-5 h-5" />}
+                                    label="Chứng chỉ"
+                                    href="/certificate"
                                     color="purple"
-                                    isHorizontal
                                 />
                             </div>
-                        </div>
-                    </section>
-
-                    {/* Quick Links / Continue Learning */}
-                    <section className="animate-slide-up" style={{ animationDelay: '0.6s' }}>
-                        <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                            <Clock className="w-6 h-6 text-blue-500" />
-                            Tiếp tục học
-                        </h2>
-                        <div className="space-y-4">
-                            <QuickLinkCard
-                                title="Tuần 1: GPIO & LED"
-                                subtitle="Bài tiếp theo: Running LEDs"
-                                href="/weeks/week-01"
-                                progress={60}
-                                color="teal"
-                                isHorizontal
-                            />
-                            <QuickLinkCard
-                                title="Quiz: Arduino cơ bản"
-                                subtitle="10 câu hỏi • 15 phút"
-                                href="/quizzes/quiz-01"
-                                color="purple"
-                                isHorizontal
-                            />
-                        </div>
-                    </section>
+                        </section>
+                    </div>
                 </div>
             </main>
         </div>
     );
 }
 
-// Stat Card Component
-function StatCard({ icon, label, value, color, delay }: {
-    icon: React.ReactNode;
-    label: string;
-    value: string;
-    color: string;
-    delay?: number;
-}) {
-    // color prop expects classes like "bg-blue-50 text-blue-500"
+// Components
+function StatCard({ icon, label, value, color }: { icon: React.ReactNode, label: string, value: string, color: 'blue' | 'orange' | 'purple' | 'teal' }) {
+    const colors = {
+        blue: 'bg-blue-50 text-blue-600',
+        orange: 'bg-orange-50 text-orange-600',
+        purple: 'bg-purple-50 text-purple-600',
+        teal: 'bg-teal-50 text-teal-600'
+    };
+
     return (
-        <Card
-            className="flex flex-col items-center justify-center p-4 md:p-6 hover:shadow-lg transition-all duration-300 transform animate-slide-up"
-            style={{ animationDelay: `${delay}ms` }}
-        >
-            <div className={cn("w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center mb-3 transition-transform hover:scale-110", color)}>
+        <Card className="p-5 flex flex-col items-center justify-center hover:shadow-lg transition-all border-gray-100 hover:scale-[1.02]">
+            <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-3 transition-colors", colors[color])}>
                 {icon}
             </div>
-            <p className="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{value}</p>
-            <p className="text-xs md:text-sm font-medium text-gray-500 uppercase tracking-wide text-center">{label}</p>
+            <span className="text-2xl font-bold text-gray-900 tabular-nums mb-0.5">{value}</span>
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{label}</span>
         </Card>
     );
 }
 
-// Course Card Component
 function CourseCard({ course, progress }: { course: Course; progress: number }) {
     return (
-        <Card className="overflow-hidden border-l-4 border-l-arduino-teal group hover:shadow-lg transition-all duration-300">
-            {/* Course Header */}
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
-                <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-arduino-mint text-arduino-teal uppercase tracking-wider">
-                            {course.code}
-                        </span>
-                        <span className="text-xs text-gray-400 font-medium bg-gray-100 px-2 py-1 rounded-md">
-                            Official Course
-                        </span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-800 group-hover:text-arduino-teal transition-colors">
-                        {course.title}
-                    </h3>
-                    <p className="text-gray-500 mt-2 leading-relaxed max-w-2xl">{course.description}</p>
-                </div>
+        <Card className="p-0 overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 group">
+            <div className="p-6 md:p-8">
+                <div className="flex flex-col md:flex-row gap-6 md:items-start justify-between">
+                    <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className="bg-arduino-teal/10 text-arduino-teal text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                                {course.code}
+                            </span>
+                            <span className="text-gray-400 text-xs font-medium">Official Course</span>
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-arduino-teal transition-colors">
+                            {course.title}
+                        </h3>
+                        <p className="text-gray-500 leading-relaxed mb-6">{course.description}</p>
 
-                <div className="w-full md:w-64 bg-gray-50 rounded-xl p-4 border border-gray-100">
-                    <div className="flex justify-between text-sm mb-2">
-                        <span className="text-gray-600 font-medium">Tiến độ chung</span>
-                        <span className="text-arduino-teal font-bold">{progress}%</span>
+                        {/* Progress Bar */}
+                        <div className="space-y-2 max-w-md">
+                            <div className="flex justify-between text-sm font-medium">
+                                <span className="text-gray-600">Tiến độ khóa học</span>
+                                <span className="text-arduino-teal">{progress}%</span>
+                            </div>
+                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div className="h-full bg-arduino-teal rounded-full transition-all duration-1000" style={{ width: `${progress}%` }} />
+                            </div>
+                        </div>
                     </div>
-                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-gradient-to-r from-arduino-teal to-teal-400 rounded-full transition-all duration-1000 ease-out"
-                            style={{ width: `${progress}%` }}
-                        />
+
+                    <div className="shrink-0 flex md:flex-col gap-3">
+                        <Button className="w-full md:w-auto shadow-md shadow-arduino-teal/20">
+                            Tiếp tục học <PlayCircle className="w-4 h-4 ml-2" />
+                        </Button>
+                        <Button variant="secondary" className="w-full md:w-auto">
+                            Xem chi tiết
+                        </Button>
                     </div>
-                    <p className="text-xs text-gray-400 mt-2 text-center">
-                        Hãy hoàn thành {course.totalWeeks} tuần học để nhận chứng chỉ
-                    </p>
                 </div>
             </div>
 
-            {/* Weeks Grid */}
-            <div>
-                <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Lộ trình học tập</p>
-                    <span className="text-xs text-gray-400">{course.totalWeeks} tuần</span>
-                </div>
-
-                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-3">
-                    {course.weeks.map((week, index) => {
-                        // Logic for card styling based on locked/unlocked state
-                        // For demo: first week active, next 2 enabled, rest disabled
-                        const isCompleted = index < 1;
-                        const isCurrent = index === 1; // Just for demo visuals
-                        const isLocked = index > 3;
+            {/* Weeks Strip */}
+            <div className="bg-gray-50/50 border-t border-gray-100 p-4 overflow-x-auto">
+                <div className="flex gap-2 min-w-max">
+                    {course.weeks.map((week, idx) => {
+                        const isCompleted = idx < 1;
+                        const isCurrent = idx === 1;
 
                         return (
                             <Link
                                 key={week.id}
                                 to={`/weeks/${week.id}`}
                                 className={cn(
-                                    "aspect-square rounded-xl flex items-center justify-center text-sm font-bold transition-all duration-200 border-2",
-                                    isCompleted
-                                        ? "bg-arduino-teal text-white border-arduino-teal shadow-md shadow-arduino-teal/20"
-                                        : isCurrent
-                                            ? "bg-white text-arduino-teal border-arduino-teal shadow-sm ring-2 ring-arduino-teal/20"
-                                            : isLocked
-                                                ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
-                                                : "bg-white text-gray-600 border-gray-200 hover:border-arduino-teal hover:text-arduino-teal"
+                                    "w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold transition-all border-2",
+                                    isCompleted ? "bg-arduino-teal text-white border-arduino-teal" :
+                                        isCurrent ? "bg-white text-arduino-teal border-arduino-teal ring-2 ring-arduino-teal/20" :
+                                            "bg-white text-gray-400 border-gray-200 hover:border-gray-300 hover:text-gray-600"
                                 )}
                                 title={week.title}
                             >
@@ -377,67 +333,23 @@ function CourseCard({ course, progress }: { course: Course; progress: number }) 
     );
 }
 
-// Quick Link Card Component
-function QuickLinkCard({ title, subtitle, href, progress, icon, color = 'teal', isHorizontal = false }: {
-    title: string;
-    subtitle: string;
-    href: string;
-    progress?: number;
-    icon?: React.ReactNode;
-    color?: 'teal' | 'cyan' | 'purple' | 'yellow' | 'orange';
-    isHorizontal?: boolean;
-}) {
+function QuickLink({ icon, label, href, color }: { icon: React.ReactNode, label: string, href: string, color: 'yellow' | 'orange' | 'blue' | 'purple' }) {
     const colors = {
-        teal: 'text-teal-600 bg-teal-50 group-hover:bg-teal-100',
-        cyan: 'text-cyan-600 bg-cyan-50 group-hover:bg-cyan-100',
-        purple: 'text-purple-600 bg-purple-50 group-hover:bg-purple-100',
         yellow: 'text-yellow-600 bg-yellow-50 group-hover:bg-yellow-100',
         orange: 'text-orange-600 bg-orange-50 group-hover:bg-orange-100',
+        blue: 'text-blue-600 bg-blue-50 group-hover:bg-blue-100',
+        purple: 'text-purple-600 bg-purple-50 group-hover:bg-purple-100',
     };
 
-    const activeColor = colors[color] || colors.teal;
-
     return (
-        <Link
-            to={href}
-            className={cn(
-                "group bg-white rounded-xl border border-gray-100 p-4 hover:shadow-card hover:border-gray-200 transition-all duration-200 block h-full",
-                isHorizontal && "flex items-center gap-4"
-            )}
-        >
-            <div className={cn(
-                "rounded-lg flex items-center justify-center transition-colors",
-                activeColor,
-                isHorizontal ? "w-12 h-12 shrink-0" : "w-10 h-10 mb-3"
-            )}>
-                {icon || <ChevronRight className="w-5 h-5" />}
+        <Link to={href} className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 bg-white hover:shadow-md hover:border-gray-200 transition-all group">
+            <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center transition-colors", colors[color])}>
+                {icon}
             </div>
-
-            <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-gray-800 group-hover:text-arduino-teal transition-colors truncate">
-                    {title}
-                </h4>
-                <p className="text-sm text-gray-500 truncate">{subtitle}</p>
-
-                {progress !== undefined && (
-                    <div className="mt-3 h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-arduino-teal rounded-full"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </div>
-                )}
-            </div>
-
-            {!isHorizontal && (
-                <div className="mt-3 flex justify-end">
-                    <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-arduino-teal transition-colors" />
-                </div>
-            )}
-
-            {isHorizontal && !progress && (
-                <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-arduino-teal transition-colors" />
-            )}
+            <span className="flex-1 font-bold text-gray-700 group-hover:text-gray-900 transition-colors">
+                {label}
+            </span>
+            <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-arduino-teal" />
         </Link>
     );
 }

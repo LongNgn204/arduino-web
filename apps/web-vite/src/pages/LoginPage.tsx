@@ -1,9 +1,9 @@
-// Trang đăng nhập - UI Premium với glassmorphism và animations
-
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Cpu, Eye, EyeOff, Loader2, ArrowRight, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Github } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
+import { AuthLayout } from '../components/layout/AuthLayout';
+import { Button } from '../components/ui/Button';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -13,23 +13,17 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
-    const [shakeError, setShakeError] = useState(false);
 
-    // Redirect nếu đã đăng nhập
     useEffect(() => {
-        if (isAuthenticated) {
-            navigate('/dashboard');
-        }
+        if (isAuthenticated) navigate('/dashboard');
     }, [isAuthenticated, navigate]);
 
-    // Xử lý submit form đăng nhập
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
         if (!username.trim() || !password.trim()) {
             setError('Vui lòng điền đầy đủ thông tin');
-            triggerShake();
             return;
         }
 
@@ -39,136 +33,100 @@ export default function LoginPage() {
             navigate('/dashboard');
         } else {
             setError(result.error || 'Đăng nhập thất bại');
-            triggerShake();
         }
     };
 
-    const triggerShake = () => {
-        setShakeError(true);
-        setTimeout(() => setShakeError(false), 500);
-    };
-
     return (
-        <div className="min-h-screen auth-gradient-bg flex items-center justify-center px-4 py-8 relative overflow-hidden">
-            {/* Decorative floating orbs */}
-            <div className="auth-orb w-96 h-96 -top-48 -left-48 animate-float" />
-            <div className="auth-orb w-64 h-64 top-1/4 -right-32 animate-float" style={{ animationDelay: '2s' }} />
-            <div className="auth-orb w-48 h-48 bottom-20 left-1/4 animate-float" style={{ animationDelay: '4s' }} />
+        <AuthLayout
+            title="Chào mừng trở lại! 👋"
+            subtitle="Đăng nhập để tiếp tục hành trình khám phá thế giới IoT."
+        >
+            <form onSubmit={handleSubmit} className="space-y-5">
+                {error && (
+                    <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm border border-red-100 flex items-center gap-2 animate-shake">
+                        ⚠️ {error}
+                    </div>
+                )}
 
-            <div className="w-full max-w-md relative z-10">
-                {/* Logo */}
-                <div className="text-center mb-6 md:mb-8 animate-fade-in">
-                    <Link to="/" className="inline-flex items-center gap-2 md:gap-3 group">
-                        <div className="relative">
-                            <Cpu className="h-10 w-10 md:h-12 md:w-12 text-arduino-teal transition-transform group-hover:scale-110" />
-                            <Sparkles className="absolute -top-1 -right-1 h-3 w-3 md:h-4 md:w-4 text-arduino-yellow animate-pulse" />
-                        </div>
-                        <span className="text-2xl md:text-3xl font-bold text-white">
-                            Arduino<span className="text-arduino-teal">Hub</span>
-                        </span>
-                    </Link>
-                    <p className="text-gray-400 mt-2 md:mt-3 text-base md:text-lg">
-                        Chào mừng bạn quay lại! 👋
-                    </p>
+                <div className="space-y-1.5">
+                    <label className="text-sm font-semibold text-gray-700">Tên đăng nhập</label>
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Nhập tên đăng nhập của bạn"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-arduino-teal focus:ring-4 focus:ring-arduino-teal/10 outline-none transition-all bg-white/50 backdrop-blur-sm"
+                        disabled={isLoading}
+                    />
                 </div>
 
-                {/* Login Card */}
-                <div className="auth-card animate-slide-up">
-                    <h1 className="text-xl md:text-2xl font-bold text-center text-white mb-2">
-                        Đăng nhập
-                    </h1>
-                    <p className="text-gray-400 text-center text-sm mb-8">
-                        Tiếp tục hành trình học Arduino của bạn
-                    </p>
-
-                    {error && (
-                        <div className={`auth-error mb-6 ${shakeError ? 'shake' : ''}`}>
-                            {error}
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div>
-                            <label htmlFor="username" className="auth-label">
-                                Tên đăng nhập
-                            </label>
-                            <input
-                                id="username"
-                                type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Nhập username của bạn"
-                                autoComplete="username"
-                                className="auth-input"
-                                disabled={isLoading}
-                            />
-                        </div>
-
-                        <div>
-                            <label htmlFor="password" className="auth-label">
-                                Mật khẩu
-                            </label>
-                            <div className="relative">
-                                <input
-                                    id="password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Nhập mật khẩu"
-                                    autoComplete="current-password"
-                                    className="auth-input pr-12"
-                                    disabled={isLoading}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                                    tabIndex={-1}
-                                >
-                                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                                </button>
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className={`auth-btn-primary flex items-center justify-center gap-2 mt-8 ${isLoading ? 'loading' : ''}`}
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="h-5 w-5 animate-spin" />
-                                    Đang đăng nhập...
-                                </>
-                            ) : (
-                                <>
-                                    Đăng nhập
-                                    <ArrowRight className="h-5 w-5" />
-                                </>
-                            )}
-                        </button>
-                    </form>
-
-                    <div className="relative my-8">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-white/10" />
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-4 text-gray-500 bg-transparent">
-                                Chưa có tài khoản?
-                            </span>
-                        </div>
+                <div className="space-y-1.5">
+                    <div className="flex justify-between items-center">
+                        <label className="text-sm font-semibold text-gray-700">Mật khẩu</label>
+                        <Link to="/forgot-password" className="text-xs font-semibold text-arduino-teal hover:underline">
+                            Quên mật khẩu?
+                        </Link>
                     </div>
 
-                    <Link to="/register" className="auth-btn-secondary">
-                        Tạo tài khoản mới
-                    </Link>
+                    <div className="relative">
+                        <input
+                            type={showPassword ? 'text' : 'password'}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Nhập mật khẩu"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-arduino-teal focus:ring-4 focus:ring-arduino-teal/10 outline-none transition-all bg-white/50 backdrop-blur-sm pr-12"
+                            disabled={isLoading}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
+                    </div>
                 </div>
 
-                <p className="text-center text-gray-500 text-sm mt-8 animate-fade-in">
-                    HNUE - Khoa Kỹ thuật & Công nghệ
+                <Button
+                    type="submit"
+                    className="w-full py-6 text-base font-bold shadow-lg shadow-arduino-teal/20 hover:shadow-arduino-teal/30 hover:-translate-y-0.5 transition-all"
+                    disabled={isLoading}
+                >
+                    {isLoading ? <Loader2 className="animate-spin mr-2" /> : 'Đăng nhập'}
+                </Button>
+
+                <div className="relative my-8">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-200" />
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                        <span className="px-4 text-gray-500 bg-gray-50">Hoặc tiếp tục với</span>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <button type="button" className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors bg-white font-medium text-gray-700">
+                        <svg className="w-5 h-5" viewBox="0 0 24 24">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.26.81-.58z" fill="#FBBC05" />
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                        </svg>
+                        Google (đang phát triển...)
+                    </button>
+                    <button type="button" className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors bg-white font-medium text-gray-700">
+                        <Github className="w-5 h-5" />
+                        GitHub (đang phát triển...)
+                    </button>
+                </div>
+
+                <p className="text-center text-gray-600 mt-8">
+                    Chưa có tài khoản?{' '}
+                    <Link to="/register" className="font-bold text-arduino-teal hover:text-teal-600 transition-colors">
+                        Đăng ký ngay
+                    </Link>
                 </p>
-            </div>
-        </div>
+            </form>
+        </AuthLayout>
     );
 }

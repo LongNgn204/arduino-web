@@ -2,7 +2,7 @@
 // Sử dụng Drizzle ORM với SQLite (Cloudflare D1)
 
 import { sql } from 'drizzle-orm';
-import { text, integer, sqliteTable, index } from 'drizzle-orm/sqlite-core';
+import { text, integer, sqliteTable, index, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 // ==========================================
 // USERS & AUTH

@@ -55,6 +55,26 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
     const [remainingQuota, setRemainingQuota] = useState<number | null>(null);
     const [attachments, setAttachments] = useState<Attachment[]>([]);
 
+    // Persistence Effect
+    useEffect(() => {
+        // Load on mount
+        const saved = localStorage.getItem('ai_chat_history');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                setMessages(parsed);
+            } catch (e) {
+                console.error('Failed to parse chat history', e);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        // Save on update (limit to last 50 messages)
+        const toSave = messages.slice(-50);
+        localStorage.setItem('ai_chat_history', JSON.stringify(toSave));
+    }, [messages]);
+
     // UI State for Resize/Drag
     const [isMaximized, setIsMaximized] = useState(false);
     const [position, setPosition] = useState({ x: 0, y: 0 }); // Will init in useEffect
@@ -247,10 +267,11 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
     };
 
 
-    const handleSend = async () => {
-        if (!input.trim() || isLoading) return;
+    const handleSend = async (messageOverride?: string) => {
+        const messageToSend = messageOverride || input;
+        if (!messageToSend.trim() || isLoading) return;
 
-        const userMessage = input.trim();
+        const userMessage = messageToSend.trim();
         const currentAttachments = [...attachments];
 
         setInput('');
@@ -309,6 +330,27 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
             setIsLoading(false);
         }
     };
+
+    // Listen for custom event/selection to open AI chat
+    useEffect(() => {
+        const handleOpenChat = (e: CustomEvent<{ question: string; autoSubmit?: boolean }>) => {
+            setIsOpen(true);
+            const { question, autoSubmit } = e.detail;
+            if (question) {
+                setTimeout(() => {
+                    setInput(question);
+                    if (autoSubmit) {
+                        handleSend(question);
+                    }
+                }, 100);
+            }
+        };
+
+        window.addEventListener('open-ai-chat' as any, handleOpenChat as any);
+        return () => {
+            window.removeEventListener('open-ai-chat' as any, handleOpenChat as any);
+        };
+    }, [handleSend]); // Depend on handleSend
 
     const clearChat = () => {
         if (window.confirm('Bạn có chắc chắn muốn xóa lịch sử chat không?')) {
@@ -562,7 +604,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                 style={{ lineHeight: '1.5' }}
                             />
                             <button
-                                onClick={handleSend}
+                                onClick={() => handleSend()}
                                 disabled={!input.trim() || isLoading}
                                 className="absolute right-2 bottom-2 p-2 bg-teal-500 hover:bg-teal-400 text-white rounded-lg disabled:opacity-50 disabled:hover:bg-teal-500 transition-all shadow-lg shadow-teal-500/20"
                             >

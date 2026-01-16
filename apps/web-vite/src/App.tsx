@@ -7,6 +7,7 @@ import { PageLoading } from './components/LoadingSpinner';
 import UpdatePopup from './components/UpdatePopup';
 import Sidebar from './components/Sidebar';
 import AiChatPopup from './components/AiChatPopup';
+import ContextualAiAssistant from './components/ContextualAiAssistant';
 import { useAuthStore } from './stores/authStore';
 
 // ==========================================
@@ -35,6 +36,8 @@ const CertificatePage = lazy(() =>
 const ProjectListingPage = lazy(() => import('./pages/ProjectListingPage'));
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const SavedPage = lazy(() => import('./pages/SavedPage'));
+const QuizListingPage = lazy(() => import('./pages/QuizListingPage'));
+const ExamDrillListingPage = lazy(() => import('./pages/ExamDrillListingPage'));
 
 // ==========================================
 // APP CONTENT
@@ -73,8 +76,15 @@ function AppContent() {
           <Route path="/labs/:labId" element={
             <Sidebar><LabPage /></Sidebar>
           } />
+
+          <Route path="/quizzes" element={
+            <Sidebar><QuizListingPage /></Sidebar>
+          } />
           <Route path="/quizzes/:quizId" element={
             <Sidebar><QuizPage /></Sidebar>
+          } />
+          <Route path="/drills" element={
+            <Sidebar><ExamDrillListingPage /></Sidebar>
           } />
           <Route path="/drills/:drillId" element={
             <Sidebar><ExamDrillPage /></Sidebar>
@@ -102,6 +112,13 @@ function AppContent() {
 
       {/* AI Chat Popup - Global on all pages */}
       <AiChatPopup />
+
+      {/* Global Text Selection Handler for Real-time AI */}
+      <ContextualAiAssistant onOpenFullChat={(text) => {
+        window.dispatchEvent(new CustomEvent('open-ai-chat', {
+          detail: { question: text, autoSubmit: true }
+        }));
+      }} />
     </>
   );
 }
