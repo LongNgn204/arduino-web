@@ -6,8 +6,7 @@ import {
     Code2,
     Zap,
     ChevronDown,
-    Loader2,
-    Layout
+    Loader2
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import {
@@ -9,7 +9,6 @@ import {
     CheckCircle2,
     BookOpen,
     Sparkles,
-    Eye,
     Bookmark,
     List,
     X
@@ -18,7 +17,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
 import { cn } from '../components/ui/Card';
 
 const API_BASE = import.meta.env.PROD
@@ -77,22 +75,20 @@ export default function LessonPage() {
                 setLesson(data.lesson);
                 setWeek(data.week);
 
-                // Siblings logic
-                if (data.lesson && data.week) {
-                    const currentOrder = data.lesson.orderIndex;
-                    const weekNum = data.week.weekNumber;
-                    const weekPadded = String(weekNum).padStart(2, '0');
-                    const prevOrder = currentOrder - 1;
-                    const nextOrder = currentOrder + 1;
+                // Use API-provided siblings (calculated on backend)
+                if (data.siblings) {
                     setSiblings({
-                        prev: prevOrder >= 1 ? `lesson-${weekPadded}-${String(prevOrder).padStart(2, '0')}` : (weekNum > 1 ? `lesson-${String(weekNum - 1).padStart(2, '0')}-02` : null), // Approx logic
-                        next: `lesson-${weekPadded}-${String(nextOrder).padStart(2, '0')}`
+                        prev: data.siblings.prev,
+                        next: data.siblings.next
                     });
+                }
 
-                    // Generate TOC
+                // Generate TOC from lesson content
+                if (data.lesson) {
                     const headings = data.lesson.content.match(/^#{1,3} (.*)$/gm) || [];
                     const tocItems = headings.map((heading: string, index: number) => {
-                        const level = heading.match(/^#+/)[0].length;
+                        const levelMatch = heading.match(/^#+/);
+                        const level = levelMatch ? levelMatch[0].length : 1;
                         const text = heading.replace(/^#+ /, '');
                         const id = `heading-${index}`;
                         return { id, text, level };
@@ -270,7 +266,7 @@ export default function LessonPage() {
                     <div className="grid grid-cols-2 gap-4 mt-8">
                         {siblings.prev ? (
                             <Link to={`/lessons/${siblings.prev}`}>
-                                <Button variant="outline" className="w-full h-14 justify-start bg-white hover:bg-gray-50 border-gray-200">
+                                <Button variant="secondary" className="w-full h-14 justify-start bg-white hover:bg-gray-50 border-gray-200">
                                     <div className="text-left">
                                         <div className="text-xs text-gray-400 font-normal mb-0.5">Bài trước</div>
                                         <div className="flex items-center font-bold text-gray-700"><ChevronLeft className="w-4 h-4 mr-1" /> Quay lại</div>

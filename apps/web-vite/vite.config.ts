@@ -7,11 +7,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      // Proxy API requests to Cloudflare Workers
+      // Proxy API requests to Cloudflare Workers (local dev)
       '/api': {
-        target: 'https://arduino-workers.stu725114073.workers.dev',
+        target: 'http://localhost:8787',
         changeOrigin: true,
-        secure: true,
+        secure: false,
       }
     }
   },

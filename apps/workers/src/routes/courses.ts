@@ -138,7 +138,64 @@ coursesRoutes.get('/lessons/:id', optionalAuth(), async (c) => {
         .where(eq(weeks.id, lesson.weekId))
         .get();
 
-    return c.json({ lesson, week });
+    // Lấy ALL lessons trong cùng week để tính prev/next
+    const weekLessons = await db.select({
+        id: lessons.id,
+        orderIndex: lessons.orderIndex,
+    })
+        .from(lessons)
+        .where(eq(lessons.weekId, lesson.weekId))
+        .orderBy(asc(lessons.orderIndex))
+        .all();
+
+    // Find current lesson index
+    const currentIndex = weekLessons.findIndex(l => l.id === lessonId);
+
+    // Calculate siblings
+    let prevLessonId: string | null = null;
+    let nextLessonId: string | null = null;
+
+    if (currentIndex > 0) {
+        prevLessonId = weekLessons[currentIndex - 1].id;
+    } else if (week && week.weekNumber > 0) {
+        // Get last lesson of previous week
+        const prevWeekNum = week.weekNumber - 1;
+        const prevWeekId = `week-${String(prevWeekNum).padStart(2, '0')}`;
+        const prevWeekLessons = await db.select({ id: lessons.id })
+            .from(lessons)
+            .where(eq(lessons.weekId, prevWeekId))
+            .orderBy(asc(lessons.orderIndex))
+            .all();
+        if (prevWeekLessons.length > 0) {
+            prevLessonId = prevWeekLessons[prevWeekLessons.length - 1].id;
+        }
+    }
+
+    if (currentIndex < weekLessons.length - 1) {
+        nextLessonId = weekLessons[currentIndex + 1].id;
+    } else if (week) {
+        // Get first lesson of next week
+        const nextWeekNum = week.weekNumber + 1;
+        const nextWeekId = `week-${String(nextWeekNum).padStart(2, '0')}`;
+        const nextWeekLessons = await db.select({ id: lessons.id })
+            .from(lessons)
+            .where(eq(lessons.weekId, nextWeekId))
+            .orderBy(asc(lessons.orderIndex))
+            .all();
+        if (nextWeekLessons.length > 0) {
+            nextLessonId = nextWeekLessons[0].id;
+        }
+    }
+
+    return c.json({
+        lesson,
+        week,
+        siblings: {
+            prev: prevLessonId,
+            next: nextLessonId,
+            totalInWeek: weekLessons.length,
+        }
+    });
 });
 
 /**

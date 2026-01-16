@@ -91,68 +91,105 @@ INSERT INTO courses (id, code, title, description, total_weeks, is_published, cr
     sql += "\n-- ==========================================\n-- LESSONS (Dynamic content mapping simplified)\n-- ==========================================\n";
 
 
+    // Helper function to read lesson content from markdown file
+    function readLessonContent(weekNum, lessonNum) {
+        const weekPadded = String(weekNum).padStart(2, '0');
+        const weekFileMap = {
+            '00': 'week-00-intro.md',
+            '01': 'week-01-gpio-led.md',
+            '02': 'week-02-7segment.md',
+            '03': 'week-03-button-keypad.md',
+            '04': 'week-04-analog-adc-pwm.md',
+            '05': 'week-05-io-integration.md',
+            '06': 'week-06-sensors.md',
+            '07': 'week-07-serial-uart.md',
+            '08': 'week-08-i2c-lcd.md',
+            '09': 'week-09-spi.md',
+            '10': 'week-10-1wire-ds18b20.md',
+            '11': 'week-11-wifi-webserver.md',
+            '12': 'week-12-async-webserver.md',
+        };
+
+        const filename = weekFileMap[weekPadded];
+        if (!filename) return 'Nội dung đang cập nhật...';
+
+        const content = readCurriculumFile(filename);
+        if (content === 'Nội dung đang cập nhật...') return content;
+
+        // For lesson 1 of each week, return full content
+        // For lesson 2, try to extract a section or return a portion
+        if (lessonNum === 1) {
+            return content; // Full week content for first lesson
+        } else {
+            // For additional lessons, extract a section if possible
+            const sections = content.split(/\n## /);
+            if (sections.length > lessonNum) {
+                return '## ' + sections[lessonNum];
+            }
+            return content.substring(content.length / 2); // Return second half for lesson 2
+        }
+    }
+
     const lessons = [
         // WEEK 0
-        ["lesson-00-01", "week-00", 1, "Điện tử cơ bản & Định luật Ohm",
-            "# Khái niệm cơ bản\\n\\nĐể bắt đầu với Arduino, bạn cần hiểu 3 đại lượng cơ bản nhất của điện:\\n\\n1. **Hiệu điện thế (Voltage - V):** Đơn vị Volt (V). Là áp lực đẩy dòng điện đi.\\n2. **Dòng điện (Current - I):** Đơn vị Ampe (A). Là dòng chảy của các electron.\\n3. **Điện trở (Resistance - R):** Đơn vị Ohm (Ω). Là sự cản trở dòng điện.\\n\\n### Định luật Ohm\\nĐây là công thức quan trọng nhất:\\n$$ V = I \\times R $$(\\n\\n![Tam giác định luật Ohm](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/OhmsLaw.png/640px-OhmsLaw.png)"],
-
-        ["lesson-00-02", "week-00", 2, "Nhận biết linh kiện điện tử",
-            "# Linh kiện thường gặp\\n\\n## 1. Điện trở (Resistor)\\nLàm giảm dòng điện. Không phân cực (cắm chiều nào cũng được).\\n\\n![Điện trở](https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Resistor_symbol_America.svg/320px-Resistor_symbol_America.svg.png)\\n\\n## 2. Diode phát quang (LED)\\nChỉ cho dòng điện đi qua 1 chiều. Chân dài là Dương (+), chân ngắn là Âm (-).\\n\\n![LED](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/LED_circuit_elements.svg/320px-LED_circuit_elements.svg.png)\\n\\n## 3. Breadboard\\nDùng để lắp mạch thử nghiệm mà không cần hàn.\\n\\n![Cấu tạo Breadboard](https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Breadboard_scheme.svg/640px-Breadboard_scheme.svg.png)"],
-
-        ["lesson-00-03", "week-00", 3, "Cách đọc điện trở",
-            "# Đọc vòng màu điện trở\\n\\n![Bảng màu điện trở](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Resistor_Color_Code.svg/640px-Resistor_Color_Code.svg.png)\\n\\n### Cách tính (Loại 4 vòng):\\n1. Vòng 1: Số thứ nhất\\n2. Vòng 2: Số thứ hai\\n3. Vòng 3: Số mũ (10^n) - Số lượng số 0 thêm vào sau\\n4. Vòng 4: Sai số (Vàng kim 5%)\\n\\n**Ví dụ:** Nâu - Đen - Đỏ - Vàng kim = 1 - 0 - 00 (thêm 2 số 0) = 1000 Ohm = 1 kΩ."],
+        ["lesson-00-01", "week-00", 1, "Điện tử cơ bản & Định luật Ohm"],
+        ["lesson-00-02", "week-00", 2, "Nhận biết linh kiện điện tử"],
+        ["lesson-00-03", "week-00", 3, "Cách đọc điện trở"],
 
         // WEEK 1
-        ["lesson-01-01", "week-01", 1, "Hệ thống nhúng là gì?", "# Hệ thống nhúng (Embedded Systems)\n\nKhái niệm hệ thống nhúng: thiết bị điện tử chuyên nhiệm, chạy nhiệm vụ cụ thể, tài nguyên hạn chế."],
-        ["lesson-01-02", "week-01", 2, "GPIO: Output", "# Digital Output\n\n- pinMode(pin, OUTPUT)\n- digitalWrite(pin, HIGH/LOW)"],
+        ["lesson-01-01", "week-01", 1, "Hệ thống nhúng & GPIO"],
+        ["lesson-01-02", "week-01", 2, "Điều khiển LED nâng cao"],
 
         // WEEK 2
-        ["lesson-02-01", "week-02", 1, "Tư duy thiết kế", "# Top-Down vs Bottom-Up"],
-        ["lesson-02-02", "week-02", 2, "LED 7 đoạn", "# Multiplexing"],
+        ["lesson-02-01", "week-02", 1, "Thiết kế hệ thống nhúng"],
+        ["lesson-02-02", "week-02", 2, "LED 7 đoạn & Multiplexing"],
 
         // WEEK 3
-        ["lesson-03-01", "week-03", 1, "Input & INPUT_PULLUP", "# Digital Input"],
-        ["lesson-03-02", "week-03", 2, "Debounce (Chống dội)", "# Debounce Logic"],
+        ["lesson-03-01", "week-03", 1, "Input & INPUT_PULLUP"],
+        ["lesson-03-02", "week-03", 2, "Debounce (Chống dội phím)"],
 
         // WEEK 4
-        ["lesson-04-01", "week-04", 1, "ADC (Analog to Digital)", "# ADC Converter"],
-        ["lesson-04-02", "week-04", 2, "PWM (Pulse Width Modulation)", "# PWM Control"],
+        ["lesson-04-01", "week-04", 1, "ADC (Analog to Digital)"],
+        ["lesson-04-02", "week-04", 2, "PWM & Điều khiển độ sáng"],
 
         // WEEK 5
-        ["lesson-05-01", "week-05", 1, "Tư duy Module hóa", "# Functions"],
-        ["lesson-05-02", "week-05", 2, "Tránh delay()", "# Millis()"],
+        ["lesson-05-01", "week-05", 1, "Tư duy Module hóa & Hàm"],
+        ["lesson-05-02", "week-05", 2, "Tránh delay() với millis()"],
 
         // WEEK 6
-        ["lesson-06-01", "week-06", 1, "Cảm biến siêu âm HC-SR04", "# HC-SR04"],
-        ["lesson-06-02", "week-06", 2, "Nhiệt độ & Độ ẩm DHT11", "# DHT11"],
+        ["lesson-06-01", "week-06", 1, "Cảm biến siêu âm HC-SR04"],
+        ["lesson-06-02", "week-06", 2, "Cảm biến nhiệt độ & độ ẩm"],
 
         // WEEK 7
-        ["lesson-07-01", "week-07", 1, "Giao thức UART", "# UART Serial"],
-        ["lesson-07-02", "week-07", 2, "Xử lý chuỗi Serial", "# Serial Parsing"],
+        ["lesson-07-01", "week-07", 1, "Giao tiếp UART Serial"],
+        ["lesson-07-02", "week-07", 2, "Xử lý chuỗi lệnh Serial"],
 
         // WEEK 8
-        ["lesson-08-01", "week-08", 1, "Giao thức I2C", "# I2C Bus"],
-        ["lesson-08-02", "week-08", 2, "LCD 1602 I2C", "# LCD Display"],
+        ["lesson-08-01", "week-08", 1, "Giao tiếp I2C"],
+        ["lesson-08-02", "week-08", 2, "LCD 1602 I2C Display"],
 
         // WEEK 9
-        ["lesson-09-01", "week-09", 1, "Giao thức SPI", "# SPI Bus"],
-        ["lesson-09-02", "week-09", 2, "Shift Register 74HC595", "# 74HC595 IC"],
+        ["lesson-09-01", "week-09", 1, "Giao tiếp SPI"],
+        ["lesson-09-02", "week-09", 2, "Shift Register 74HC595"],
 
         // WEEK 10
-        ["lesson-10-01", "week-10", 1, "Giao thức 1-Wire", "# OneWire Bus"],
-        ["lesson-10-02", "week-10", 2, "DS18B20 Temp Sensor", "# DS18B20 Sensor"],
+        ["lesson-10-01", "week-10", 1, "Giao tiếp 1-Wire"],
+        ["lesson-10-02", "week-10", 2, "Cảm biến DS18B20"],
 
         // WEEK 11
-        ["lesson-11-01", "week-11", 1, "ESP8266/ESP32 Intro", "# ESP Platform"],
-        ["lesson-11-02", "week-11", 2, "Simple WebServer", "# HTTP Server"],
+        ["lesson-11-01", "week-11", 1, "ESP8266/ESP32 Nhập môn"],
+        ["lesson-11-02", "week-11", 2, "WebServer cơ bản"],
 
         // WEEK 12
-        ["lesson-12-01", "week-12", 1, "Async WebServer", "# ESPAsyncWebServer"],
-        ["lesson-12-02", "week-12", 2, "AJAX & Fetch API", "# Fetch API"],
+        ["lesson-12-01", "week-12", 1, "Async WebServer"],
+        ["lesson-12-02", "week-12", 2, "AJAX & Fetch API"],
     ];
 
-    lessons.forEach(([l_id, w_id, l_idx, l_title, l_content]) => {
-        sql += `INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('${l_id}', '${w_id}', ${l_idx}, '${l_title}', '${l_content.replace(/'/g, "''")}', 20, 1, unixepoch());\n`;
+    lessons.forEach(([l_id, w_id, l_idx, l_title]) => {
+        // Extract weekNum from w_id (e.g., "week-01" -> 1)
+        const weekNum = parseInt(w_id.replace('week-', ''), 10);
+        const content = readLessonContent(weekNum, l_idx);
+        sql += `INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('${l_id}', '${w_id}', ${l_idx}, '${l_title}', '${content.replace(/'/g, "''")}', 20, 1, unixepoch());\n`;
     });
 
     sql += "\n-- ==========================================\n-- LABS\n-- ==========================================\n";

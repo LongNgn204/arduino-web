@@ -21,6 +21,7 @@ import certificateRoutes from './routes/certificate';
 import projectsRoutes from './routes/projects';
 import personalizationRoutes from './routes/personalization';
 import adminRoutes from './routes/admin';
+import compilerRoutes from './routes/compiler';
 
 // Import middleware
 import { rateLimitMiddleware } from './middleware/rateLimit';
@@ -121,6 +122,9 @@ app.route('/api', personalizationRoutes);
 
 // Admin routes: /api/admin/*
 app.route('/api/admin', adminRoutes);
+
+// Compiler routes: /api/compile/*
+app.route('/api/compile', compilerRoutes);
 
 // ==========================================
 // ERROR HANDLING
