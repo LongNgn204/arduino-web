@@ -108,39 +108,39 @@ export default function WeekDetailPage() {
     return (
         <div className="min-h-screen bg-arduino-base text-arduino-text-primary font-sans">
             {/* Hero Header */}
-            <header className="relative overflow-hidden bg-white shadow-soft pt-8 pb-16 lg:pb-24">
+            <header className="relative overflow-hidden bg-white shadow-soft pt-6 md:pt-8 pb-12 md:pb-16 lg:pb-24">
                 {/* Background Decor */}
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-arduino-mint/30 rounded-bl-[100px] -z-0" />
-                <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-arduino-yellow/20 rounded-tr-[80px] -z-0" />
+                <div className="absolute top-0 right-0 w-1/2 md:w-1/3 h-full bg-arduino-mint/30 rounded-bl-[100px] -z-0" />
+                <div className="absolute bottom-0 left-0 w-1/3 md:w-1/4 h-1/2 bg-arduino-yellow/20 rounded-tr-[80px] -z-0" />
 
                 <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Back Button */}
                     <Link
                         to="/dashboard"
-                        className="inline-flex items-center gap-2 text-arduino-text-secondary hover:text-arduino-teal transition-colors mb-8 font-medium"
+                        className="inline-flex items-center gap-2 text-arduino-text-secondary hover:text-arduino-teal transition-colors mb-6 md:mb-8 font-medium"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         <span className="text-sm">Quay lại Dashboard</span>
                     </Link>
 
                     {/* Week Info */}
-                    <div className="flex flex-col md:flex-row md:items-start gap-8">
+                    <div className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8">
                         {/* Week Number Badge */}
-                        <div className="relative shrink-0">
-                            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-arduino-teal to-teal-600 flex items-center justify-center text-white text-4xl font-black shadow-lg shadow-arduino-teal/20">
+                        <div className="relative shrink-0 mx-auto md:mx-0">
+                            <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl md:rounded-3xl bg-gradient-to-br from-arduino-teal to-teal-600 flex items-center justify-center text-white text-3xl md:text-4xl font-black shadow-lg shadow-arduino-teal/20">
                                 {week.weekNumber}
                             </div>
-                            <div className="absolute -bottom-3 -right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center border-2 border-arduino-teal shadow-sm">
-                                <Sparkles className="w-4 h-4 text-arduino-teal" />
+                            <div className="absolute -bottom-2 md:-bottom-3 -right-2 md:-right-3 w-7 h-7 md:w-8 md:h-8 bg-white rounded-full flex items-center justify-center border-2 border-arduino-teal shadow-sm">
+                                <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-arduino-teal" />
                             </div>
                         </div>
 
-                        <div className="flex-1">
+                        <div className="flex-1 text-center md:text-left">
                             <Badge variant="mint" className="mb-3">Tuần {week.weekNumber}</Badge>
-                            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+                            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
                                 {week.title}
                             </h1>
-                            <div className="flex flex-wrap items-center gap-4 text-sm text-arduino-text-secondary">
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-4 text-xs md:text-sm text-arduino-text-secondary">
                                 <span className="flex items-center gap-1.5 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
                                     <BookOpen className="w-4 h-4 text-arduino-teal" />
                                     <span className="font-medium text-gray-700">{(week.lessons || []).length}</span> bài giảng

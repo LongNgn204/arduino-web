@@ -57,24 +57,24 @@ export default function LoginPage() {
 
             <div className="w-full max-w-md relative z-10">
                 {/* Logo */}
-                <div className="text-center mb-8 animate-fade-in">
-                    <Link to="/" className="inline-flex items-center gap-3 group">
+                <div className="text-center mb-6 md:mb-8 animate-fade-in">
+                    <Link to="/" className="inline-flex items-center gap-2 md:gap-3 group">
                         <div className="relative">
-                            <Cpu className="h-12 w-12 text-arduino-teal transition-transform group-hover:scale-110" />
-                            <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-arduino-yellow animate-pulse" />
+                            <Cpu className="h-10 w-10 md:h-12 md:w-12 text-arduino-teal transition-transform group-hover:scale-110" />
+                            <Sparkles className="absolute -top-1 -right-1 h-3 w-3 md:h-4 md:w-4 text-arduino-yellow animate-pulse" />
                         </div>
-                        <span className="text-3xl font-bold text-white">
+                        <span className="text-2xl md:text-3xl font-bold text-white">
                             Arduino<span className="text-arduino-teal">Hub</span>
                         </span>
                     </Link>
-                    <p className="text-gray-400 mt-3 text-lg">
+                    <p className="text-gray-400 mt-2 md:mt-3 text-base md:text-lg">
                         Chào mừng bạn quay lại! 👋
                     </p>
                 </div>
 
                 {/* Login Card */}
                 <div className="auth-card animate-slide-up">
-                    <h1 className="text-2xl font-bold text-center text-white mb-2">
+                    <h1 className="text-xl md:text-2xl font-bold text-center text-white mb-2">
                         Đăng nhập
                     </h1>
                     <p className="text-gray-400 text-center text-sm mb-8">
