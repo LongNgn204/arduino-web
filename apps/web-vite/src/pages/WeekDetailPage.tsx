@@ -154,20 +154,23 @@ export default function WeekDetailPage() {
 
                                 {/* Week Buttons */}
                                 <div className="flex items-center gap-2 py-2 px-2 relative">
-                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => {
+                                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => {
                                         const isActive = currentWeekNum === num;
                                         const isPast = currentWeekNum > num;
+                                        // Chú thích: Week 0 là bắt buộc, cần style nổi bật
+                                        const isRequired = num === 0;
 
                                         // Topic labels for tooltips
                                         const topicLabels: Record<number, string> = {
-                                            1: 'Nhập môn',
-                                            2: 'GPIO',
+                                            0: 'Điện tử',
+                                            1: 'GPIO',
+                                            2: 'Logic',
                                             3: 'ADC/PWM',
-                                            4: 'LED 7 đoạn',
+                                            4: 'Hiển thị',
                                             5: 'Cảm biến',
                                             6: 'Động cơ',
                                             7: 'UART',
-                                            8: 'I2C',
+                                            8: 'I2C/SPI',
                                             9: 'WiFi',
                                             10: 'MQTT',
                                             11: 'App',
@@ -179,19 +182,21 @@ export default function WeekDetailPage() {
                                                 key={num}
                                                 to={`/weeks/week-${num.toString().padStart(2, '0')}`}
                                                 className="relative z-10 group flex-shrink-0"
-                                                title={`Tuần ${num}: ${topicLabels[num]}`}
+                                                title={`Tuần ${num}: ${topicLabels[num]}${isRequired ? ' (Bắt buộc)' : ''}`}
                                             >
                                                 <div className={`
                                                     w-12 h-12 md:w-14 md:h-14 rounded-xl flex flex-col items-center justify-center font-bold text-sm transition-all duration-300 border-2
                                                     ${isActive
                                                         ? 'bg-white text-arduino-teal border-white scale-110 shadow-lg shadow-black/20'
-                                                        : isPast
-                                                            ? 'bg-teal-600/50 text-white border-teal-500/50 hover:bg-teal-500 hover:scale-105'
-                                                            : 'bg-teal-800/40 text-teal-300 border-teal-700/30 hover:bg-teal-700 hover:text-white hover:scale-105'
+                                                        : isRequired
+                                                            ? 'bg-amber-500/80 text-white border-amber-400 hover:bg-amber-400 hover:scale-105'
+                                                            : isPast
+                                                                ? 'bg-teal-600/50 text-white border-teal-500/50 hover:bg-teal-500 hover:scale-105'
+                                                                : 'bg-teal-800/40 text-teal-300 border-teal-700/30 hover:bg-teal-700 hover:text-white hover:scale-105'
                                                     }
                                                 `}>
                                                     {isPast ? <CheckCircle2 className="w-5 h-5" /> : <span className="text-base md:text-lg">{num}</span>}
-                                                    <span className={`text-[9px] mt-0.5 font-medium truncate max-w-[40px] ${isActive ? 'text-teal-600' : 'text-teal-300/80'}`}>
+                                                    <span className={`text-[9px] mt-0.5 font-medium truncate max-w-[40px] ${isActive ? 'text-teal-600' : isRequired ? 'text-amber-100' : 'text-teal-300/80'}`}>
                                                         {topicLabels[num]}
                                                     </span>
                                                 </div>

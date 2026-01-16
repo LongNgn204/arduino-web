@@ -1,81 +1,146 @@
-# Arduino Learning Hub - HNUE FET 🚀
+# Arduino Learning Hub 🚀
 
-Nền tảng học tập "Lập trình hệ thống nhúng & IoT" thế hệ mới dành cho sinh viên Khoa Kỹ thuật & Công nghệ - ĐH Sư phạm Hà Nội.
+[![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](LICENSE)
+[![Deploy: Cloudflare](https://img.shields.io/badge/Deploy-Cloudflare-orange.svg)](https://pages.cloudflare.com/)
+[![Node: 20+](https://img.shields.io/badge/Node-20+-green.svg)](https://nodejs.org/)
 
-![AI Assistant](https://placehold.co/1200x600/1e293b/teal?text=AI+Assistant+Encyclopedia)
+> **Nền tảng học tập "Lập trình hệ thống nhúng & IoT"** dành cho sinh viên Khoa Kỹ thuật & Công nghệ - ĐH Sư phạm Hà Nội.
 
-## ✨ Tính Năng Nổi Bật
+---
 
-### 🎓 Hệ Thống Học Tập Toàn Diện
-- **12 Tuần Giáo Trình**: Lộ trình bài bản từ cơ bản đến nâng cao.
-- **Simulator Online**: Tích hợp Wokwi Simulator chạy code ngay trên trình duyệt.
-- **Web IDE Thông Minh**: Code editor với Syntax Highlighting, Auto-save.
+## ✨ Tính năng nổi bật
 
-### 🤖 AI Agent "Bách Khoa Toàn Thư" (Mới 🌟)
-Trợ lý AI mạnh mẽ được nâng cấp toàn diện:
-- **Kiến thức vô hạn**: Trả lời mọi câu hỏi từ Arduino đến Toán học, Khoa học, Xã hội.
-- **Hỗ trợ LaTeX**: Hiển thị công thức Toán học đẹp mắt (ví dụ: $x = \frac{-b \pm \sqrt{\Delta}}{2a}$).
-- **Giao diện linh hoạt**: Cửa sổ chat có thể **Kéo thả (Drag)**, **Thay đổi kích thước (Resize)** và **Phóng to toàn màn hình**.
-- **Auto-Fix Agent**: Tự động tìm và sửa lỗi code trong IDE chỉ với 1 cú click.
+| Tính năng | Mô tả |
+|-----------|-------|
+| 🎓 **13 Tuần Giáo Trình** | Lộ trình từ Week 0 (Điện tử cơ bản) đến Week 12 (Dự án IoT) |
+| 🔌 **Dual-Board Support** | Hỗ trợ cả Arduino Uno và ESP32 |
+| 💻 **Web IDE Tích hợp** | Code editor với Syntax Highlighting, Auto-save |
+| 🎮 **Simulator Online** | Tích hợp Wokwi Simulator chạy code trên trình duyệt |
+| 🤖 **AI Agent** | Trợ lý AI hỗ trợ debug code và giải đáp thắc mắc |
+| 📝 **Quiz System** | Hệ thống quiz 12 tuần với review đáp án |
+| 🏆 **Gamification** | Leaderboard và challenges hàng tuần |
 
-### 🏆 Gamification
-- **Leaderboard**: Bảng xếp hạng sinh viên xuất sắc.
-- **Challenges**: Thử thách hàng tuần.
+---
 
-## 🛠️ Công Nghệ (Tech Stack)
+## 🛠️ Tech Stack
 
-Project sử dụng công nghệ Modern Web mới nhất:
-
-### Frontend
-- **Framework**: [Vite](https://vitejs.dev/) + React 19 + TypeScript
-- **Styling**: TailwindCSS v4 + PostCSS + Animations
-- **AI UI**: React Markdown + Katex (LaTeX Support)
+### Frontend (`apps/web-vite`)
+- **Framework**: Vite + React 19 + TypeScript
+- **Styling**: TailwindCSS v4 + Framer Motion
+- **AI UI**: React Markdown + KaTeX (LaTeX)
 - **State**: Zustand
 
-### Backend (Serverless)
-- **Runtime**: Cloudflare Workers
+### Backend (`apps/workers`)
+- **Runtime**: Cloudflare Workers (Edge)
 - **Framework**: Hono
 - **Database**: Cloudflare D1 (SQLite) + Drizzle ORM
-- **AI Integration**: OpenRouter API
+- **AI**: OpenRouter API
 
-## 🚀 Cài Đặt và Chạy Local
+---
+
+## 🚀 Quick Start
 
 ### Yêu cầu
 - Node.js 20+
-- npm
+- npm hoặc pnpm
 
-### Các bước
-1. **Clone project:**
-   ```bash
-   git clone https://github.com/LongNgn204/arduino-web.git
-   cd arduino-web
-   ```
+### 1. Clone & Install
 
-2. **Cài đặt dependencies:**
-   ```bash
-   npm install
-   ```
+```bash
+git clone https://github.com/LongNgn204/arduino-web.git
+cd arduino-web
+```
 
-3. **Chạy Frontend (Vite):**
-   ```bash
-   cd apps/web-vite
-   npm run dev
-   ```
-   Truy cập: `http://localhost:5173`
+### 2. Chạy Frontend
 
-4. **Chạy Backend (Workers):**
-   ```bash
-   cd apps/workers
-   npm run dev
-   ```
-   API URL: `http://localhost:8787`
+```bash
+cd apps/web-vite
+npm install
+npm run dev
+```
+→ Truy cập: `http://localhost:5173`
+
+### 3. Chạy Backend (tuỳ chọn)
+
+```bash
+cd apps/workers
+npm install
+npm run dev
+```
+→ API: `http://localhost:8787`
+
+### 4. Seed Database (local)
+
+```bash
+cd apps/workers
+npx wrangler d1 execute arduino-db --local --file=src/db/seed_lms_2026.sql
+```
+
+---
+
+## 📁 Project Structure
+
+```
+arduino-web/
+├── apps/
+│   ├── web-vite/          # Frontend (Vite + React)
+│   │   ├── src/
+│   │   │   ├── components/  # UI Components
+│   │   │   ├── pages/       # Route pages
+│   │   │   └── stores/      # Zustand stores
+│   │   └── package.json
+│   │
+│   └── workers/           # Backend (Cloudflare Workers)
+│       ├── src/
+│       │   ├── db/          # SQL schemas & seeds
+│       │   └── index.ts     # API routes (Hono)
+│       └── wrangler.toml
+│
+├── curriculum/            # Nội dung giáo trình (.md)
+│   ├── week-00-intro.md   # Nhập môn Điện tử (BẮT BUỘC)
+│   ├── week-01-gpio-led.md
+│   └── ...
+│
+└── scripts/               # Utility scripts
+```
+
+---
+
+## 📚 Curriculum Overview
+
+| Week | Chủ đề | Nội dung chính |
+|------|--------|----------------|
+| **0** | Nhập môn Điện tử ⚡ | Định luật Ohm, Điện trở, LED, Breadboard **(BẮT BUỘC)** |
+| 1-4 | Foundation | GPIO, Digital I/O, Analog/PWM, LED 7 đoạn |
+| 5-6 | Sensors & Logic | Cảm biến DHT11, LDR, Servo, Relay |
+| 7-8 | Communication | UART, I2C, SPI |
+| 9-11 | IoT & Cloud | WiFi, MQTT, Web Server, App |
+| 12 | Capstone | Dự án cuối khóa |
+
+---
 
 ## 🌍 Deployment
 
-Xem hướng dẫn chi tiết tại file [DEPLOY.md](./DEPLOY.md).
-Backend chạy trên Cloudflare Workers (Global Edge Network).
+Chi tiết tại [DEPLOY.md](./DEPLOY.md)
 
-## 📝 Credits
-- **Chủ dự án**: Nguyễn Hoàng Long
-- **Đơn vị**: Khoa Kỹ thuật & Công nghệ - HNUE
-- **Phiên bản**: 2.1.0 (AI Agent Update)
+- **Frontend**: Cloudflare Pages
+- **Backend**: Cloudflare Workers  
+- **Database**: Cloudflare D1
+
+---
+
+## 🧪 Testing
+
+```bash
+cd apps/web-vite
+npm run test          # Unit tests
+npm run test:coverage # Coverage report
+```
+
+---
+
+## 📝 License
+
+MIT © 2024 [Nguyễn Hoàng Long](https://github.com/LongNgn204)
+
+**Đơn vị**: Khoa Kỹ thuật & Công nghệ - HNUE

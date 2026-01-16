@@ -27,8 +27,6 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 | Performance | Thấp | Cao |
 | Nhiều client | Chậm | Nhanh |
 
-### 1.2 Kiến trúc Async
-
 ```
 Client 1 ─► ┌─────────────┐
             │   Async     │ ─► LED Control
@@ -37,6 +35,25 @@ Client 2 ─► │  WebServer  │ ─► Send JSON
 Client 3 ─► └─────────────┘
                   ↑
           Event-driven (không block)
+```
+
+### Sơ đồ tuần tự xử lý Async (Mermaid)
+
+```mermaid
+sequenceDiagram
+    participant C as Client (Browser)
+    participant S as ESP32 (Async Server)
+    participant L as LED Hardware
+    
+    Note over C,S: Non-blocking Request
+    C->>S: GET /toggle/1
+    S-->>C: Trả về JSON {"status": "ok"} ngay lập tức
+    
+    par Xử lý phần cứng
+        S->>L: Đảo trạng thái LED
+    and Cập nhật UI
+        C->>C: Đổi màu nút bấm
+    end
 ```
 
 ### 1.3 Thư viện cần cài

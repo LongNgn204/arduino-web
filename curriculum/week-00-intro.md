@@ -5,6 +5,10 @@
 
 ---
 
+![Banner Nhập Môn](https://images.unsplash.com/photo-1553406830-ef2513450d76?auto=format&fit=crop&w=1200&q=80)
+
+---
+
 ## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
@@ -158,6 +162,19 @@ Vạch 3 (Cam) = x1000 (thêm 3 số 0)
 **LED (Light Emitting Diode)** là diode phát sáng khi có dòng điện chạy qua.
 
 ![Cấu tạo LED](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/LED_circuit_elements.svg/320px-LED_circuit_elements.svg.png)
+
+### Sơ đồ mạch LED cơ bản (Mermaid)
+
+```mermaid
+graph LR
+    P[Nguồn 5V] -->|Dòng điện| R[Điện Trở R]
+    R -->|Hạn dòng| L[LED Anode +]
+    L -->|Phát sáng| G[GND -]
+    style P fill:#ff9999,stroke:#333,stroke-width:2px
+    style R fill:#ffcc99,stroke:#333
+    style L fill:#99ff99,stroke:#333
+    style G fill:#99ccff,stroke:#333
+```
 
 ### 3.2 Đặc điểm quan trọng của LED
 

@@ -15,6 +15,13 @@
       "when": 1768451057321,
       "tag": "0001_chief_typhoid_mary",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1768571434760,
+      "tag": "0002_graceful_gambit",
+      "breakpoints": true
     }
   ]
 }

@@ -382,12 +382,36 @@ function MarkdownRenderer({ content, toc }: { content: string, toc: TOCItem[] })
                         <span className="flex-1">{children}</span>
                     </li>
                 ),
+                // Table Styling
+                table: ({ children }) => (
+                    <div className="overflow-x-auto my-8 rounded-xl border border-gray-200 shadow-sm">
+                        <table className="w-full text-left border-collapse bg-white">
+                            {children}
+                        </table>
+                    </div>
+                ),
+                thead: ({ children }) => <thead className="bg-gray-50 border-b border-gray-200">{children}</thead>,
+                th: ({ children }) => (
+                    <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                        {children}
+                    </th>
+                ),
+                tr: ({ children }) => <tr className="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors">{children}</tr>,
+                td: ({ children }) => <td className="px-6 py-4 text-sm text-gray-600 leading-relaxed">{children}</td>,
+
+                // Code & Mermaid
                 code: ({ className, children }) => {
                     const isInline = !className;
                     if (isInline) {
                         return <code className="px-1.5 py-0.5 bg-gray-100 rounded-md text-pink-600 text-sm font-mono border border-gray-200">{children}</code>;
                     }
                     const language = className?.replace('language-', '') || 'text';
+
+                    // Mermaid Diagram Support
+                    if (language === 'mermaid') {
+                        return <MermaidDiagram code={String(children)} />;
+                    }
+
                     return (
                         <div className="my-8 rounded-xl overflow-hidden border border-gray-200 shadow-md">
                             <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
@@ -435,5 +459,70 @@ function Loader2({ className }: { className?: string }) {
         >
             <path d="M21 12a9 9 0 1 1-6.219-8.56" />
         </svg>
+    );
+}
+
+function MermaidDiagram({ code }: { code: string }) {
+    const [svg, setSvg] = useState('');
+    const [error, setError] = useState(false);
+    // Unique ID for this diagram
+    const [id] = useState(`mermaid-${Math.random().toString(36).substr(2, 9)}`);
+
+    useEffect(() => {
+        const renderDiagram = async () => {
+            try {
+                // @ts-ignore
+                if (!window.mermaid) {
+                    // Load script if not present
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
+                    script.onload = () => initMermaid();
+                    document.head.appendChild(script);
+                } else {
+                    initMermaid();
+                }
+            } catch (e) {
+                console.error('Mermaid load error:', e);
+                setError(true);
+            }
+        };
+
+        const initMermaid = async () => {
+            try {
+                // @ts-ignore
+                window.mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+                // @ts-ignore
+                const { svg } = await window.mermaid.render(id, code);
+                setSvg(svg);
+            } catch (e) {
+                console.error('Mermaid render error:', e);
+                setError(true);
+            }
+        };
+
+        renderDiagram();
+    }, [code, id]);
+
+    if (error) {
+        return (
+            <div className="my-8 p-4 bg-red-50 border border-red-100 rounded-xl text-xs font-mono text-red-600 overflow-auto">
+                <div className="font-bold mb-2">Mermaid Render Error:</div>
+                {code}
+            </div>
+        );
+    }
+
+    if (!svg) {
+        return (
+            <div className="my-8 flex justify-center py-12 bg-gray-50 rounded-xl border border-gray-100 animate-pulse">
+                <Loader2 className="w-6 h-6 text-gray-300 animate-spin" />
+            </div>
+        );
+    }
+
+    return (
+        <div className="my-8 flex justify-center bg-white p-6 rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
+            <div dangerouslySetInnerHTML={{ __html: svg }} />
+        </div>
     );
 }
