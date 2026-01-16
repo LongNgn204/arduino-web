@@ -178,7 +178,7 @@ export default function QuizPage() {
         const percentage = Math.round((score.earned / score.total) * 100);
 
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 gap-8">
                 <div className="max-w-md w-full text-center bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
                     <div className={`w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center ${score.passed ? 'bg-green-100' : 'bg-red-100'}`}>
                         {score.passed ? (
@@ -231,7 +231,75 @@ export default function QuizPage() {
                         </Button>
                     </div>
                 </div>
-            </div>
+                {quiz.questions.map((q, i) => {
+                    const result = _results.find(r => r.questionId === q.id);
+                    const isCorrect = result?.correct;
+                    const userAnswerIndex = answers[q.id];
+                    // Frontend might store answer as index (number) or string. 
+                    // Our questions table `options` is text[], `correctAnswer` is text (the actual string).
+                    // But frontend Logic at line 326: `answers[currentQuestion.id] === index`. So `answers` stores INDEX.
+                    // We need to map index back to string to display user choice? Or just show the option block.
+
+                    return (
+                        <div key={q.id} className={`bg-white p-6 rounded-2xl border-2 ${isCorrect ? 'border-green-100' : 'border-red-100'}`}>
+                            <div className="flex items-start gap-4">
+                                <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                    }`}>
+                                    {i + 1}
+                                </span>
+                                <div className="flex-1 space-y-3">
+                                    <p className="font-medium text-gray-900 text-lg">{q.content}</p>
+
+                                    <div className="space-y-2">
+                                        {q.options?.map((opt, optIdx) => {
+                                            const isSelected = userAnswerIndex === optIdx;
+                                            // Wait, frontend `currentQuestion.correctAnswer` exists (interface Question).
+                                            // But does backend send it? Yes, we fetch `quizzes/${id}` which returns questions with answers?
+                                            // Usually we shouldn't send answers to frontend before submit if we want to be secure.
+                                            // But the `Question` interface has `correctAnswer`. 
+                                            // If the API returns it, we can highlight strict match.
+                                            // Let's assume API returns it for now (simpler MVP). Or rely on `result` if it contained the correct answer index.
+                                            // `result` has `explanation`. 
+
+                                            // Let's rely on simple comparison if available, or just show explanation.
+                                            // Better: Just show explanation and user selected.
+
+                                            let style = "border-gray-100 text-gray-500";
+
+
+                                            if (isSelected) {
+                                                style = isCorrect
+                                                    ? "border-green-500 bg-green-50 text-green-700"
+                                                    : "border-red-500 bg-red-50 text-red-700";
+                                            } else if (opt === q.correctAnswer && !isCorrect) {
+                                                // Show correct answer if user was wrong
+                                                style = "border-green-500 bg-green-50 text-green-700 dashed-border";
+                                            }
+
+                                            return (
+                                                <div key={optIdx} className={`p-3 rounded-lg border flex justify-between items-center ${style}`}>
+                                                    <span>{String.fromCharCode(65 + optIdx)}. {opt}</span>
+                                                    {isSelected && (isCorrect ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />)}
+                                                    {!isSelected && opt === q.correctAnswer && !isCorrect && <CheckCircle2 className="w-4 h-4 opacity-50" />}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+
+                                    {/* Explanation Box */}
+                                    <div className="mt-4 p-4 bg-blue-50 text-blue-800 rounded-xl text-sm flex gap-3 items-start">
+                                        <HelpCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                                        <div>
+                                            <span className="font-bold block mb-1">Giải thích:</span>
+                                            {result?.explanation || q.explanation || "Chưa có giải thích cho câu hỏi này."}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div >
         );
     }
 

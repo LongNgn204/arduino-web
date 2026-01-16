@@ -17,7 +17,8 @@ import {
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { cn } from '../components/ui/Card'; // Importing cn from Card for utility
+import { cn } from '../components/ui/Card';
+import OnboardingTour from '../components/OnboardingTour';
 
 // API Base URL
 const API_BASE = import.meta.env.PROD
@@ -109,10 +110,11 @@ export default function DashboardPage() {
                 </div>
             </header>
 
-            {/* Main Content */}
+            {/* Tour Guide */}
+            <OnboardingTour />
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Welcome Section */}
-                <div className="mb-10 text-center md:text-left">
+                <div id="dashboard-welcome" className="mb-10 text-center md:text-left">
                     <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-2 tracking-tight">
                         Xin chào, {user?.displayName || user?.username || 'bạn hiền'}! 👋
                     </h1>
@@ -122,7 +124,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+                <div id="dashboard-stats" className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
                     <StatCard
                         icon={<BookOpen className="w-6 h-6" />}
                         label="Bài học"
@@ -153,7 +155,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Courses */}
                     <div className="lg:col-span-2 space-y-8">
-                        <section>
+                        <section id="dashboard-courses">
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                                     <GraduationCap className="w-6 h-6 text-arduino-teal" />
@@ -187,7 +189,7 @@ export default function DashboardPage() {
                     {/* Right Column: Quick Actions & Leaderboard */}
                     <div className="space-y-8">
                         {/* Make Learning a Habit */}
-                        <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg shadow-indigo-200 overflow-hidden relative">
+                        <Card id="dashboard-challenges" className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg shadow-indigo-200 overflow-hidden relative">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
                             <div className="relative z-10 p-6">
                                 <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">

@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { eq, and, desc } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
-import { savedItems, projects, lessons } from '../db/schema';
-import { v4 as uuidv4 } from 'uuid';
+import { savedItems } from '../db/schema';
+import { generateId } from '../services/crypto';
 import type { Env } from '../types';
 
 const personalRouter = new Hono<{ Bindings: Env }>();
@@ -35,7 +35,7 @@ personalRouter.post('/save', async (c) => {
         } else {
             // Save
             await db.insert(savedItems).values({
-                id: uuidv4(),
+                id: generateId(),
                 userId,
                 itemType,
                 itemId

@@ -11,7 +11,7 @@ import { generateId } from '../services/crypto';
 import type { Env, AuthUser } from '../types';
 
 // Validation schema
-const attachmentSchema = z.object({%
+const attachmentSchema = z.object({
     type: z.enum(['image', 'text']),
     content: z.string(), // Base64 for image, raw text for text
     name: z.string().optional(),

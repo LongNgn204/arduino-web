@@ -4,6 +4,17 @@
 import { sql } from 'drizzle-orm';
 import { text, integer, sqliteTable, index, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
+// Bảng topics - Chủ đề lớn (2026 Curriculum)
+export const topics = sqliteTable('topics', {
+    id: text('id').primaryKey(),
+    courseId: text('course_id').notNull().references(() => courses.id, { onDelete: 'cascade' }),
+    orderIndex: integer('order_index').notNull(),
+    title: text('title').notNull(), // Nền tảng, Giao tiếp, Cảm biến...
+    description: text('description'),
+    icon: text('icon'), // Lucide icon name
+    createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+});
+
 // ==========================================
 // USERS & AUTH
 // ==========================================
@@ -56,6 +67,7 @@ export const weeks = sqliteTable('weeks', {
     overview: text('overview'), // Markdown content
     objectives: text('objectives'), // JSON array of objectives
     examChecklist: text('exam_checklist'), // JSON array - những gì cần biết để thi
+    topicId: text('topic_id').references(() => topics.id, { onDelete: 'set null' }), // New 2026: Link to Topic
     isPublished: integer('is_published', { mode: 'boolean' }).notNull().default(false),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 }, (table) => ({
@@ -74,6 +86,7 @@ export const lessons = sqliteTable('lessons', {
     title: text('title').notNull(),
     content: text('content').notNull(), // Markdown content
     duration: integer('duration'), // Phút ước tính
+    boardSupport: text('board_support', { enum: ['uno', 'esp32', 'both'] }).default('both'), // New 2026
     isPublished: integer('is_published', { mode: 'boolean' }).notNull().default(false),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 }, (table) => ({
@@ -94,6 +107,7 @@ export const labs = sqliteTable('labs', {
     rubric: text('rubric'), // JSON - tiêu chí chấm điểm
     simulatorUrl: text('simulator_url'), // Wokwi embed URL
     duration: integer('duration'), // Phút ước tính
+    boardSupport: text('board_support', { enum: ['uno', 'esp32', 'both'] }).default('both'), // New 2026
     isPublished: integer('is_published', { mode: 'boolean' }).notNull().default(false),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 }, (table) => ({

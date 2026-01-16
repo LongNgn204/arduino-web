@@ -174,14 +174,17 @@ export const ARDUINO_KNOWLEDGE_BASE = {
 };
 
 // Generate knowledge context string for system prompt
-export function generateKnowledgeContext(topic?: string): string {
+export function generateKnowledgeContext(_topic?: string): string {
     let context = '## KIẾN THỨC ARDUINO (verified)\n\n';
+
+    // Chú thích: Type-safe access to functions object
+    const funcs = ARDUINO_KNOWLEDGE_BASE.functions as Record<string, { syntax: string; notes?: string }>;
 
     // Add top functions
     context += '### Các hàm cơ bản:\n';
     const topFuncs = ['pinMode', 'digitalWrite', 'digitalRead', 'analogRead', 'analogWrite', 'delay'];
     for (const func of topFuncs) {
-        const f = ARDUINO_KNOWLEDGE_BASE.functions[func];
+        const f = funcs[func];
         if (f) {
             context += `- **${func}**: \`${f.syntax}\` - ${f.notes || ''}\n`;
         }
@@ -208,10 +211,13 @@ export function searchKnowledge(query: string): string[] {
     const queryLower = query.toLowerCase();
     const keywords = queryLower.split(/\s+/);
 
+    // Chú thích: Type-safe casting for objects
+    const funcs = ARDUINO_KNOWLEDGE_BASE.functions as Record<string, { syntax: string; example?: string; notes?: string }>;
+
     // Search functions
-    for (const [name, func] of Object.entries(ARDUINO_KNOWLEDGE_BASE.functions)) {
+    for (const [name, func] of Object.entries(funcs)) {
         if (keywords.some(kw => name.toLowerCase().includes(kw) || func.syntax.toLowerCase().includes(kw))) {
-            results.push(`**${name}**: \`${func.syntax}\`\n${func.example}\n${func.notes || ''}`);
+            results.push(`**${name}**: \`${func.syntax}\`\n${func.example || ''}\n${func.notes || ''}`);
         }
     }
 
