@@ -75,33 +75,34 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
         });
     }, []);
 
+    // Chú thích: Light theme mode colors để match với main website
     const modeConfig = {
         tutor: {
             label: 'Tutor',
             description: 'Bách khoa toàn thư & Trợ giảng',
             icon: <Sparkles className="w-4 h-4" />,
             color: 'teal',
-            bgColor: 'bg-teal-500/20',
-            textColor: 'text-teal-400',
-            borderColor: 'border-teal-500/30'
+            bgColor: 'bg-teal-100',
+            textColor: 'text-teal-700',
+            borderColor: 'border-teal-200'
         },
         socratic: {
             label: 'Socratic',
             description: 'Gợi mở tư duy & Vấn đáp',
             icon: <GraduationCap className="w-4 h-4" />,
             color: 'purple',
-            bgColor: 'bg-purple-500/20',
-            textColor: 'text-purple-400',
-            borderColor: 'border-purple-500/30'
+            bgColor: 'bg-purple-100',
+            textColor: 'text-purple-700',
+            borderColor: 'border-purple-200'
         },
         grader: {
             label: 'Grader',
             description: 'Chấm điểm & Review code',
             icon: <ClipboardCheck className="w-4 h-4" />,
             color: 'amber',
-            bgColor: 'bg-amber-500/20',
-            textColor: 'text-amber-400',
-            borderColor: 'border-amber-500/30'
+            bgColor: 'bg-amber-100',
+            textColor: 'text-amber-700',
+            borderColor: 'border-amber-200'
         }
     };
 
@@ -341,12 +342,12 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                         height: isMaximized ? '100vh' : size.height,
                         zIndex: 100,
                     }}
-                    className={`bg-slate-900 border border-slate-700 shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${isMaximized ? 'rounded-none' : 'rounded-2xl'}`}
+                    className={`bg-white border border-gray-200 shadow-2xl shadow-gray-300/50 flex flex-col overflow-hidden transition-all duration-200 ${isMaximized ? 'rounded-none' : 'rounded-2xl'}`}
                 >
                     {/* Header - Draggable */}
                     <div
                         onMouseDown={handleDragStart}
-                        className={`flex items-center justify-between p-3 border-b border-slate-700 bg-slate-800/80 backdrop-blur select-none cursor-move ${isDragging ? 'cursor-grabbing' : ''}`}
+                        className={`flex items-center justify-between p-3 border-b border-gray-100 bg-gray-50/90 backdrop-blur select-none cursor-move ${isDragging ? 'cursor-grabbing' : ''}`}
                     >
                         <div className="flex items-center gap-3">
                             <div className={`w-9 h-9 rounded-xl ${currentModeConfig.bgColor} ${currentModeConfig.textColor} flex items-center justify-center`}>
@@ -356,12 +357,12 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                 <button
                                     onMouseDown={(e) => e.stopPropagation()}
                                     onClick={() => setShowModeSelect(!showModeSelect)}
-                                    className="flex items-center gap-1 font-bold text-white hover:text-teal-400 transition-colors"
+                                    className="flex items-center gap-1 font-bold text-gray-800 hover:text-teal-600 transition-colors"
                                 >
                                     {currentModeConfig.label}
                                     <ChevronDown className={`w-4 h-4 transition-transform ${showModeSelect ? 'rotate-180' : ''}`} />
                                 </button>
-                                <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
+                                <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">
                                     AI Assistant
                                 </p>
                             </div>
@@ -369,21 +370,21 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                         <div className="flex items-center gap-1" onMouseDown={(e) => e.stopPropagation()}>
                             <button
                                 onClick={clearChat}
-                                className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-colors"
+                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                 title="Xóa lịch sử"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={() => setIsMaximized(!isMaximized)}
-                                className="p-2 text-slate-400 hover:text-teal-400 hover:bg-slate-700 rounded-lg transition-colors"
+                                className="p-2 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                                 title={isMaximized ? "Thu nhỏ" : "Phóng to"}
                             >
                                 {isMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                             </button>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-2 text-slate-400 hover:text-white hover:bg-red-500/20 rounded-lg transition-colors"
+                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -392,7 +393,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
 
                     {/* Mode Selector Dropdown */}
                     {showModeSelect && (
-                        <div className="absolute top-[60px] left-4 right-4 bg-slate-800 rounded-xl border border-slate-700 shadow-xl z-20 p-2 space-y-1">
+                        <div className="absolute top-[60px] left-4 right-4 bg-white rounded-xl border border-gray-200 shadow-xl z-20 p-2 space-y-1">
                             {(Object.keys(modeConfig) as AiMode[]).map((m) => (
                                 <button
                                     key={m}
@@ -400,16 +401,16 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                         setMode(m);
                                         setShowModeSelect(false);
                                     }}
-                                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${mode === m ? 'bg-slate-700' : 'hover:bg-slate-700/50'}`}
+                                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${mode === m ? 'bg-gray-100' : 'hover:bg-gray-50'}`}
                                 >
                                     <div className={`w-8 h-8 rounded-lg ${modeConfig[m].bgColor} ${modeConfig[m].textColor} flex items-center justify-center`}>
                                         {modeConfig[m].icon}
                                     </div>
                                     <div className="text-left">
-                                        <p className={`font-medium ${mode === m ? 'text-white' : 'text-slate-300'}`}>
+                                        <p className={`font-medium ${mode === m ? 'text-gray-900' : 'text-gray-700'}`}>
                                             {modeConfig[m].label}
                                         </p>
-                                        <p className="text-xs text-slate-500">{modeConfig[m].description}</p>
+                                        <p className="text-xs text-gray-500">{modeConfig[m].description}</p>
                                     </div>
                                 </button>
                             ))}
@@ -417,16 +418,16 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                     )}
 
                     {/* Messages Area */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900/50 scroll-smooth custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 scroll-smooth custom-scrollbar">
                         {messages.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center h-full text-slate-500 space-y-6">
+                            <div className="flex flex-col items-center justify-center h-full text-gray-500 space-y-6">
                                 <div className={`w-20 h-20 rounded-3xl ${currentModeConfig.bgColor} ${currentModeConfig.textColor} flex items-center justify-center shadow-lg`}>
                                     {currentModeConfig.icon}
                                 </div>
                                 <div className="text-center space-y-2 px-4">
-                                    <h3 className="text-lg font-bold text-white">Xin chào! 👋</h3>
-                                    <p className="text-sm">Tôi là AI Assistant toàn năng.<br />Hỏi tôi về Arduino, Toán học, hay bất cứ điều gì!</p>
-                                    <div className="text-xs bg-slate-800 px-2 py-1 rounded inline-block text-slate-400 mt-2">
+                                    <h3 className="text-lg font-bold text-gray-800">Xin chào! 👋</h3>
+                                    <p className="text-sm text-gray-600">Tôi là AI Assistant toàn năng.<br />Hỏi tôi về Arduino, Toán học, hay bất cứ điều gì!</p>
+                                    <div className="text-xs bg-teal-50 text-teal-700 px-3 py-1.5 rounded-full inline-block mt-2 border border-teal-200">
                                         ✨ Hỗ trợ công thức Toán LaTeX ($E=mc^2$)
                                     </div>
                                 </div>
@@ -435,7 +436,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                         <button
                                             key={idx}
                                             onClick={() => setInput(suggestion)}
-                                            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 hover:border-teal-500/50 text-slate-300 text-xs rounded-xl border border-slate-700 transition-all text-left truncate"
+                                            className="px-4 py-2 bg-white hover:bg-teal-50 hover:border-teal-300 text-gray-700 text-xs rounded-xl border border-gray-200 transition-all text-left truncate shadow-sm"
                                         >
                                             {suggestion}
                                         </button>
@@ -449,13 +450,13 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div
-                                        className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-md ${msg.role === 'user'
+                                        className={`max-w-[90%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${msg.role === 'user'
                                             ? 'bg-teal-600 text-white rounded-tr-none'
-                                            : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-tl-none'
+                                            : 'bg-white text-gray-800 border border-gray-200 rounded-tl-none'
                                             }`}
                                     >
                                         {msg.role === 'assistant' ? (
-                                            <div className="prose prose-invert prose-sm max-w-none break-words">
+                                            <div className="prose prose-sm max-w-none break-words prose-headings:text-gray-800 prose-p:text-gray-700">
                                                 <ReactMarkdown
                                                     remarkPlugins={[remarkMath, remarkGfm]}
                                                     rehypePlugins={[rehypeKatex]}
@@ -464,15 +465,15 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                                             const match = /language-(\w+)/.exec(className || '')
                                                             return !inline ? (
                                                                 <div className="relative group my-2">
-                                                                    <div className="absolute top-2 right-2 px-2 py-1 text-xs text-slate-500 bg-slate-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                    <div className="absolute top-2 right-2 px-2 py-1 text-xs text-gray-500 bg-gray-100 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                                                                         {match ? match[1] : 'code'}
                                                                     </div>
-                                                                    <code className={`${className} block p-3 bg-black/30 rounded-lg overflow-x-auto`} {...props}>
+                                                                    <code className={`${className} block p-3 bg-gray-900 text-gray-100 rounded-lg overflow-x-auto`} {...props}>
                                                                         {children}
                                                                     </code>
                                                                 </div>
                                                             ) : (
-                                                                <code className={`${className} bg-black/20 px-1 py-0.5 rounded text-amber-200`} {...props}>
+                                                                <code className={`${className} bg-gray-100 text-teal-700 px-1 py-0.5 rounded`} {...props}>
                                                                     {children}
                                                                 </code>
                                                             )
@@ -491,9 +492,9 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                         )}
                         {isLoading && (
                             <div className="flex justify-start">
-                                <div className="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2">
-                                    <Loader2 className="w-4 h-4 animate-spin text-teal-400" />
-                                    <span className="text-xs text-slate-400 animate-pulse">Đang phân tích...</span>
+                                <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2 shadow-sm">
+                                    <Loader2 className="w-4 h-4 animate-spin text-teal-600" />
+                                    <span className="text-xs text-gray-500 animate-pulse">Đang phân tích...</span>
                                 </div>
                             </div>
                         )}
@@ -501,9 +502,9 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                     </div>
 
                     {/* Footer Input */}
-                    <div className="p-4 bg-slate-800/80 backdrop-blur border-t border-slate-700 space-y-2">
+                    <div className="p-4 bg-white/90 backdrop-blur border-t border-gray-100 space-y-2">
                         {remainingQuota !== null && remainingQuota < 10 && (
-                            <div className="flex items-center gap-2 text-xs text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
+                            <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
                                 <span className="font-bold">⚠️</span>
                                 <span>Còn {remainingQuota} câu hỏi.</span>
                             </div>
@@ -514,11 +515,11 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                             <div className="flex gap-2 overflow-x-auto py-2 px-1">
                                 {attachments.map((file, idx) => (
                                     <div key={idx} className="relative group flex-shrink-0">
-                                        <div className="w-16 h-16 rounded-lg border border-slate-600 bg-slate-700/50 flex items-center justify-center overflow-hidden">
+                                        <div className="w-16 h-16 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">
                                             {file.type === 'image' ? (
                                                 <img src={file.content} alt={file.name} className="w-full h-full object-cover" />
                                             ) : (
-                                                <FileText className="w-8 h-8 text-slate-400" />
+                                                <FileText className="w-8 h-8 text-gray-400" />
                                             )}
                                         </div>
                                         <button
@@ -527,14 +528,14 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                         >
                                             <X className="w-3 h-3" />
                                         </button>
-                                        <p className="text-[10px] text-slate-400 truncate w-16 text-center mt-1">{file.name}</p>
+                                        <p className="text-[10px] text-gray-500 truncate w-16 text-center mt-1">{file.name}</p>
                                     </div>
                                 ))}
                             </div>
                         )}
 
                         <div className="relative flex items-end gap-2">
-                            <label className="p-2 text-slate-400 hover:text-teal-400 cursor-pointer transition-colors rounded-lg hover:bg-slate-700/50">
+                            <label className="p-2 text-gray-400 hover:text-teal-600 cursor-pointer transition-colors rounded-lg hover:bg-teal-50">
                                 <Paperclip className="w-5 h-5" />
                                 <input
                                     type="file"
@@ -555,7 +556,7 @@ export default function AiChatPopup({ lessonId, labId, currentCode }: AiChatPopu
                                     }
                                 }}
                                 placeholder="Nhập câu hỏi..."
-                                className="w-full bg-slate-900 border border-slate-700 text-white rounded-xl pl-4 pr-12 py-3 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 placeholder-slate-500 resize-none max-h-32 min-h-[46px]"
+                                className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-300 resize-none transition-all placeholder:text-gray-400 max-h-32 min-h-[46px]"
                                 rows={1}
                                 disabled={isLoading}
                                 style={{ lineHeight: '1.5' }}
