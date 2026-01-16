@@ -1,6 +1,6 @@
--- Seed data cho Arduino Learning Hub
--- Generated from curriculum/ markdown files
--- Run: cd apps/workers && npx wrangler d1 execute arduino-db --remote --file=src/db/seed.sql
+-- Seed data cho Arduino Learning Hub (Generated Standard)
+-- Admin user: admin/admin123
+-- Course: TECH476 (13 Weeks including Week 0)
 
 -- ==========================================
 -- CLEAR OLD DATA
@@ -16,96 +16,85 @@ DELETE FROM labs;
 DELETE FROM lessons;
 DELETE FROM weeks;
 DELETE FROM courses;
+DELETE FROM sessions;
+DELETE FROM users;
+
+-- ==========================================
+-- USERS
+-- ==========================================
+INSERT INTO users (id, username, password_hash, role, display_name, created_at, updated_at) VALUES 
+('admin-001', 'admin', 'pbkdf2$100000$c2FsdF9hZG1pbl90ZXN0$WkYxR2FEbG1iSEZ3WVhOemQyOXlaQT09', 'admin', 'Administrator', unixepoch(), unixepoch()),
+('student-001', 'sinhvien', 'pbkdf2$100000$c2FsdF9zdHVkZW50X3Rlc3Q$dGVzdHBhc3N3b3JkMTIz', 'student', 'Nguyen Hoang Long', unixepoch(), unixepoch());
 
 -- ==========================================
 -- COURSE
 -- ==========================================
 INSERT INTO courses (id, code, title, description, total_weeks, is_published, created_at) VALUES 
-('course-tech476', 'TECH476', 'Lập trình hệ thống nhúng & IoT', 
- 'Khóa học Arduino Uno 12 tuần: Từ GPIO cơ bản đến WiFi & IoT. Học lý thuyết chi tiết, thực hành với simulator Wokwi, và làm dự án thực tế.', 
- 12, 1, unixepoch());
+('course-tech476', 'TECH476', 'Lập trình hệ thống nhúng & IoT', 'Khóa học Arduino Uno 13 tuần: Từ nhập môn điện tử đến IoT. Học lý thuyết, thực hành simulator, và làm dự án thực tế.', 13, 1, unixepoch());
 
 -- ==========================================
--- WEEKS (with full overview)
+-- WEEKS (0-12)
 -- ==========================================
 INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-01', 'course-tech476', 1, 'Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)', 
- '', 
- '[]', 
- '["Arduino Uno","GPIO","Tách hàm"]', 1, unixepoch());
+('week-00', 'course-tech476', 0, 'Nhập môn Điện tử & Linh kiện', '# Tuần 0: Nhập môn Điện tử & Linh kiện
 
+## Giới thiệu
+Chào mừng bạn đến với khóa học "Lập trình hệ thống nhúng & IoT". Trước khi bắt đầu viết code cho Arduino, chúng ta cần hiểu về "ngôn ngữ" của phần cứng: **Điện tử cơ bản**.
+
+Trong tuần này, bạn sẽ làm quen với các khái niệm cốt lõi như Điện áp, Dòng điện, Điện trở và thực hành lắp mạch đầu tiên trên Breadboard.
+
+## Mục tiêu học tập
+- [ ] Hiểu định luật Ohm và mối quan hệ V-I-R.
+- [ ] Nhận biết các linh kiện: Điện trở, LED, Tụ điện, Transistor.
+- [ ] Đọc giá trị điện trở bằng vạch màu.
+- [ ] Sử dụng Breadboard để lắp mạch.
+
+## Nội dung bài giảng
+
+### Bài 1: Ba đại lượng cơ bản và Định luật Ohm
+Điện cũng giống như nước chảy trong ống:
+- **Hiệu điện thế (Voltage - V)**: Áp lực nước (đẩy nước đi). Đơn vị: Volt (V).
+- **Dòng điện (Current - I)**: Lưu lượng nước chảy. Đơn vị: Ampe (A).
+- **Điện trở (Resistance - R)**: Sự cản trở dòng nước (ống nhỏ hay to). Đơn vị: Ohm (Ω).
+
+**Công thức thần thánh:**
+$$ V = I \times R $$
+
+> **Ví dụ:** Bạn có nguồn 5V và muốn thắp sáng 1 đèn LED (cần 2V, 20mA). Bạn cần dùng điện trở bao nhiêu để đèn không cháy?
+> $$ V_{R} = 5V - 2V = 3V $$
+> $$ R = \frac{V_R}{I} = \frac{3V}{0.02A} = 150 \Omega $$
+
+### Bài 2: Linh kiện điện tử quanh ta
+1. **Điện trở (Resistor)**:
+   - Hình dáng: Có các vạch màu.
+   - Tác dụng: Hạn chế dòng điện.
+   - Cách đọc màu: Đen(0), Nâu(1), Đỏ(2), Cam(3), Vàng(4)... "Sáng sớm chiều tối..."
+
+2. **LED (Light Emitting Diode)**:
+   - Diode phát quang.
+   - **Quan trọng**: Chỉ dẫn điện 1 chiều. Chân Dài (+), Chân Ngắn (-).
+   - Đừng cắm ngược, và luôn cần điện trở hạn dòng!
+
+3. **Breadboard (Bo mạch thử nghiệm)**:
+   - Giúp nối dây không cần hàn.
+   - Hàng dọc (cạnh 2 bên): Nối liền nhau (dùng cho Nguồn).
+   - Hàng ngang (ở giữa): Nối liền 5 lỗ (dùng để cắm linh kiện).
+
+## Bài tập thực hành (Lab)
+**Lab 0: Hello World của Phần cứng**
+- **Nhiệm vụ**: Làm sáng 1 đèn LED bằng pin 9V hoặc Arduino 5V.
+- **Yêu cầu**: Tính toán điện trở phù hợp.
+- **Simulator**: [Mở Wokwi Lab 0](https://wokwi.com/projects/new/arduino-uno)
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
 INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-02', 'course-tech476', 2, 'Thiết kế Hệ thống Nhúng & LED 7 Đoạn', 
- '', 
- '[]', 
- '["Top-Down","Bottom-Up","LED 7 đoạn","Common Cathode","Common Anode","Multiplexing","74HC595"]', 1, unixepoch());
+('week-01', 'course-tech476', 1, 'Tổng quan HT nhúng & GPIO', '# Tuần 1: Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)
 
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-03', 'course-tech476', 3, 'Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad', 
- '', 
- '[]', 
- '["INPUT_PULLUP","Logic đảo","Debounce","Edge Detection","Keypad"]', 1, unixepoch());
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Làm quen Arduino Uno, hiểu cấu trúc chương trình, điều khiển LED cơ bản
 
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-04', 'course-tech476', 4, 'Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)', 
- '', 
- '[]', 
- '["ADC 10-bit","analogRead()","PWM","analogWrite()","map()","Duty Cycle"]', 1, unixepoch());
+---
 
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-05', 'course-tech476', 5, 'Thực hành Tích hợp I/O', 
- '', 
- '[]', 
- '["State Machine","Non-blocking","Modular code","Tách I/O","Debug từng phần"]', 1, unixepoch());
-
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-06', 'course-tech476', 6, 'Cảm biến trong Hệ thống Nhúng', 
- '', 
- '[]', 
- '["HC-SR04","DHT11","PIR","TTP223"]', 1, unixepoch());
-
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-07', 'course-tech476', 7, 'Giao thức Kết nối Nối tiếp (Serial UART)', 
- '', 
- '[]', 
- '["UART","Baudrate","Serial.print()","Serial.read()","Serial.readStringUntil()","SoftwareSerial"]', 1, unixepoch());
-
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-08', 'course-tech476', 8, 'Giao thức Kết nối I2C', 
- '', 
- '[]', 
- '["I2C","Wire.h","Address","I2C Scanner","LCD I2C"]', 1, unixepoch());
-
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-09', 'course-tech476', 9, 'Giao thức Kết nối SPI', 
- '', 
- '[]', 
- '[]', 1, unixepoch());
-
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-10', 'course-tech476', 10, 'Giao thức 1-Wire (DS18B20)', 
- '', 
- '[]', 
- '[]', 1, unixepoch());
-
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-11', 'course-tech476', 11, 'Giao tiếp WiFi - Chế độ WebServer', 
- '', 
- '[]', 
- '[]', 1, unixepoch());
-
-INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
-('week-12', 'course-tech476', 12, 'Giao tiếp WiFi - Chế độ Asynchronous WebServer', 
- '', 
- '[]', 
- '[]', 1, unixepoch());
-
--- ==========================================
--- LESSONS (Full content from curriculum)
--- ==========================================
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-01-01', 'week-01', 1, 'Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)', 
- '## 🎯 Mục tiêu học tập
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -514,12 +503,233 @@ R = (Vnguồn - Vled) / Iled
 | HIGH/LOW | Mức logic 5V / 0V |
 | OUTPUT/INPUT | Chế độ xuất / nhập tín hiệu |
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-02-01', 'week-02', 1, 'Thiết kế Hệ thống Nhúng & LED 7 Đoạn', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz tự kiểm tra
+
+### Câu 1:
+Hàm `setup()` chạy bao nhiêu lần trong suốt vòng đời chương trình Arduino?
+
+- A. Không lần nào
+- B. Một lần duy nhất
+- C. Vô hạn lần
+- D. Tùy thuộc vào code
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Một lần duy nhất**
+
+Hàm `setup()` chạy đúng 1 lần khi Arduino khởi động hoặc reset. Sau đó, hàm `loop()` mới bắt đầu chạy lặp.
+</details>
+
+### Câu 2:
+Tại sao LED cần mắc nối tiếp với điện trở?
+
+- A. Để LED sáng hơn
+- B. Để giới hạn dòng điện, tránh cháy LED
+- C. Để LED nháy được
+- D. Để tiết kiệm điện
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Để giới hạn dòng điện, tránh cháy LED**
+
+LED có đặc tính khi điện áp thuận đạt ngưỡng, dòng điện tăng rất nhanh. Điện trở hạn chế dòng ở mức an toàn (~20mA).
+</details>
+
+### Câu 3:
+Lệnh `digitalWrite(5, HIGH)` làm gì?
+
+- A. Đọc tín hiệu từ chân 5
+- B. Xuất tín hiệu 5V ra chân 5
+- C. Cấu hình chân 5 làm OUTPUT
+- D. Tạo xung PWM trên chân 5
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Xuất tín hiệu 5V ra chân 5**
+
+`digitalWrite(pin, HIGH)` đưa chân về mức logic cao (5V với Arduino Uno).
+</details>
+
+### Câu 4:
+Nhược điểm chính của hàm `delay()` là gì?
+
+- A. Tốn nhiều bộ nhớ
+- B. CPU không làm gì khác trong lúc chờ (blocking)
+- C. Không chính xác về thời gian
+- D. Chỉ hoạt động với LED
+
+<details>
+<summary>Đáp án</summary>
+
+**B. CPU không làm gì khác trong lúc chờ (blocking)**
+
+Trong thời gian delay, Arduino không thể đọc nút nhấn, cảm biến, hay xử lý bất cứ việc gì khác. Tuần sau sẽ học cách dùng `millis()` để tránh blocking.
+</details>
+
+### Câu 5:
+Giá trị điện trở hạn dòng phổ biến cho LED với nguồn 5V là?
+
+- A. 10Ω
+- B. 220Ω - 330Ω
+- C. 1kΩ - 10kΩ
+- D. 1MΩ
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 220Ω - 330Ω**
+
+Với nguồn 5V, LED đỏ (2V drop), dòng 20mA: R = (5-2)/0.02 = 150Ω. Dùng 220Ω hoặc 330Ω để an toàn và LED vẫn đủ sáng.
+</details>
+
+---
+
+## 🔬 Phần 6: Bài thực hành (Labs)
+
+### Lab 1-1: Điều khiển LED theo quy luật thời gian
+
+**Mục tiêu**: Viết hàm tái sử dụng để nháy LED
+
+**Yêu cầu**:
+1. Bật 1s, tắt 1s, lặp 5 lần
+2. Bật 3s, tắt 0.5s, lặp 5 lần  
+3. Bật 0.5s, tắt 3s, lặp 5 lần
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Đúng số lần lặp | 30% |
+| Đúng thời gian bật/tắt | 30% |
+| Có hàm `blinkN()` tái sử dụng | 20% |
+| Code có comment rõ ràng | 10% |
+| Serial log theo dõi được | 10% |
+
+---
+
+### Lab 1-2: Điều khiển 5 LED tuần tự
+
+**Mục tiêu**: Sử dụng mảng và vòng lặp để quản lý nhiều LED
+
+**Yêu cầu**:
+- Bật tuần tự LED1→LED5, cách 1s
+- Giữ tất cả sáng 5s
+- Tắt tuần tự LED5→LED1, cách 1s
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Đúng thứ tự bật/tắt | 40% |
+| Sử dụng mảng LED_PINS[] | 20% |
+| Sử dụng vòng lặp for | 20% |
+| Đúng thời gian delay | 10% |
+| Code sạch, có comment | 10% |
+
+---
+
+### Lab 1-3: Hiệu ứng LED đuổi (Knight Rider)
+
+**Mục tiêu**: Tạo hiệu ứng "duy nhất 1 LED sáng"
+
+**Yêu cầu**:
+- Chạy 1→5 với delay 1s
+- Chạy 5→1 với delay 0.5s
+- Lặp vô hạn
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Luôn chỉ có 1 LED sáng | 40% |
+| Đúng hướng chạy | 20% |
+| Đúng thời gian delay | 20% |
+| Có hàm `allOff()` và `onlyOne()` | 10% |
+| Hiệu ứng mượt mà | 10% |
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+### Đề bài:
+Viết chương trình điều khiển **8 LED** (D2-D9) tạo hiệu ứng **"ping-pong"**:
+- LED chạy từ 1→8 rồi từ 8→1, lặp vô hạn
+- Tốc độ: 200ms mỗi LED
+- Yêu cầu: Dùng mảng, vòng lặp, tách hàm
+
+### Rubric chấm điểm:
+| Tiêu chí | Điểm |
+|----------|------|
+| Hiệu ứng ping-pong đúng | 40% |
+| Sử dụng mảng chân LED | 15% |
+| Có vòng lặp for | 15% |
+| Tách hàm riêng cho hiệu ứng | 15% |
+| Code có comment tiếng Việt | 10% |
+| Không lỗi, chạy ổn định | 5% |
+
+### Code tham khảo:
+
+```cpp
+/*
+ * Đề thi mẫu: Ping-pong 8 LED
+ * Hiệu ứng: LED chạy 1→8→1 lặp vô hạn
+ */
+
+const int LED_PINS[] = {2, 3, 4, 5, 6, 7, 8, 9};
+const int NUM_LEDS = 8;
+const int SPEED = 200;  // ms
+
+void allOff() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], LOW);
+    }
+}
+
+void onlyOne(int index) {
+    allOff();
+    digitalWrite(LED_PINS[index], HIGH);
+}
+
+void pingPong() {
+    // Chạy tiến: 0 → 7
+    for (int i = 0; i < NUM_LEDS; i++) {
+        onlyOne(i);
+        delay(SPEED);
+    }
+    // Chạy lùi: 6 → 1 (bỏ 2 đầu để không lặp)
+    for (int i = NUM_LEDS - 2; i > 0; i--) {
+        onlyOne(i);
+        delay(SPEED);
+    }
+}
+
+void setup() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+    }
+    allOff();
+}
+
+void loop() {
+    pingPong();
+}
+```
+
+---
+
+> **Tuần tiếp theo**: LED 7 đoạn & Thiết kế hệ thống nhúng
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-02', 'course-tech476', 2, 'Thiết kế HT nhúng & LED 7 đoạn', '# Tuần 2: Thiết kế Hệ thống Nhúng & LED 7 Đoạn
+
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Hiểu phương pháp thiết kế, điều khiển LED 7 đoạn đơn và module 4 số
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -1217,12 +1427,364 @@ Số 4 chữ số từ int:
 | Shift Register | IC dịch bit, mở rộng output |
 | Latch | Chốt dữ liệu ra output |
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-03-01', 'week-03', 1, 'Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz tự kiểm tra
+
+### Câu 1:
+LED 7 đoạn loại Common Cathode cần mức logic nào để bật 1 segment?
+
+- A. LOW (0V)
+- B. HIGH (5V)
+- C. PWM
+- D. Không cần tín hiệu
+
+<details>
+<summary>Đáp án</summary>
+
+**B. HIGH (5V)**
+
+Common Cathode có chân chung nối GND (0V). Để có dòng điện chạy qua LED, segment cần nhận mức HIGH (5V) để tạo hiệu điện thế.
+</details>
+
+### Câu 2:
+Phương pháp thiết kế nào phù hợp khi bạn muốn thử nghiệm 1 module cảm biến mới?
+
+- A. Top-Down
+- B. Bottom-Up
+- C. Waterfall
+- D. Agile
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Bottom-Up**
+
+Bottom-Up phù hợp khi thử nghiệm module mới vì bạn có thể test riêng từng phần, xác nhận hoạt động rồi mới ghép vào hệ thống lớn.
+</details>
+
+### Câu 3:
+Với module 4 LED 7 đoạn, tại sao phải dùng kỹ thuật multiplexing?
+
+- A. Để LED sáng hơn
+- B. Để giảm số chân điều khiển
+- C. Để tiết kiệm điện
+- D. Để hiển thị màu sắc
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Để giảm số chân điều khiển**
+
+Nếu điều khiển trực tiếp 4 digit × 8 segment = 32 chân. Với multiplexing, chỉ cần 8 chân segment + 4 chân digit = 12 chân.
+</details>
+
+### Câu 4:
+74HC595 có thể điều khiển bao nhiêu output?
+
+- A. 4
+- B. 6
+- C. 8
+- D. 16
+
+<details>
+<summary>Đáp án</summary>
+
+**C. 8**
+
+74HC595 là shift register 8-bit, có 8 chân output Q0-Q7. Có thể nối nhiều 595 cascade để mở rộng thêm.
+</details>
+
+### Câu 5:
+Để hiển thị số 8 trên LED 7 đoạn, cần bật những segment nào?
+
+- A. a, b, c
+- B. a, b, c, d, e, f
+- C. a, b, c, d, e, f, g (tất cả)
+- D. b, c
+
+<details>
+<summary>Đáp án</summary>
+
+**C. a, b, c, d, e, f, g (tất cả)**
+
+Số 8 cần tất cả 7 segment để tạo hình đầy đủ. Mã segment = 0b01111111 = 0x7F.
+</details>
+
+### Câu 6:
+Khi quét 4 digit với tần số 50Hz, mỗi digit được bật trong bao lâu?
+
+- A. 20ms
+- B. 10ms
+- C. 5ms
+- D. 1ms
+
+<details>
+<summary>Đáp án</summary>
+
+**C. 5ms**
+
+50Hz = 20ms mỗi chu kỳ. Chia cho 4 digit → 5ms mỗi digit.
+</details>
+
+### Câu 7:
+Chân STCP (Latch) của 74HC595 có chức năng gì?
+
+- A. Nhận data serial
+- B. Tạo xung clock dịch bit
+- C. Chốt dữ liệu ra các chân output
+- D. Reset thanh ghi
+
+<details>
+<summary>Đáp án</summary>
+
+**C. Chốt dữ liệu ra các chân output**
+
+STCP (Storage Clock) khi nhận xung cạnh lên sẽ copy dữ liệu từ shift register sang storage register, xuất ra Q0-Q7.
+</details>
+
+### Câu 8:
+Nếu LED 7 đoạn hiển thị ngược (số 2 thành số 5), nguyên nhân có thể là gì?
+
+- A. Nhầm loại CC/CA
+- B. Sai thứ tự chân segment
+- C. Điện trở quá lớn
+- D. Cả A và B
+
+<details>
+<summary>Đáp án</summary>
+
+**D. Cả A và B**
+
+Nhầm CC/CA sẽ đảo logic toàn bộ. Sai thứ tự chân segment sẽ làm sai vị trí các thanh LED.
+</details>
+
+### Câu 9:
+Để tách chữ số hàng trăm từ số 4567, dùng công thức nào?
+
+- A. 4567 % 100
+- B. 4567 / 100
+- C. (4567 / 100) % 10
+- D. 4567 % 1000
+
+<details>
+<summary>Đáp án</summary>
+
+**C. (4567 / 100) % 10**
+
+4567 / 100 = 45 (integer division), 45 % 10 = 5 (chữ số hàng trăm).
+</details>
+
+### Câu 10:
+Với 74HC595, nếu quên nối chân OE (Output Enable), điều gì xảy ra?
+
+- A. LED sáng bình thường
+- B. LED không sáng (output ở trạng thái high-impedance)
+- C. IC bị cháy
+- D. Arduino bị reset
+
+<details>
+<summary>Đáp án</summary>
+
+**B. LED không sáng (output ở trạng thái high-impedance)**
+
+OE cần nối LOW để enable output. Nếu để floating hoặc HIGH, các chân Q0-Q7 ở trạng thái high-impedance (không xuất tín hiệu).
+</details>
+
+---
+
+## 🔬 Phần 6: Bài thực hành (Labs)
+
+### Lab 2-1: LED 7 đoạn (1 số)
+
+**Mục tiêu**: Điều khiển LED 7 đoạn đơn hiển thị số
+
+**Yêu cầu**:
+1. Hiển thị 0→9, trễ 2s
+2. Hiển thị 0→9 rồi 9→0, trễ 2s
+3. Hiển thị các số chẵn: 0,2,4,6,8 và số lẻ: 1,3,5,7,9
+
+**Sơ đồ mạch**:
+```
+Arduino          LED 7 đoạn (CC)
+   D2 ──[220Ω]── Segment a
+   D3 ──[220Ω]── Segment b
+   D4 ──[220Ω]── Segment c
+   D5 ──[220Ω]── Segment d
+   D6 ──[220Ω]── Segment e
+   D7 ──[220Ω]── Segment f
+   D8 ──[220Ω]── Segment g
+   GND ───────── Common (chân chung)
+```
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Hiển thị đúng số 0-9 | 30% |
+| Đúng thứ tự và thời gian 2s | 30% |
+| Có bảng mã segment rõ ràng | 20% |
+| Code có comment tiếng Việt | 10% |
+| Serial log theo dõi được | 10% |
+
+---
+
+### Lab 2-2: Mô đun 4 LED 7 đoạn
+
+**Mục tiêu**: Điều khiển module 4 số bằng kỹ thuật multiplexing
+
+**Yêu cầu**:
+1. Hiển thị số tự nhiên 0→9999, trễ 0.3s
+2. Hiển thị số chẵn 0→9998, trễ 0.3s
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Quét 4 digit không nhấp nháy | 30% |
+| Đếm đúng 0-9999 | 30% |
+| Dùng millis() không block | 20% |
+| Tách số đúng (đơn vị/chục/trăm/nghìn) | 10% |
+| Code sạch, có hàm refreshDisplay() | 10% |
+
+---
+
+### Lab 2-3: Module 4 LED 7 đoạn + 74HC595
+
+**Mục tiêu**: Sử dụng shift register để giảm số chân điều khiển
+
+**Yêu cầu**:
+1. Hiển thị 0–9 trên tất cả chữ số (0000, 1111, ... 9999)
+2. Đếm tăng 0→9999, trễ 0.2s
+3. Đếm giảm 9999→0, trễ 0.2s
+4. Nháy cả 4 led 4 lần, chu kỳ nháy 2s
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| 74HC595 hoạt động đúng | 30% |
+| Đếm tăng/giảm chính xác | 25% |
+| Nháy đúng 4 lần, chu kỳ 2s | 20% |
+| Sử dụng hàm shiftOut() | 15% |
+| Code modular, có hàm riêng | 10% |
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+### Đề bài:
+Viết chương trình điều khiển **module 4 LED 7 đoạn** với các yêu cầu:
+
+1. **Đếm từ 0000 đến 0059** (đếm giây 00-59), trễ 1s mỗi số
+2. **Khi đạt 0059**, reset về 0000 và tăng **hàng phút** (0100, 0200...)
+3. **Hiển thị định dạng MM:SS** (phút:giây)
+4. Sử dụng **mảng** và **hàm riêng** cho việc quét display
+
+### Rubric chấm điểm:
+
+| Tiêu chí | Điểm |
+|----------|------|
+| Đếm giây 00-59 đúng | 30% |
+| Tăng phút khi giây = 59 | 20% |
+| Quét display không flicker | 20% |
+| Sử dụng mảng và vòng lặp | 15% |
+| Có hàm refreshDisplay() riêng | 10% |
+| Code có comment tiếng Việt | 5% |
+
+### Code tham khảo:
+
+```cpp
+/*
+ * Đề thi mẫu: Đồng hồ đếm MM:SS
+ * Module 4 LED 7 đoạn
+ */
+
+const int SEG_PINS[] = {2, 3, 4, 5, 6, 7, 8};
+const int DIGIT_PINS[] = {9, 10, 11, 12};
+const int NUM_SEGS = 7;
+const int NUM_DIGITS = 4;
+
+const byte DIGITS_CODE[] = {
+    0b00111111, 0b00000110, 0b01011011, 0b01001111, 0b01100110,
+    0b01101101, 0b01111101, 0b00000111, 0b01111111, 0b01101111
+};
+
+int minutes = 0;
+int seconds = 0;
+unsigned long previousMillis = 0;
+
+void setSegments(int num) {
+    if (num < 0 || num > 9) num = 0;
+    byte pattern = DIGITS_CODE[num];
+    for (int i = 0; i < NUM_SEGS; i++) {
+        digitalWrite(SEG_PINS[i], (pattern >> i) & 1);
+    }
+}
+
+void allDigitsOff() {
+    for (int i = 0; i < NUM_DIGITS; i++) {
+        digitalWrite(DIGIT_PINS[i], LOW);
+    }
+}
+
+void refreshDisplay(int mins, int secs) {
+    int digits[4];
+    digits[0] = mins / 10;   // Chục phút
+    digits[1] = mins % 10;   // Đơn vị phút
+    digits[2] = secs / 10;   // Chục giây
+    digits[3] = secs % 10;   // Đơn vị giây
+    
+    for (int d = 0; d < NUM_DIGITS; d++) {
+        allDigitsOff();
+        setSegments(digits[d]);
+        digitalWrite(DIGIT_PINS[d], HIGH);
+        delay(4);
+    }
+}
+
+void setup() {
+    Serial.begin(9600);
+    for (int i = 0; i < NUM_SEGS; i++) pinMode(SEG_PINS[i], OUTPUT);
+    for (int i = 0; i < NUM_DIGITS; i++) pinMode(DIGIT_PINS[i], OUTPUT);
+    allDigitsOff();
+    Serial.println("=== Clock MM:SS ===");
+}
+
+void loop() {
+    refreshDisplay(minutes, seconds);
+    
+    if (millis() - previousMillis >= 1000) {
+        previousMillis = millis();
+        
+        seconds++;
+        if (seconds >= 60) {
+            seconds = 0;
+            minutes++;
+            if (minutes >= 60) {
+                minutes = 0;
+            }
+        }
+        
+        Serial.print(minutes < 10 ? "0" : "");
+        Serial.print(minutes);
+        Serial.print(":");
+        Serial.print(seconds < 10 ? "0" : "");
+        Serial.println(seconds);
+    }
+}
+```
+
+---
+
+> **Tuần tiếp theo**: Tuần 3 - Nút nhấn & Keypad (INPUT_PULLUP, Debounce, Edge Detection)
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-03', 'course-tech476', 3, 'Input & Keypad', '# Tuần 3: Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad
+
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Đọc nút nhấn chính xác, xử lý debounce, điều khiển bằng keypad
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -1855,12 +2417,417 @@ lastState = currentState;
 | Falling Edge | Cạnh xuống (HIGH→LOW) |
 | Rising Edge | Cạnh lên (LOW→HIGH) |
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-04-01', 'week-04', 1, 'Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz tự kiểm tra
+
+### Câu 1:
+Với `pinMode(2, INPUT_PULLUP)`, khi nút KHÔNG được nhấn, `digitalRead(2)` trả về?
+
+- A. LOW
+- B. HIGH
+- C. Không xác định
+- D. 0
+
+<details>
+<summary>Đáp án</summary>
+
+**B. HIGH**
+
+INPUT_PULLUP kéo chân lên VCC qua điện trở nội. Khi không nhấn, chân đọc HIGH. Khi nhấn (nối GND), chân đọc LOW.
+</details>
+
+### Câu 2:
+Tại sao cần xử lý debounce khi đọc nút nhấn?
+
+- A. Để LED sáng hơn
+- B. Để tránh đọc nhiều lần khi nhấn 1 lần
+- C. Để tiết kiệm điện
+- D. Để nút bền hơn
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Để tránh đọc nhiều lần khi nhấn 1 lần**
+
+Tiếp điểm cơ khí nảy lên xuống (bounce) trong ~10-50ms, gây ra nhiều xung. Debounce chờ ổn định rồi mới đọc.
+</details>
+
+### Câu 3:
+"Edge Detection" dùng để làm gì?
+
+- A. Đọc trạng thái nút liên tục
+- B. Phát hiện thời điểm nút thay đổi trạng thái
+- C. Làm đèn nhấp nháy
+- D. Tăng tốc độ xử lý
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Phát hiện thời điểm nút thay đổi trạng thái**
+
+Edge detection phát hiện khi nút chuyển từ HIGH→LOW (falling edge) hoặc LOW→HIGH (rising edge), dùng để đếm lần nhấn.
+</details>
+
+### Câu 4:
+Keypad 4x4 cần bao nhiêu chân Arduino?
+
+- A. 4
+- B. 8
+- C. 12
+- D. 16
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 8**
+
+4 chân cho 4 hàng + 4 chân cho 4 cột = 8 chân. Kỹ thuật quét ma trận giúp giảm từ 16 phím xuống 8 chân.
+</details>
+
+### Câu 5:
+Thời gian debounce thường dùng là?
+
+- A. 1-5 ms
+- B. 20-50 ms
+- C. 100-200 ms
+- D. 1-2 giây
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 20-50 ms**
+
+Bounce thường kéo dài 10-50ms. Debounce 20-50ms đủ để ổn định mà không làm trễ phản hồi đáng kể.
+</details>
+
+### Câu 6:
+Với INPUT_PULLUP, nút cần nối như thế nào?
+
+- A. Từ pin → 5V
+- B. Từ pin → GND
+- C. Qua điện trở → 5V
+- D. Qua điện trở → GND
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Từ pin → GND**
+
+INPUT_PULLUP đã có sẵn pull-up nội. Chỉ cần nối nút từ pin xuống GND. Khi nhấn = nối GND = LOW.
+</details>
+
+### Câu 7:
+Hàm `keypad.getKey()` trả về gì khi không có phím nào được nhấn?
+
+- A. 0
+- B. NULL
+- C. NO_KEY hoặc ''\0''
+- D. -1
+
+<details>
+<summary>Đáp án</summary>
+
+**C. NO_KEY hoặc ''\0''**
+
+Khi không có phím, getKey() trả về NO_KEY (= 0 = ''\0''). Có thể kiểm tra bằng `if (key)` vì ''\0'' = false.
+</details>
+
+### Câu 8:
+Falling Edge là gì?
+
+- A. Tín hiệu đi từ LOW lên HIGH
+- B. Tín hiệu đi từ HIGH xuống LOW
+- C. Tín hiệu giữ ở LOW
+- D. Tín hiệu giữ ở HIGH
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Tín hiệu đi từ HIGH xuống LOW**
+
+Falling = rơi xuống. Với INPUT_PULLUP, falling edge xảy ra khi bắt đầu nhấn nút.
+</details>
+
+### Câu 9:
+Điện trở pull-up nội của Arduino khoảng bao nhiêu?
+
+- A. 100Ω
+- B. 1kΩ
+- C. 10kΩ
+- D. 20kΩ - 50kΩ
+
+<details>
+<summary>Đáp án</summary>
+
+**D. 20kΩ - 50kΩ**
+
+ATmega328P có pull-up nội khoảng 20-50kΩ, đủ để hoạt động với hầu hết các nút nhấn thông thường.
+</details>
+
+### Câu 10:
+Trong code password, tại sao dùng `Serial.print("*")` thay vì in ký tự thật?
+
+- A. Tiết kiệm bộ nhớ
+- B. Để ẩn mật khẩu (bảo mật)
+- C. Vì Serial không hiển thị được số
+- D. Để debug dễ hơn
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Để ẩn mật khẩu (bảo mật)**
+
+Giống như nhập mật khẩu trên máy tính, hiển thị * thay vì ký tự thật để người xung quanh không thấy.
+</details>
+
+---
+
+## 🔬 Phần 6: Bài thực hành (Labs)
+
+### Lab 3-1: Nhấn → LED bật, nhả → LED tắt
+
+**Mục tiêu**: Đọc nút nhấn và điều khiển LED trực tiếp
+
+**Yêu cầu**:
+- Nhấn giữ nút → LED sáng
+- Nhả nút → LED tắt
+- Serial format: `Trạng thái nút ấn: (1/0)` và `Trạng thái led: (bật/tắt)`
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| LED bật/tắt đúng theo nút | 40% |
+| Serial output đúng format | 30% |
+| Dùng INPUT_PULLUP | 20% |
+| Code có comment | 10% |
+
+---
+
+### Lab 3-2: Đếm số lần nhấn, lẻ bật, chẵn tắt
+
+**Mục tiêu**: Áp dụng edge detection và debounce
+
+**Yêu cầu**:
+- Đếm số lần nhấn nút
+- Lẻ → LED bật, Chẵn → LED tắt
+- Serial format: `Số lần nhấn nút: xx` và `Trạng thái led: (bật/tắt)`
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Đếm đúng số lần nhấn | 30% |
+| Logic lẻ/chẵn đúng | 30% |
+| Có debounce (không đếm nhảy số) | 20% |
+| Serial output đúng format | 10% |
+| Code có comment | 10% |
+
+---
+
+### Lab 3-3: Keypad đọc 1 ký tự
+
+**Mục tiêu**: Sử dụng thư viện Keypad
+
+**Yêu cầu**:
+- Đọc phím từ keypad 4x4
+- Serial format: `Kí tự vừa nhập: ____`
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Đọc đúng tất cả 16 phím | 50% |
+| Serial output đúng format | 30% |
+| Cấu hình đúng rowPins/colPins | 10% |
+| Code sạch | 10% |
+
+---
+
+### Lab 3-4: Keypad điều khiển 5 LED
+
+**Mục tiêu**: Mapping phím với chức năng
+
+**Yêu cầu**:
+- 1/2: bật/tắt LED1
+- 3/4: bật/tắt LED2
+- ... (đến 9/0: bật/tắt LED5)
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Mapping đúng 10 phím | 40% |
+| 5 LED hoạt động độc lập | 30% |
+| Serial log phím nhấn | 20% |
+| Code modular (switch/case) | 10% |
+
+---
+
+### Lab 3-5: Keypad password
+
+**Mục tiêu**: Xây dựng hệ thống mật khẩu
+
+**Yêu cầu**:
+- Nhập mật khẩu, # để xác nhận
+- Đúng → LED xanh + "Mật khẩu đúng"
+- Sai → LED đỏ + "Mật khẩu sai"
+- * để xóa và nhập lại
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| So sánh mật khẩu đúng | 30% |
+| LED xanh/đỏ đúng trạng thái | 25% |
+| Phím # và * hoạt động | 25% |
+| Serial output đúng | 10% |
+| Code có hàm riêng | 10% |
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+### Đề bài:
+Viết chương trình **nhập mã PIN bằng keypad**, với yêu cầu:
+
+1. Mã PIN là **4 chữ số** (ví dụ: "1234")
+2. Nhấn `#` để xác nhận, `*` để xóa
+3. **Đúng PIN**: Bật LED xanh + buzzer ngắn (100ms) + Serial "PIN CORRECT"
+4. **Sai PIN**: Bật LED đỏ + buzzer dài (500ms) + Serial "PIN INCORRECT"
+5. Sau 3 lần sai liên tiếp: **khóa 10 giây**, LED đỏ nhấp nháy
+
+### Rubric chấm điểm:
+
+| Tiêu chí | Điểm |
+|----------|------|
+| Nhập và so sánh PIN đúng | 25% |
+| LED xanh/đỏ theo kết quả | 20% |
+| Buzzer ngắn/dài theo kết quả | 15% |
+| Khóa 10s sau 3 lần sai | 20% |
+| Serial output đúng format | 10% |
+| Code sạch, có hàm riêng | 10% |
+
+### Code tham khảo:
+
+```cpp
+/*
+ * Đề thi mẫu: PIN Lock System
+ * Keypad + LED + Buzzer
+ */
+
+#include <Keypad.h>
+
+const byte ROWS = 4;
+const byte COLS = 4;
+char keys[ROWS][COLS] = {
+    {''1'',''2'',''3'',''A''},
+    {''4'',''5'',''6'',''B''},
+    {''7'',''8'',''9'',''C''},
+    {''*'',''0'',''#'',''D''}
+};
+byte rowPins[ROWS] = {9, 8, 7, 6};
+byte colPins[COLS] = {5, 4, 3, 2};
+Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
+
+const int LED_GREEN = A0;
+const int LED_RED = A1;
+const int BUZZER = A2;
+
+const String CORRECT_PIN = "1234";
+String inputPIN = "";
+int wrongCount = 0;
+bool locked = false;
+unsigned long lockTime = 0;
+
+void beepShort() {
+    tone(BUZZER, 1000, 100);
+}
+
+void beepLong() {
+    tone(BUZZER, 500, 500);
+}
+
+void resetLEDs() {
+    digitalWrite(LED_GREEN, LOW);
+    digitalWrite(LED_RED, LOW);
+}
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(LED_GREEN, OUTPUT);
+    pinMode(LED_RED, OUTPUT);
+    pinMode(BUZZER, OUTPUT);
+    resetLEDs();
+    Serial.println("=== PIN Lock System ===");
+    Serial.print("Enter PIN: ");
+}
+
+void loop() {
+    // Kiểm tra khóa
+    if (locked) {
+        if (millis() - lockTime < 10000) {
+            // Nhấp nháy LED đỏ
+            digitalWrite(LED_RED, (millis() / 250) % 2);
+            return;
+        } else {
+            locked = false;
+            wrongCount = 0;
+            resetLEDs();
+            Serial.println("\nUnlocked! Try again.");
+            Serial.print("Enter PIN: ");
+        }
+    }
+    
+    char key = keypad.getKey();
+    if (!key) return;
+    
+    if (key == ''#'') {
+        Serial.println();
+        if (inputPIN == CORRECT_PIN) {
+            digitalWrite(LED_GREEN, HIGH);
+            beepShort();
+            Serial.println("PIN CORRECT");
+            wrongCount = 0;
+            delay(2000);
+        } else {
+            digitalWrite(LED_RED, HIGH);
+            beepLong();
+            Serial.println("PIN INCORRECT");
+            wrongCount++;
+            delay(1000);
+            
+            if (wrongCount >= 3) {
+                Serial.println("LOCKED for 10 seconds!");
+                locked = true;
+                lockTime = millis();
+            }
+        }
+        resetLEDs();
+        inputPIN = "";
+        if (!locked) Serial.print("Enter PIN: ");
+        
+    } else if (key == ''*'') {
+        inputPIN = "";
+        Serial.println("\nCleared!");
+        Serial.print("Enter PIN: ");
+        
+    } else if (inputPIN.length() < 4) {
+        inputPIN += key;
+        Serial.print("*");
+    }
+}
+```
+
+---
+
+> **Tuần tiếp theo**: Tuần 4 - Analog Input/Output (ADC & PWM)
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-04', 'course-tech476', 4, 'Analog I/O (ADC & PWM)', '# Tuần 4: Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)
+
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Đọc tín hiệu analog từ potentiometer, điều khiển LED bằng PWM
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -2349,12 +3316,353 @@ PWM từ raw = map(raw, 0, 1023, 0, 255)
 | Resolution | Độ phân giải (10-bit = 1024 mức) |
 | Potentiometer | Biến trở xoay |
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-05-01', 'week-05', 1, 'Thực hành Tích hợp I/O', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz tự kiểm tra
+
+### Câu 1:
+ADC 10-bit của Arduino cho dải giá trị nào?
+
+- A. 0 - 255
+- B. 0 - 511
+- C. 0 - 1023
+- D. 0 - 4095
+
+<details>
+<summary>Đáp án</summary>
+
+**C. 0 - 1023**
+
+10-bit = 2^10 = 1024 mức, từ 0 đến 1023.
+</details>
+
+### Câu 2:
+Với điện áp 2.5V vào chân A0, analogRead() trả về khoảng bao nhiêu?
+
+- A. 256
+- B. 512
+- C. 768
+- D. 1023
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 512**
+
+2.5V là nửa của 5V, nên raw ≈ 1023/2 ≈ 511-512.
+</details>
+
+### Câu 3:
+Chân nào của Arduino Uno KHÔNG hỗ trợ PWM?
+
+- A. D3
+- B. D5
+- C. D7
+- D. D9
+
+<details>
+<summary>Đáp án</summary>
+
+**C. D7**
+
+Chân PWM trên Uno: 3, 5, 6, 9, 10, 11 (có dấu ~ trên board).
+</details>
+
+### Câu 4:
+`analogWrite(9, 127)` tạo duty cycle khoảng bao nhiêu?
+
+- A. 25%
+- B. 50%
+- C. 75%
+- D. 100%
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 50%**
+
+127/255 ≈ 50%. LED sáng ở mức trung bình.
+</details>
+
+### Câu 5:
+Hàm `map(500, 0, 1000, 0, 100)` trả về?
+
+- A. 25
+- B. 50
+- C. 75
+- D. 100
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 50**
+
+500 là nửa của dải 0-1000, nên map sang 0-100 = 50.
+</details>
+
+### Câu 6:
+Potentiometer có bao nhiêu chân?
+
+- A. 2
+- B. 3
+- C. 4
+- D. 5
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 3**
+
+3 chân: VCC, Signal (wiper), GND.
+</details>
+
+### Câu 7:
+PWM trên Arduino Uno hoạt động ở tần số khoảng bao nhiêu?
+
+- A. 50 Hz
+- B. 490 Hz
+- C. 1000 Hz
+- D. 16000 Hz
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 490 Hz**
+
+Khoảng 490 Hz (pin 3,9,10,11) hoặc 980 Hz (pin 5,6).
+</details>
+
+### Câu 8:
+Tại sao PWM được gọi là "analog giả"?
+
+- A. Vì nó dùng chân analog
+- B. Vì bật/tắt nhanh tạo hiệu ứng analog trung bình
+- C. Vì cần ADC
+- D. Vì điện áp thay đổi liên tục
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Vì bật/tắt nhanh tạo hiệu ứng analog trung bình**
+
+LED/motor không phản ứng kịp tần số cao, nên "thấy" điện áp trung bình.
+</details>
+
+### Câu 9:
+Công thức chuyển raw sang điện áp là?
+
+- A. V = raw × 1023 / 5
+- B. V = raw × 5 / 1023
+- C. V = raw + 5
+- D. V = raw / 5
+
+<details>
+<summary>Đáp án</summary>
+
+**B. V = raw × 5 / 1023**
+
+raw = 0 → 0V, raw = 1023 → 5V.
+</details>
+
+### Câu 10:
+Nếu pot nối sai (Signal vào GND thay vì wiper), đọc sẽ ra?
+
+- A. Luôn 0
+- B. Luôn 1023
+- C. Giá trị random
+- D. Lỗi compile
+
+<details>
+<summary>Đáp án</summary>
+
+**A. Luôn 0**
+
+Nếu nối thẳng vào GND, điện áp luôn = 0V → raw = 0.
+</details>
+
+---
+
+## 🔬 Phần 6: Bài thực hành (Labs)
+
+### Lab 4-1: Đọc điện áp pot — 3 dạng
+
+**Mục tiêu**: Đọc và chuyển đổi giá trị analog
+
+**Yêu cầu**:
+- Hiển thị Raw (0-1023)
+- Hiển thị Điện áp (V) với 2 số thập phân
+- Hiển thị Phần trăm (%) với 1 số thập phân
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Raw thay đổi mượt 0-1023 | 30% |
+| Điện áp tính đúng 0-5V | 30% |
+| Phần trăm tính đúng 0-100% | 30% |
+| Code có comment | 10% |
+
+---
+
+### Lab 4-2: PWM độ sáng LED theo pot
+
+**Mục tiêu**: Điều khiển LED bằng PWM
+
+**Yêu cầu**:
+- LED sáng tỉ lệ với pot
+- Serial: Raw, %, Vout
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| LED thay đổi độ sáng mượt | 40% |
+| Dùng đúng chân PWM | 20% |
+| Serial output đúng format | 30% |
+| Dùng map() đúng cách | 10% |
+
+---
+
+### Lab 4-3: Điều khiển tốc độ nháy theo pot
+
+**Mục tiêu**: Thay đổi timing theo analog input
+
+**Yêu cầu**:
+- pot=1023 → nháy nhanh (0.1s)
+- pot=0 → nháy chậm (1s)
+- Serial: %, LED state, chu kỳ
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Tốc độ nháy thay đổi đúng | 40% |
+| Dùng millis() (non-blocking) | 30% |
+| Serial output đúng format | 20% |
+| Code sạch | 10% |
+
+---
+
+### Lab 4-4: 7 LED theo pot, 3 chế độ
+
+**Mục tiêu**: Điều khiển pattern LED theo ngưỡng
+
+**Yêu cầu**:
+- <30%: chạy 2→8
+- >70%: chạy 8→2
+- 30-70%: từ giữa ra
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| 3 chế độ hoạt động đúng | 40% |
+| Chuyển chế độ mượt | 20% |
+| Serial output đúng chế độ | 20% |
+| Pattern LED đẹp | 10% |
+| Code modular | 10% |
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+### Đề bài:
+Viết chương trình với **potentiometer** và **LED13** + **7 LED (D2-D8)**:
+
+1. **LED13 nháy** với tốc độ **tỉ lệ nghịch** với pot%
+   - pot = 0% → nháy chậm (1s)
+   - pot = 100% → nháy nhanh (0.1s)
+
+2. **7 LED** hiển thị **số LED sáng tỉ lệ thuận** với pot%
+   - 0-14%: 0 LED sáng
+   - 15-28%: 1 LED sáng
+   - 29-42%: 2 LED sáng
+   - ... (mỗi 14% thêm 1 LED)
+   - 86-100%: 7 LED sáng
+
+3. Serial output: `pot=__% | LEDs=__ | Blink=__ms`
+
+### Rubric chấm điểm:
+
+| Tiêu chí | Điểm |
+|----------|------|
+| LED13 nháy đúng tốc độ | 25% |
+| 7 LED sáng đúng số lượng | 30% |
+| Dùng millis() (non-blocking) | 20% |
+| Serial output đúng format | 15% |
+| Code sạch, có hàm riêng | 10% |
+
+### Code tham khảo:
+
+```cpp
+/*
+ * Đề thi mẫu: Pot controls blink speed + LED bar
+ */
+
+const int POT_PIN = A0;
+const int LED_BLINK = 13;
+const int LED_PINS[] = {2, 3, 4, 5, 6, 7, 8};
+const int NUM_LEDS = 7;
+
+unsigned long previousMillis = 0;
+bool blinkState = false;
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(LED_BLINK, OUTPUT);
+    for (int i = 0; i < NUM_LEDS; i++) {
+        pinMode(LED_PINS[i], OUTPUT);
+    }
+}
+
+void setBarLEDs(int count) {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        digitalWrite(LED_PINS[i], i < count ? HIGH : LOW);
+    }
+}
+
+void loop() {
+    int raw = analogRead(POT_PIN);
+    float percent = raw * 100.0 / 1023.0;
+    
+    // Tốc độ nháy: tỉ lệ nghịch
+    int blinkDelay = map(raw, 0, 1023, 1000, 100);
+    
+    // Số LED sáng: tỉ lệ thuận (0-7 LED)
+    int ledCount = map(raw, 0, 1023, 0, 8);  // 0-7 LED
+    if (ledCount > NUM_LEDS) ledCount = NUM_LEDS;
+    
+    // Non-blocking blink
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= blinkDelay / 2) {
+        previousMillis = currentMillis;
+        blinkState = !blinkState;
+        digitalWrite(LED_BLINK, blinkState);
+        
+        // Serial output
+        Serial.print("pot=");
+        Serial.print(percent, 0);
+        Serial.print("% | LEDs=");
+        Serial.print(ledCount);
+        Serial.print(" | Blink=");
+        Serial.print(blinkDelay);
+        Serial.println("ms");
+    }
+    
+    // Update LED bar
+    setBarLEDs(ledCount);
+}
+```
+
+---
+
+> **Tuần tiếp theo**: Tuần 5 - Thực hành tích hợp I/O (Ghép nút + pot + LED + 7-seg)
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-05', 'course-tech476', 5, 'Thực hành tích hợp I/O', '# Tuần 5: Thực hành Tích hợp I/O
+
+> **Thời lượng**: 2 tiết lý thuyết + 3 tiết thực hành  
+> **Mục tiêu**: Ghép nối pot + nút + LED + 7-seg thành hệ thống hoàn chỉnh
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -2971,12 +4279,99 @@ void loop() {
 }
 ```
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-06-01', 'week-06', 1, 'Cảm biến trong Hệ thống Nhúng', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz tự kiểm tra
+
+### Câu 1:
+Tại sao nên dùng millis() thay vì delay() khi tích hợp nhiều I/O?
+
+- A. millis() nhanh hơn
+- B. delay() block CPU, không đọc được input
+- C. millis() tiết kiệm điện
+- D. delay() làm LED sáng hơn
+
+<details>
+<summary>Đáp án</summary>
+
+**B. delay() block CPU, không đọc được input**
+
+Trong lúc delay(), CPU không làm gì khác, không đọc nút, không quét display.
+</details>
+
+### Câu 2:
+State Machine giúp gì trong lập trình nhúng?
+
+- A. Tăng tốc độ CPU
+- B. Tổ chức code theo trạng thái, dễ quản lý
+- C. Giảm bộ nhớ
+- D. Tăng độ sáng LED
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Tổ chức code theo trạng thái, dễ quản lý**
+
+State machine giúp chia logic thành các trạng thái rõ ràng, dễ debug và mở rộng.
+</details>
+
+### Câu 3-10:
+*(Các câu hỏi tương tự về tích hợp I/O, timing, modular code)*
+
+---
+
+## 🔬 Phần 6: Bài thực hành (Labs)
+
+### Lab 5-1: LED trang trí theo pot
+**Rubric**: Đúng 3 chế độ (40%), chuyển mượt (30%), Serial log (20%), code sạch (10%)
+
+### Lab 5-2: LED bar theo pot
+**Rubric**: Đúng số LED (40%), ngưỡng 10% (30%), Serial (20%), code (10%)
+
+### Lab 5-3: LED theo số lần nhấn
+**Rubric**: Đếm đúng (30%), 2 mode (40%), debounce (20%), code (10%)
+
+### Lab 5-4: Hiển thị % pot
+**Rubric**: Display đúng (40%), quét mượt (30%), pot phản hồi (20%), code (10%)
+
+### Lab 5-5: Hiển thị số lần nhấn
+**Rubric**: Đếm đúng (30%), display đúng (40%), debounce (20%), code (10%)
+
+### Lab 5-6: Đếm tăng/giảm theo nút
+**Rubric**: 2 mode (40%), auto count (30%), display (20%), code (10%)
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+### Đề bài:
+**2 nút A/B + 4 LED 7 đoạn + pot**:
+1. Nút A đổi mode hiển thị: pot% / số lần nhấn B
+2. Nút B: trong mode 2 thì đếm; trong mode 1 thì reset display về 00
+3. Hiển thị 00–99, không miss nút
+
+### Rubric:
+| Tiêu chí | Điểm |
+|----------|------|
+| 2 mode hoạt động đúng | 30% |
+| Nút B đúng chức năng theo mode | 25% |
+| Display 00-99 mượt | 20% |
+| Không miss nút (debounce) | 15% |
+| Code sạch | 10% |
+
+---
+
+> **Tuần tiếp theo**: Tuần 6 - Cảm biến trong Hệ thống Nhúng
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-06', 'course-tech476', 6, 'Cảm biến (Sensors)', '# Tuần 6: Cảm biến trong Hệ thống Nhúng
+
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Đọc và xử lý dữ liệu từ các cảm biến phổ biến
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -3577,12 +4972,86 @@ void loop() {
 Khoảng cách (cm) = duration × 0.034 / 2
 ```
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-07-01', 'week-07', 1, 'Giao thức Kết nối Nối tiếp (Serial UART)', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz tự kiểm tra
+
+### Câu 1:
+HC-SR04 hoạt động ở tần số nào?
+
+- A. 20kHz
+- B. 40kHz
+- C. 60kHz
+- D. 100kHz
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 40kHz**
+
+Sóng siêu âm 40kHz, nằm ngoài phạm vi nghe của con người.
+</details>
+
+### Câu 2:
+DHT11 cần chờ bao lâu giữa các lần đọc?
+
+- A. 100ms
+- B. 500ms
+- C. 2 giây
+- D. 5 giây
+
+<details>
+<summary>Đáp án</summary>
+
+**C. 2 giây**
+
+DHT11 có thời gian sampling chậm, đọc nhanh hơn sẽ gây lỗi.
+</details>
+
+### Câu 3-10:
+*(Các câu hỏi về nguyên lý cảm biến, kết nối, xử lý lỗi)*
+
+---
+
+## 🔬 Phần 6: Bài thực hành (Labs)
+
+### Lab 6-1 đến 6-6:
+*(Rubric cho mỗi bài như trong code mẫu)*
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+### Đề bài:
+**Hệ thống cảnh báo khoảng cách + 3 LED + relay còi + Serial log**
+
+1. >60cm: an toàn, LED xanh
+2. 30-60cm: cảnh báo, LED vàng
+3. <30cm: nguy hiểm, LED đỏ + relay còi
+4. Serial log đúng format
+
+### Rubric:
+| Tiêu chí | Điểm |
+|----------|------|
+| Đo khoảng cách chính xác | 25% |
+| 3 mức cảnh báo đúng | 30% |
+| Relay hoạt động | 20% |
+| Serial output đúng | 15% |
+| Code sạch | 10% |
+
+---
+
+> **Tuần tiếp theo**: Tuần 7 - Serial UART (Giao tiếp nối tiếp)
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-07', 'course-tech476', 7, 'Giao tiếp Serial (UART)', '# Tuần 7: Giao thức Kết nối Nối tiếp (Serial UART)
+
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Giao tiếp UART giữa Arduino và PC, Arduino với Arduino
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -3960,12 +5429,330 @@ void loop() {
 | Full-duplex | Gửi và nhận đồng thời |
 | Buffer | Bộ nhớ đệm tạm |
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-08-01', 'week-08', 1, 'Giao thức Kết nối I2C', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz tự kiểm tra
+
+### Câu 1:
+UART là viết tắt của gì?
+
+- A. Universal Analog Receiver/Transmitter
+- B. Universal Asynchronous Receiver/Transmitter
+- C. Unified Asynchronous Receiver/Transmitter
+- D. Universal Automatic Receiver/Transmitter
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Universal Asynchronous Receiver/Transmitter**
+
+UART là giao thức truyền không đồng bộ (Asynchronous) phổ biến.
+</details>
+
+### Câu 2:
+Nếu baudrate của 2 bên khác nhau, điều gì xảy ra?
+
+- A. Truyền chậm hơn
+- B. Nhận được ký tự lạ/sai
+- C. Arduino reset
+- D. Không có gì
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Nhận được ký tự lạ/sai**
+
+Khi baudrate khác nhau, timing bit bị lệch, dẫn đến giải mã sai.
+</details>
+
+### Câu 3:
+`Serial.available()` trả về gì?
+
+- A. True/False
+- B. Số byte trong buffer đang chờ đọc
+- C. Baudrate hiện tại
+- D. Trạng thái kết nối
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Số byte trong buffer đang chờ đọc**
+
+Dùng để kiểm tra có data mới không: `if (Serial.available() > 0)`.
+</details>
+
+### Câu 4:
+Để giao tiếp 2 Arduino, chân nào nối với chân nào?
+
+- A. TX-TX, RX-RX
+- B. TX-RX, RX-TX
+- C. TX-GND, RX-VCC
+- D. Chỉ cần nối TX
+
+<details>
+<summary>Đáp án</summary>
+
+**B. TX-RX, RX-TX**
+
+TX (transmit) của một bên nối với RX (receive) của bên kia, và ngược lại.
+</details>
+
+### Câu 5:
+`Serial.readStringUntil(''\n'')` dừng khi nào?
+
+- A. Sau 1 giây
+- B. Khi gặp ký tự newline (\n)
+- C. Khi buffer đầy
+- D. Khi nhận được 64 byte
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Khi gặp ký tự newline (\n)**
+
+Đọc string cho đến khi gặp ký tự được chỉ định (newline trong trường hợp này).
+</details>
+
+### Câu 6:
+SoftwareSerial dùng để làm gì?
+
+- A. Tăng tốc độ Serial
+- B. Tạo thêm cổng UART trên pin bất kỳ
+- C. Mã hóa dữ liệu
+- D. Debug lỗi
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Tạo thêm cổng UART trên pin bất kỳ**
+
+Arduino Uno chỉ có 1 hardware UART. SoftwareSerial cho phép tạo thêm.
+</details>
+
+### Câu 7:
+Hàm nào gửi data MÀ KHÔNG xuống dòng?
+
+- A. Serial.println()
+- B. Serial.print()
+- C. Serial.write()
+- D. Cả B và C
+
+<details>
+<summary>Đáp án</summary>
+
+**D. Cả B và C**
+
+`print()` và `write()` đều không tự thêm newline. `println()` có thêm.
+</details>
+
+### Câu 8:
+Baudrate 9600 có nghĩa là?
+
+- A. 9600 byte mỗi giây
+- B. 9600 bit mỗi giây
+- C. 9600 ký tự mỗi giây
+- D. 9600 frame mỗi giây
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 9600 bit mỗi giây**
+
+Với 10 bit/byte (1 start + 8 data + 1 stop), tốc độ thực ≈ 960 byte/s.
+</details>
+
+### Câu 9:
+Arduino Uno có bao nhiêu cổng Hardware UART?
+
+- A. 0
+- B. 1
+- C. 2
+- D. 4
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 1**
+
+Uno có 1 UART trên D0/D1 (cũng dùng cho USB). Mega có 4 UART.
+</details>
+
+### Câu 10:
+Để đọc số nguyên từ Serial, dùng hàm nào?
+
+- A. Serial.readInt()
+- B. Serial.parseInt()
+- C. Serial.getNumber()
+- D. Serial.readNumber()
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Serial.parseInt()**
+
+Đọc chuỗi số và chuyển thành integer.
+</details>
+
+---
+
+## 🔬 Phần 6: Bài thực hành (Labs)
+
+### Lab 7-1: Đọc pot và hiển thị trên PC
+
+**Mục tiêu**: Gửi telemetry từ Arduino lên PC
+
+**Yêu cầu**:
+- Đọc pot mỗi 500ms
+- Gửi dạng CSV: raw,voltage,percent
+- Voltage có 2 số thập phân, percent có 1 số
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Format CSV đúng | 40% |
+| Giá trị tính toán chính xác | 30% |
+| Timing 500ms | 20% |
+| Code có comment | 10% |
+
+---
+
+### Lab 7-2: Điều khiển LED từ PC
+
+**Mục tiêu**: Nhận lệnh từ Serial Monitor điều khiển LED
+
+**Yêu cầu**:
+- Lệnh: LED1=ON, LED1=OFF, PWM=0..255
+- Response: OK hoặc ERR + message
+- Có lệnh STATUS trả về trạng thái
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| Parse lệnh đúng | 35% |
+| LED hoạt động theo lệnh | 25% |
+| Response đúng format | 20% |
+| PWM hoạt động | 10% |
+| Xử lý lỗi (lệnh sai) | 10% |
+
+---
+
+### Lab 7-3: Giao tiếp 2 Arduino
+
+**Mục tiêu**: Master gửi lệnh, Slave thực hiện và phản hồi
+
+**Yêu cầu**:
+- Dùng SoftwareSerial
+- Master nhận từ PC, chuyển tiếp đến Slave
+- Slave thực hiện và phản hồi
+
+**Rubric**:
+| Tiêu chí | Điểm |
+|----------|------|
+| SoftwareSerial hoạt động | 30% |
+| Master chuyển tiếp đúng | 25% |
+| Slave thực hiện lệnh | 25% |
+| Phản hồi về Master→PC | 10% |
+| Kết nối TX-RX đúng | 10% |
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+### Đề bài:
+Viết chương trình **điều khiển 2 LED từ Serial** và **gửi telemetry pot**:
+
+1. **Lệnh điều khiển**:
+   - `LED1=ON` / `LED1=OFF`
+   - `LED2=ON` / `LED2=OFF`
+   - `ALL=ON` / `ALL=OFF` (bật/tắt cả 2)
+
+2. **Telemetry**: Tự động gửi pot mỗi 1 giây
+   - Format: `POT,raw,percent`
+   - Ví dụ: `POT,512,50`
+
+3. **Response**: `OK` hoặc `ERR`
+
+### Rubric chấm điểm:
+
+| Tiêu chí | Điểm |
+|----------|------|
+| Lệnh LED1/LED2 hoạt động | 25% |
+| Lệnh ALL hoạt động | 15% |
+| Telemetry đúng format và timing | 25% |
+| Response OK/ERR đúng | 15% |
+| Xử lý lệnh sai | 10% |
+| Code sạch, có comment | 10% |
+
+### Code tham khảo:
+
+```cpp
+/*
+ * Đề thi mẫu: Serial LED Control + Pot Telemetry
+ */
+
+const int LED1_PIN = 13;
+const int LED2_PIN = 12;
+const int POT_PIN = A0;
+
+bool led1 = false, led2 = false;
+unsigned long lastTelemetry = 0;
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(LED1_PIN, OUTPUT);
+    pinMode(LED2_PIN, OUTPUT);
+    Serial.println("=== Ready ===");
+}
+
+void updateLEDs() {
+    digitalWrite(LED1_PIN, led1);
+    digitalWrite(LED2_PIN, led2);
+}
+
+void loop() {
+    // Telemetry every 1 second
+    if (millis() - lastTelemetry >= 1000) {
+        lastTelemetry = millis();
+        int raw = analogRead(POT_PIN);
+        int percent = map(raw, 0, 1023, 0, 100);
+        Serial.print("POT,");
+        Serial.print(raw);
+        Serial.print(",");
+        Serial.println(percent);
+    }
+    
+    // Command handling
+    if (Serial.available()) {
+        String cmd = Serial.readStringUntil(''\n'');
+        cmd.trim();
+        cmd.toUpperCase();
+        
+        if (cmd == "LED1=ON") { led1 = true; Serial.println("OK"); }
+        else if (cmd == "LED1=OFF") { led1 = false; Serial.println("OK"); }
+        else if (cmd == "LED2=ON") { led2 = true; Serial.println("OK"); }
+        else if (cmd == "LED2=OFF") { led2 = false; Serial.println("OK"); }
+        else if (cmd == "ALL=ON") { led1 = led2 = true; Serial.println("OK"); }
+        else if (cmd == "ALL=OFF") { led1 = led2 = false; Serial.println("OK"); }
+        else { Serial.println("ERR"); }
+        
+        updateLEDs();
+    }
+}
+```
+
+---
+
+> **Tuần tiếp theo**: Tuần 8 - Giao thức I2C
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-08', 'course-tech476', 8, 'Giao tiếp I2C & LCD', '# Tuần 8: Giao thức Kết nối I2C
+
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Sử dụng I2C để giao tiếp với LCD và các thiết bị khác
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -4384,12 +6171,133 @@ void loop() {
 | Slave | Thiết bị phản hồi |
 | Pull-up | Điện trở kéo lên VCC |
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-09-01', 'week-09', 1, 'Giao thức Kết nối SPI', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz tự kiểm tra
+
+### Câu 1:
+I2C cần bao nhiêu dây dữ liệu?
+
+- A. 1
+- B. 2
+- C. 3
+- D. 4
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 2**
+
+SDA (Data) và SCL (Clock).
+</details>
+
+### Câu 2:
+Chân I2C của Arduino Uno là?
+
+- A. D0, D1
+- B. D10, D11
+- C. A4, A5
+- D. D2, D3
+
+<details>
+<summary>Đáp án</summary>
+
+**C. A4, A5**
+
+A4 = SDA, A5 = SCL.
+</details>
+
+### Câu 3:
+Địa chỉ LCD1602 I2C thường là?
+
+- A. 0x08
+- B. 0x27 hoặc 0x3F
+- C. 0x50
+- D. 0x68
+
+<details>
+<summary>Đáp án</summary>
+
+**B. 0x27 hoặc 0x3F**
+
+Tùy thuộc vào chip PCF8574 (0x27) hoặc PCF8574A (0x3F).
+</details>
+
+### Câu 4:
+`Wire.begin()` không có tham số nghĩa là?
+
+- A. Slave mode
+- B. Master mode
+- C. Lỗi
+- D. Tự detect
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Master mode**
+
+Không địa chỉ = Master. Có địa chỉ = Slave.
+</details>
+
+### Câu 5:
+Tại sao I2C cần pull-up resistor?
+
+- A. Tăng tốc độ
+- B. Bus I2C là open-drain, cần kéo lên HIGH
+- C. Bảo vệ quá áp
+- D. Giảm nhiễu
+
+<details>
+<summary>Đáp án</summary>
+
+**B. Bus I2C là open-drain, cần kéo lên HIGH**
+
+Thiết bị I2C chỉ có thể kéo xuống LOW, cần resistor kéo lên HIGH.
+</details>
+
+### Câu 6-10:
+*(Câu hỏi về LCD, Master/Slave, so sánh với UART/SPI)*
+
+---
+
+## 🔬 Phần 6: Bài thực hành (Labs)
+
+### Lab 8-1: I2C Scanner
+**Rubric**: Tìm đúng địa chỉ (50%), format output (30%), nhận dạng thiết bị (20%)
+
+### Lab 8-2: LCD hiển thị
+**Rubric**: LCD hiện đúng (40%), 2 dòng (30%), đếm giây (20%), code (10%)
+
+### Lab 8-3: Master-Slave
+**Rubric**: Gửi lệnh (30%), Slave thực hiện (30%), Phản hồi (30%), code (10%)
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+**LCD hiển thị pot raw/V/% + nút đổi mode + Serial backup log**
+
+| Tiêu chí | Điểm |
+|----------|------|
+| LCD hiển thị 3 mode | 30% |
+| Nút đổi mode (debounce) | 25% |
+| Pot đọc đúng | 20% |
+| Serial log backup | 15% |
+| Code sạch | 10% |
+
+---
+
+> **Tuần tiếp theo**: Tuần 9 - Giao thức SPI
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-09', 'course-tech476', 9, 'Giao tiếp SPI', '# Tuần 9: Giao thức Kết nối SPI
+
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Hiểu SPI và điều khiển thiết bị qua shift register
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -4710,12 +6618,61 @@ void loop() {
 4. **MSBFIRST**: Bit cao nhất gửi trước
 5. **Cascade**: Nối nhiều IC để mở rộng thêm
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-10-01', 'week-10', 1, 'Giao thức 1-Wire (DS18B20)', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz (5 câu về SPI, 74HC595, bit shift)
+
+### Câu 1:
+SPI cần bao nhiêu dây tối thiểu?
+<details><summary>Đáp án</summary>**4 dây**: MOSI, MISO, SCK, SS</details>
+
+### Câu 2:
+74HC595 có bao nhiêu output?
+<details><summary>Đáp án</summary>**8 output** (Q0-Q7)</details>
+
+### Câu 3-5:
+*(Câu hỏi về MSBFIRST, Latch, cascade)*
+
+---
+
+## 🔬 Phần 6: Labs + Rubric
+
+### Lab 9-1: Binary Count
+**Rubric**: Đếm đúng 0-255 (40%), hiển thị binary (30%), timing (20%), code (10%)
+
+### Lab 9-2: Knight Rider
+**Rubric**: Pattern đúng (40%), tốc độ (30%), không lặp đầu cuối (20%), code (10%)
+
+### Lab 9-3: Serial Pattern Selector
+**Rubric**: 3 pattern (40%), lệnh Serial (30%), Speed control (20%), code (10%)
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+**74HC595 + 2 pattern + nút đổi + Serial mode**
+
+| Tiêu chí | Điểm |
+|----------|------|
+| 2 pattern hoạt động | 35% |
+| Nút đổi pattern | 25% |
+| Serial hiện mode | 20% |
+| Speed control | 10% |
+| Code sạch | 10% |
+
+---
+
+> **Tuần tiếp theo**: Tuần 10 - Giao thức 1-Wire
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-10', 'course-tech476', 10, 'Giao tiếp 1-Wire', '# Tuần 10: Giao thức 1-Wire (DS18B20)
+
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Đọc cảm biến nhiệt độ DS18B20 qua giao thức 1-Wire
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -5081,12 +7038,70 @@ void loop() {
 4. **ROM Address**: Mỗi sensor có mã 64-bit duy nhất
 5. **requestTemperatures()**: Yêu cầu đọc, chờ 750ms
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-11-01', 'week-11', 1, 'Giao tiếp WiFi - Chế độ WebServer', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz (5 câu)
+
+### Câu 1:
+1-Wire cần bao nhiêu dây data?
+<details><summary>Đáp án</summary>**1 dây** (DQ). Cộng thêm GND và VCC nếu không dùng parasite power.</details>
+
+### Câu 2:
+Điện trở pull-up cho DS18B20 là bao nhiêu?
+<details><summary>Đáp án</summary>**4.7kΩ** từ DQ lên VCC.</details>
+
+### Câu 3:
+Nếu DS18B20 trả về -127°C, nghĩa là gì?
+<details><summary>Đáp án</summary>**Lỗi kết nối** - sensor không được nhận diện.</details>
+
+### Câu 4:
+Thời gian đo ở độ phân giải 12-bit là?
+<details><summary>Đáp án</summary>**~750ms**</details>
+
+### Câu 5:
+Lệnh nào yêu cầu tất cả sensor đọc nhiệt độ?
+<details><summary>Đáp án</summary>`sensors.requestTemperatures();`</details>
+
+---
+
+## 🔬 Phần 6: Labs + Rubric
+
+### Lab 10-1: Đọc nhiệt độ
+**Rubric**: Đọc đúng (40%), Serial output (30%), xử lý lỗi (20%), code (10%)
+
+### Lab 10-2: Cảnh báo 3 mức
+**Rubric**: 3 mức LED (40%), ngưỡng đúng (30%), Serial log (20%), code (10%)
+
+### Lab 10-3: Multi-sensor
+**Rubric**: Đọc nhiều sensor (40%), hiện địa chỉ (30%), format output (20%), code (10%)
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+**DS18B20 + 3 LED cảnh báo + LCD hiển thị**
+
+| Tiêu chí | Điểm |
+|----------|------|
+| Đọc nhiệt độ chính xác | 30% |
+| 3 mức LED đúng ngưỡng | 25% |
+| LCD hiển thị | 25% |
+| Serial backup log | 10% |
+| Code sạch | 10% |
+
+---
+
+> **Tuần tiếp theo**: Tuần 11 - WiFi WebServer
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-11', 'course-tech476', 11, 'WiFi & WebServer (Cơ bản)', '# Tuần 11: Giao tiếp WiFi - Chế độ WebServer
+
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Điều khiển LED từ xa qua web browser
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -5516,12 +7531,62 @@ void loop() {
 3. **Route**: server.on("/path", handler)
 4. **handleClient()**: Phải gọi trong loop()
 
----', 
- 30, 1, unixepoch());
+---
 
-INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES 
-('lesson-12-01', 'week-12', 1, 'Giao tiếp WiFi - Chế độ Asynchronous WebServer', 
- '## 🎯 Mục tiêu học tập
+## 📋 Phần 5: Quiz (5 câu)
+
+### Câu 1:
+Arduino Uno có WiFi tích hợp không?
+<details><summary>Đáp án</summary>**Không**. Cần dùng ESP8266/ESP32.</details>
+
+### Câu 2:
+`server.on("/on", handleOn)` nghĩa là gì?
+<details><summary>Đáp án</summary>Khi truy cập URL `/on`, hàm `handleOn()` sẽ được gọi.</details>
+
+### Câu 3:
+Hàm nào phải gọi liên tục trong loop()?
+<details><summary>Đáp án</summary>`server.handleClient()`</details>
+
+### Câu 4-5:
+*(Câu hỏi về WiFi mode, HTTP method)*
+
+---
+
+## 🔬 Phần 6: Labs + Rubric
+
+### Lab 11-1: 1 LED WebServer
+**Rubric**: Web hoạt động (40%), LED đúng (30%), UI đẹp (20%), Serial log (10%)
+
+### Lab 11-2: 2 LED WebServer
+**Rubric**: 2 LED độc lập (40%), nút BAT/TAT đúng (30%), UI đẹp (20%), code (10%)
+
+---
+
+## 🏆 Đề thi mẫu 60 phút
+
+**Web điều khiển 2 LED + /state endpoint trả JSON**
+
+| Tiêu chí | Điểm |
+|----------|------|
+| 2 LED hoạt động | 30% |
+| /state trả JSON | 25% |
+| Trạng thái không mất khi refresh | 20% |
+| UI đẹp | 15% |
+| Code sạch | 10% |
+
+---
+
+> **Tuần tiếp theo**: Tuần 12 - Async WebServer
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
+INSERT INTO weeks (id, course_id, week_number, title, overview, objectives, exam_checklist, is_published, created_at) VALUES 
+('week-12', 'course-tech476', 12, 'IoT Project & Async Server', '# Tuần 12: Giao tiếp WiFi - Chế độ Asynchronous WebServer
+
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Xây dựng WebServer không đồng bộ, responsive và realtime
+
+---
+
+## 🎯 Mục tiêu học tập
 
 Sau khi hoàn thành tuần này, bạn sẽ:
 
@@ -5996,471 +8061,206 @@ void loop() {
 4. **setInterval()**: Auto-refresh UI định kỳ
 5. **PROGMEM**: Lưu HTML trong Flash, tiết kiệm RAM
 
----', 
- 30, 1, unixepoch());
+---
+
+## 📋 Phần 5: Quiz (5 câu)
+
+### Câu 1:
+Async WebServer có cần gọi handleClient() trong loop() không?
+<details><summary>Đáp án</summary>**Không**. Đó là ưu điểm chính của Async.</details>
+
+### Câu 2:
+`request->send(200, "application/json", json)` làm gì?
+<details><summary>Đáp án</summary>Trả response HTTP 200 với content type JSON và nội dung `json`.</details>
+
+### Câu 3:
+PROGMEM dùng để làm gì?
+<details><summary>Đáp án</summary>Lưu dữ liệu lớn (HTML) vào Flash thay vì RAM.</details>
+
+### Câu 4:
+JavaScript fetch() hoạt động thế nào?
+<details><summary>Đáp án</summary>Gọi HTTP request không đồng bộ, không reload trang.</details>
+
+### Câu 5:
+Làm sao để UI cập nhật tự động?
+<details><summary>Đáp án</summary>Dùng `setInterval()` gọi fetch() định kỳ.</details>
+
+---
+
+## 🔬 Phần 6: Labs + Rubric
+
+### Lab 12-1: Async 1 LED
+**Rubric**: Không cần handleClient() (30%), JSON API (30%), Auto-refresh (25%), UI đẹp (15%)
+
+### Lab 12-2: Async 2 LED
+**Rubric**: 2 LED độc lập (30%), JSON state (25%), Real-time update (25%), UI đẹp (20%)
+
+---
+
+## 🏆 Đề thi mẫu cuối khóa
+
+**Dashboard IoT: 2 LED + Sensor display + Auto-refresh**
+
+| Tiêu chí | Điểm |
+|----------|------|
+| Async WebServer hoạt động | 20% |
+| 2 LED điều khiển đúng | 20% |
+| JSON API /state | 20% |
+| Auto-refresh UI | 20% |
+| UI đẹp, responsive | 10% |
+| Code sạch, comment | 10% |
+
+---
+
+## 🎉 Kết thúc khóa học!
+
+Chúc mừng bạn đã hoàn thành 12 tuần học Arduino!
+
+### Bạn đã học được:
+- ✅ GPIO, LED, Button, Keypad
+- ✅ ADC, PWM, Sensors
+- ✅ Communication: UART, I2C, SPI, 1-Wire
+- ✅ IoT: WiFi WebServer, Async, JSON API
+
+### Bước tiếp theo:
+- 🚀 Xây dựng dự án IoT thực tế
+- 🚀 Học MQTT, Firebase, Cloud
+- 🚀 Tích hợp Mobile App
+
+---
+
+> **Chúc bạn thành công trong hành trình IoT!** 🌟
+', '["Mục tiêu 1", "Mục tiêu 2"]', '["Checklist 1", "Checklist 2"]', 1, unixepoch());
 
 -- ==========================================
--- LABS (from curriculum)
+-- LESSONS (Dynamic content mapping simplified)
 -- ==========================================
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-01-01', 'week-01', 1, 'Thực hành tuần 1', 
- 'Áp dụng kiến thức tuần 1', 
- '# Bài thực hành
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-00-01', 'week-00', 1, 'Điện tử cơ bản & Định luật Ohm', '# Khái niệm cơ bản\n\nĐể bắt đầu với Arduino, bạn cần hiểu 3 đại lượng cơ bản nhất của điện:\n\n1. **Hiệu điện thế (Voltage - V):** Đơn vị Volt (V). Là áp lực đẩy dòng điện đi.\n2. **Dòng điện (Current - I):** Đơn vị Ampe (A). Là dòng chảy của các electron.\n3. **Điện trở (Resistance - R):** Đơn vị Ohm (Ω). Là sự cản trở dòng điện.\n\n### Định luật Ohm\nĐây là công thức quan trọng nhất:\n$$ V = I \times R $$(\n\n![Tam giác định luật Ohm](https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/OhmsLaw.png/640px-OhmsLaw.png)', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-00-02', 'week-00', 2, 'Nhận biết linh kiện điện tử', '# Linh kiện thường gặp\n\n## 1. Điện trở (Resistor)\nLàm giảm dòng điện. Không phân cực (cắm chiều nào cũng được).\n\n![Điện trở](https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Resistor_symbol_America.svg/320px-Resistor_symbol_America.svg.png)\n\n## 2. Diode phát quang (LED)\nChỉ cho dòng điện đi qua 1 chiều. Chân dài là Dương (+), chân ngắn là Âm (-).\n\n![LED](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/LED_circuit_elements.svg/320px-LED_circuit_elements.svg.png)\n\n## 3. Breadboard\nDùng để lắp mạch thử nghiệm mà không cần hàn.\n\n![Cấu tạo Breadboard](https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Breadboard_scheme.svg/640px-Breadboard_scheme.svg.png)', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-00-03', 'week-00', 3, 'Cách đọc điện trở', '# Đọc vòng màu điện trở\n\n![Bảng màu điện trở](https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Resistor_Color_Code.svg/640px-Resistor_Color_Code.svg.png)\n\n### Cách tính (Loại 4 vòng):\n1. Vòng 1: Số thứ nhất\n2. Vòng 2: Số thứ hai\n3. Vòng 3: Số mũ (10^n) - Số lượng số 0 thêm vào sau\n4. Vòng 4: Sai số (Vàng kim 5%)\n\n**Ví dụ:** Nâu - Đen - Đỏ - Vàng kim = 1 - 0 - 00 (thêm 2 số 0) = 1000 Ohm = 1 kΩ.', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-01-01', 'week-01', 1, 'Hệ thống nhúng là gì?', '# Hệ thống nhúng (Embedded Systems)
 
-Áp dụng kiến thức đã học trong tuần 1.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+Khái niệm hệ thống nhúng: thiết bị điện tử chuyên nhiệm, chạy nhiệm vụ cụ thể, tài nguyên hạn chế.', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-01-02', 'week-01', 2, 'GPIO: Output', '# Digital Output
 
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-02-01', 'week-02', 1, 'Thực hành tuần 2', 
- 'Áp dụng kiến thức tuần 2', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 2.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-03-01', 'week-03', 1, 'Thực hành tuần 3', 
- 'Áp dụng kiến thức tuần 3', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 3.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-04-01', 'week-04', 1, 'Thực hành tuần 4', 
- 'Áp dụng kiến thức tuần 4', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 4.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-05-01', 'week-05', 1, 'Thực hành tuần 5', 
- 'Áp dụng kiến thức tuần 5', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 5.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-06-01', 'week-06', 1, 'Thực hành tuần 6', 
- 'Áp dụng kiến thức tuần 6', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 6.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-07-01', 'week-07', 1, 'Thực hành tuần 7', 
- 'Áp dụng kiến thức tuần 7', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 7.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-08-01', 'week-08', 1, 'Thực hành tuần 8', 
- 'Áp dụng kiến thức tuần 8', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 8.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-09-01', 'week-09', 1, 'Thực hành tuần 9', 
- 'Áp dụng kiến thức tuần 9', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 9.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-10-01', 'week-10', 1, 'Thực hành tuần 10', 
- 'Áp dụng kiến thức tuần 10', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 10.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
-
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-11-01', 'week-11', 1, 'Thực hành tuần 11', 
- 'Áp dụng kiến thức tuần 11', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 11.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
-
-INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES 
-('lab-12-01', 'week-12', 1, 'Thực hành tuần 12', 
- 'Áp dụng kiến thức tuần 12', 
- '# Bài thực hành
-
-Áp dụng kiến thức đã học trong tuần 12.', 
- 'Xem sơ đồ trong hướng dẫn', 
- '// Viết code của bạn ở đây\n\nvoid setup() {\n  \n}\n\nvoid loop() {\n  \n}', 
- '', 
- '{"criteria":[{"name":"Hoàn thành yêu cầu","points":100,"description":"Đánh giá tổng hợp"}],"total":100}', 
- 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
+- pinMode(pin, OUTPUT)
+- digitalWrite(pin, HIGH/LOW)', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-02-01', 'week-02', 1, 'Tư duy thiết kế', '# Top-Down vs Bottom-Up', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-02-02', 'week-02', 2, 'LED 7 đoạn', '# Multiplexing', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-03-01', 'week-03', 1, 'Input & INPUT_PULLUP', '# Digital Input', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-03-02', 'week-03', 2, 'Debounce (Chống dội)', '# Debounce Logic', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-04-01', 'week-04', 1, 'ADC (Analog to Digital)', '# ADC Converter', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-04-02', 'week-04', 2, 'PWM (Pulse Width Modulation)', '# PWM Control', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-05-01', 'week-05', 1, 'Tư duy Module hóa', '# Functions', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-05-02', 'week-05', 2, 'Tránh delay()', '# Millis()', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-06-01', 'week-06', 1, 'Cảm biến siêu âm HC-SR04', '# HC-SR04', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-06-02', 'week-06', 2, 'Nhiệt độ & Độ ẩm DHT11', '# DHT11', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-07-01', 'week-07', 1, 'Giao thức UART', '# UART Serial', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-07-02', 'week-07', 2, 'Xử lý chuỗi Serial', '# Serial Parsing', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-08-01', 'week-08', 1, 'Giao thức I2C', '# I2C Bus', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-08-02', 'week-08', 2, 'LCD 1602 I2C', '# LCD Display', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-09-01', 'week-09', 1, 'Giao thức SPI', '# SPI Bus', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-09-02', 'week-09', 2, 'Shift Register 74HC595', '# 74HC595 IC', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-10-01', 'week-10', 1, 'Giao thức 1-Wire', '# OneWire Bus', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-10-02', 'week-10', 2, 'DS18B20 Temp Sensor', '# DS18B20 Sensor', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-11-01', 'week-11', 1, 'ESP8266/ESP32 Intro', '# ESP Platform', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-11-02', 'week-11', 2, 'Simple WebServer', '# HTTP Server', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-12-01', 'week-12', 1, 'Async WebServer', '# ESPAsyncWebServer', 20, 1, unixepoch());
+INSERT INTO lessons (id, week_id, order_index, title, content, duration, is_published, created_at) VALUES ('lesson-12-02', 'week-12', 2, 'AJAX & Fetch API', '# Fetch API', 20, 1, unixepoch());
 
 -- ==========================================
--- QUIZZES & QUESTIONS
+-- LABS
 -- ==========================================
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-01', 'week-01', 'Quiz Tuần 1: Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)', 
- 'Kiểm tra kiến thức tuần 1', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-01-01', 'quiz-01', 1, 'single', 'Câu hỏi 1 tuần 1?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-01-02', 'quiz-01', 2, 'single', 'Câu hỏi 2 tuần 1?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-01-03', 'quiz-01', 3, 'single', 'Câu hỏi 3 tuần 1?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-02', 'week-02', 'Quiz Tuần 2: Thiết kế Hệ thống Nhúng & LED 7 Đoạn', 
- 'Kiểm tra kiến thức tuần 2', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-02-01', 'quiz-02', 1, 'single', 'Câu hỏi 1 tuần 2?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-02-02', 'quiz-02', 2, 'single', 'Câu hỏi 2 tuần 2?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-02-03', 'quiz-02', 3, 'single', 'Câu hỏi 3 tuần 2?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-03', 'week-03', 'Quiz Tuần 3: Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad', 
- 'Kiểm tra kiến thức tuần 3', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-03-01', 'quiz-03', 1, 'single', 'Câu hỏi 1 tuần 3?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-03-02', 'quiz-03', 2, 'single', 'Câu hỏi 2 tuần 3?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-03-03', 'quiz-03', 3, 'single', 'Câu hỏi 3 tuần 3?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-04', 'week-04', 'Quiz Tuần 4: Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)', 
- 'Kiểm tra kiến thức tuần 4', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-04-01', 'quiz-04', 1, 'single', 'Câu hỏi 1 tuần 4?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-04-02', 'quiz-04', 2, 'single', 'Câu hỏi 2 tuần 4?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-04-03', 'quiz-04', 3, 'single', 'Câu hỏi 3 tuần 4?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-05', 'week-05', 'Quiz Tuần 5: Thực hành Tích hợp I/O', 
- 'Kiểm tra kiến thức tuần 5', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-05-01', 'quiz-05', 1, 'single', 'Câu hỏi 1 tuần 5?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-05-02', 'quiz-05', 2, 'single', 'Câu hỏi 2 tuần 5?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-05-03', 'quiz-05', 3, 'single', 'Câu hỏi 3 tuần 5?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-06', 'week-06', 'Quiz Tuần 6: Cảm biến trong Hệ thống Nhúng', 
- 'Kiểm tra kiến thức tuần 6', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-06-01', 'quiz-06', 1, 'single', 'Câu hỏi 1 tuần 6?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-06-02', 'quiz-06', 2, 'single', 'Câu hỏi 2 tuần 6?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-06-03', 'quiz-06', 3, 'single', 'Câu hỏi 3 tuần 6?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-07', 'week-07', 'Quiz Tuần 7: Giao thức Kết nối Nối tiếp (Serial UART)', 
- 'Kiểm tra kiến thức tuần 7', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-07-01', 'quiz-07', 1, 'single', 'Câu hỏi 1 tuần 7?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-07-02', 'quiz-07', 2, 'single', 'Câu hỏi 2 tuần 7?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-07-03', 'quiz-07', 3, 'single', 'Câu hỏi 3 tuần 7?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-08', 'week-08', 'Quiz Tuần 8: Giao thức Kết nối I2C', 
- 'Kiểm tra kiến thức tuần 8', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-08-01', 'quiz-08', 1, 'single', 'Câu hỏi 1 tuần 8?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-08-02', 'quiz-08', 2, 'single', 'Câu hỏi 2 tuần 8?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-08-03', 'quiz-08', 3, 'single', 'Câu hỏi 3 tuần 8?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-09', 'week-09', 'Quiz Tuần 9: Giao thức Kết nối SPI', 
- 'Kiểm tra kiến thức tuần 9', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-09-01', 'quiz-09', 1, 'single', 'Câu hỏi 1 tuần 9?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-09-02', 'quiz-09', 2, 'single', 'Câu hỏi 2 tuần 9?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-09-03', 'quiz-09', 3, 'single', 'Câu hỏi 3 tuần 9?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-10', 'week-10', 'Quiz Tuần 10: Giao thức 1-Wire (DS18B20)', 
- 'Kiểm tra kiến thức tuần 10', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-10-01', 'quiz-10', 1, 'single', 'Câu hỏi 1 tuần 10?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-10-02', 'quiz-10', 2, 'single', 'Câu hỏi 2 tuần 10?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-10-03', 'quiz-10', 3, 'single', 'Câu hỏi 3 tuần 10?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-11', 'week-11', 'Quiz Tuần 11: Giao tiếp WiFi - Chế độ WebServer', 
- 'Kiểm tra kiến thức tuần 11', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-11-01', 'quiz-11', 1, 'single', 'Câu hỏi 1 tuần 11?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-11-02', 'quiz-11', 2, 'single', 'Câu hỏi 2 tuần 11?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-11-03', 'quiz-11', 3, 'single', 'Câu hỏi 3 tuần 11?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES 
-('quiz-12', 'week-12', 'Quiz Tuần 12: Giao tiếp WiFi - Chế độ Asynchronous WebServer', 
- 'Kiểm tra kiến thức tuần 12', 15, 60, 1, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-12-01', 'quiz-12', 1, 'single', 'Câu hỏi 1 tuần 12?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-12-02', 'quiz-12', 2, 'single', 'Câu hỏi 2 tuần 12?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
-
-INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
-('q-12-03', 'quiz-12', 3, 'single', 'Câu hỏi 3 tuần 12?', 
- '["Đáp án A","Đáp án B","Đáp án C","Đáp án D"]', '0', 
- '', 10, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-00-01', 'week-00', 1, 'Mô phỏng mạch LED cơ bản', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-01-01', 'week-01', 1, 'Blink 3 quy luật', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-02-01', 'week-02', 1, 'LED 7 đoạn cơ bản', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-03-01', 'week-03', 1, 'Nút nhấn & LED', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-04-01', 'week-04', 1, 'Đọc biến trở', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-05-01', 'week-05', 1, 'Đèn giao thông (millis)', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-06-01', 'week-06', 1, 'Cảm biến khoảng cách', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-07-01', 'week-07', 1, 'Serial Command', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-08-01', 'week-08', 1, 'LCD Hello World', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-09-01', 'week-09', 1, 'Shift Register LED', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-10-01', 'week-10', 1, 'Đọc nhiệt độ DS18B20', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/arduino-uno', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-11-01', 'week-11', 1, 'WiFi Connect', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
+INSERT INTO labs (id, week_id, order_index, title, objective, instructions, wiring, starter_code, solution_code, rubric, simulator_url, duration, is_published, created_at) VALUES ('lab-12-01', 'week-12', 1, 'IoT Dashboard', 'Objective', '# Instructions', 'Wiring', '// Starter Code', '// Solution', '{"total":10}', 'https://wokwi.com/projects/new/esp32', 45, 1, unixepoch());
 
 -- ==========================================
--- EXAM DRILLS (one per week)
+-- QUIZZES
 -- ==========================================
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-01', 'week-01', 'Exam Drill Tuần 1', 
- 'Ôn tập kiến thức tuần 1 - Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)',
- '# Bài thi thực hành Tuần 1\n\n## Đề bài\nÁp dụng kiến thức tuần 1: Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-02', 'week-02', 'Exam Drill Tuần 2', 
- 'Ôn tập kiến thức tuần 2 - Thiết kế Hệ thống Nhúng & LED 7 Đoạn',
- '# Bài thi thực hành Tuần 2\n\n## Đề bài\nÁp dụng kiến thức tuần 2: Thiết kế Hệ thống Nhúng & LED 7 Đoạn\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-03', 'week-03', 'Exam Drill Tuần 3', 
- 'Ôn tập kiến thức tuần 3 - Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad',
- '# Bài thi thực hành Tuần 3\n\n## Đề bài\nÁp dụng kiến thức tuần 3: Phần cứng Hệ thống Nhúng - Nút nhấn & Keypad\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-04', 'week-04', 'Exam Drill Tuần 4', 
- 'Ôn tập kiến thức tuần 4 - Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)',
- '# Bài thi thực hành Tuần 4\n\n## Đề bài\nÁp dụng kiến thức tuần 4: Phần mềm Hệ thống Nhúng - Analog Input/Output (ADC & PWM)\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-05', 'week-05', 'Exam Drill Tuần 5', 
- 'Ôn tập kiến thức tuần 5 - Thực hành Tích hợp I/O',
- '# Bài thi thực hành Tuần 5\n\n## Đề bài\nÁp dụng kiến thức tuần 5: Thực hành Tích hợp I/O\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-06', 'week-06', 'Exam Drill Tuần 6', 
- 'Ôn tập kiến thức tuần 6 - Cảm biến trong Hệ thống Nhúng',
- '# Bài thi thực hành Tuần 6\n\n## Đề bài\nÁp dụng kiến thức tuần 6: Cảm biến trong Hệ thống Nhúng\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-07', 'week-07', 'Exam Drill Tuần 7', 
- 'Ôn tập kiến thức tuần 7 - Giao thức Kết nối Nối tiếp (Serial UART)',
- '# Bài thi thực hành Tuần 7\n\n## Đề bài\nÁp dụng kiến thức tuần 7: Giao thức Kết nối Nối tiếp (Serial UART)\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-08', 'week-08', 'Exam Drill Tuần 8', 
- 'Ôn tập kiến thức tuần 8 - Giao thức Kết nối I2C',
- '# Bài thi thực hành Tuần 8\n\n## Đề bài\nÁp dụng kiến thức tuần 8: Giao thức Kết nối I2C\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-09', 'week-09', 'Exam Drill Tuần 9', 
- 'Ôn tập kiến thức tuần 9 - Giao thức Kết nối SPI',
- '# Bài thi thực hành Tuần 9\n\n## Đề bài\nÁp dụng kiến thức tuần 9: Giao thức Kết nối SPI\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-10', 'week-10', 'Exam Drill Tuần 10', 
- 'Ôn tập kiến thức tuần 10 - Giao thức 1-Wire (DS18B20)',
- '# Bài thi thực hành Tuần 10\n\n## Đề bài\nÁp dụng kiến thức tuần 10: Giao thức 1-Wire (DS18B20)\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-11', 'week-11', 'Exam Drill Tuần 11', 
- 'Ôn tập kiến thức tuần 11 - Giao tiếp WiFi - Chế độ WebServer',
- '# Bài thi thực hành Tuần 11\n\n## Đề bài\nÁp dụng kiến thức tuần 11: Giao tiếp WiFi - Chế độ WebServer\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
-INSERT INTO exam_drills (id, week_id, title, description, content, rubric, time_limit, is_published, created_at) VALUES 
-('drill-12', 'week-12', 'Exam Drill Tuần 12', 
- 'Ôn tập kiến thức tuần 12 - Giao tiếp WiFi - Chế độ Asynchronous WebServer',
- '# Bài thi thực hành Tuần 12\n\n## Đề bài\nÁp dụng kiến thức tuần 12: Giao tiếp WiFi - Chế độ Asynchronous WebServer\n\n## Yêu cầu\n1. Hoàn thành bài tập trong thời gian quy định\n2. Code chạy đúng yêu cầu\n3. Có comment giải thích logic',
- '{"items":[{"name":"Hoàn thành yêu cầu","points":50,"description":"Đáp ứng đầy đủ yêu cầu đề bài"},{"name":"Code quality","points":30,"description":"Code sạch, có comment"},{"name":"Debug & Testing","points":20,"description":"Có Serial log, test kỹ"}]}',
- 30, 1, unixepoch());
-
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-00', 'week-00', 'Trắc nghiệm Linh kiện cơ bản', 'Kiểm tra kiến thức về R, C, LED và định luật Ohm', 10, 80, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES 
+('q-00-01', 'quiz-00', 1, 'single', 'Công thức định luật Ohm là gì?', '["V = I / R", "I = V * R", "V = I * R", "R = V * I"]', '2', 'V = I * R là đáp án đúng.', 10, unixepoch()),
+('q-00-02', 'quiz-00', 2, 'single', 'Linh kiện nào dùng để cản trở dòng điện?', '["Tụ điện", "Điện trở", "Transistor", "LED"]', '1', 'Điện trở có chức năng cản trở dòng điện.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-01', 'week-01', 'Quiz Week 01', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-01-01', 'quiz-01', 1, 'single', 'Question 1 for Week 01?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-01-02', 'quiz-01', 2, 'single', 'Question 2 for Week 01?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-01-03', 'quiz-01', 3, 'single', 'Question 3 for Week 01?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-01-04', 'quiz-01', 4, 'single', 'Question 4 for Week 01?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-01-05', 'quiz-01', 5, 'single', 'Question 5 for Week 01?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-02', 'week-02', 'Quiz Week 02', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-02-01', 'quiz-02', 1, 'single', 'Question 1 for Week 02?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-02-02', 'quiz-02', 2, 'single', 'Question 2 for Week 02?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-02-03', 'quiz-02', 3, 'single', 'Question 3 for Week 02?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-02-04', 'quiz-02', 4, 'single', 'Question 4 for Week 02?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-02-05', 'quiz-02', 5, 'single', 'Question 5 for Week 02?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-03', 'week-03', 'Quiz Week 03', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-03-01', 'quiz-03', 1, 'single', 'Question 1 for Week 03?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-03-02', 'quiz-03', 2, 'single', 'Question 2 for Week 03?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-03-03', 'quiz-03', 3, 'single', 'Question 3 for Week 03?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-03-04', 'quiz-03', 4, 'single', 'Question 4 for Week 03?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-03-05', 'quiz-03', 5, 'single', 'Question 5 for Week 03?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-04', 'week-04', 'Quiz Week 04', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-04-01', 'quiz-04', 1, 'single', 'Question 1 for Week 04?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-04-02', 'quiz-04', 2, 'single', 'Question 2 for Week 04?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-04-03', 'quiz-04', 3, 'single', 'Question 3 for Week 04?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-04-04', 'quiz-04', 4, 'single', 'Question 4 for Week 04?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-04-05', 'quiz-04', 5, 'single', 'Question 5 for Week 04?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-05', 'week-05', 'Quiz Week 05', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-05-01', 'quiz-05', 1, 'single', 'Question 1 for Week 05?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-05-02', 'quiz-05', 2, 'single', 'Question 2 for Week 05?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-05-03', 'quiz-05', 3, 'single', 'Question 3 for Week 05?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-05-04', 'quiz-05', 4, 'single', 'Question 4 for Week 05?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-05-05', 'quiz-05', 5, 'single', 'Question 5 for Week 05?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-06', 'week-06', 'Quiz Week 06', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-06-01', 'quiz-06', 1, 'single', 'Question 1 for Week 06?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-06-02', 'quiz-06', 2, 'single', 'Question 2 for Week 06?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-06-03', 'quiz-06', 3, 'single', 'Question 3 for Week 06?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-06-04', 'quiz-06', 4, 'single', 'Question 4 for Week 06?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-06-05', 'quiz-06', 5, 'single', 'Question 5 for Week 06?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-07', 'week-07', 'Quiz Week 07', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-07-01', 'quiz-07', 1, 'single', 'Question 1 for Week 07?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-07-02', 'quiz-07', 2, 'single', 'Question 2 for Week 07?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-07-03', 'quiz-07', 3, 'single', 'Question 3 for Week 07?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-07-04', 'quiz-07', 4, 'single', 'Question 4 for Week 07?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-07-05', 'quiz-07', 5, 'single', 'Question 5 for Week 07?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-08', 'week-08', 'Quiz Week 08', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-08-01', 'quiz-08', 1, 'single', 'Question 1 for Week 08?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-08-02', 'quiz-08', 2, 'single', 'Question 2 for Week 08?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-08-03', 'quiz-08', 3, 'single', 'Question 3 for Week 08?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-08-04', 'quiz-08', 4, 'single', 'Question 4 for Week 08?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-08-05', 'quiz-08', 5, 'single', 'Question 5 for Week 08?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-09', 'week-09', 'Quiz Week 09', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-09-01', 'quiz-09', 1, 'single', 'Question 1 for Week 09?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-09-02', 'quiz-09', 2, 'single', 'Question 2 for Week 09?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-09-03', 'quiz-09', 3, 'single', 'Question 3 for Week 09?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-09-04', 'quiz-09', 4, 'single', 'Question 4 for Week 09?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-09-05', 'quiz-09', 5, 'single', 'Question 5 for Week 09?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-10', 'week-10', 'Quiz Week 10', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-10-01', 'quiz-10', 1, 'single', 'Question 1 for Week 10?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-10-02', 'quiz-10', 2, 'single', 'Question 2 for Week 10?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-10-03', 'quiz-10', 3, 'single', 'Question 3 for Week 10?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-10-04', 'quiz-10', 4, 'single', 'Question 4 for Week 10?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-10-05', 'quiz-10', 5, 'single', 'Question 5 for Week 10?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-11', 'week-11', 'Quiz Week 11', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-11-01', 'quiz-11', 1, 'single', 'Question 1 for Week 11?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-11-02', 'quiz-11', 2, 'single', 'Question 2 for Week 11?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-11-03', 'quiz-11', 3, 'single', 'Question 3 for Week 11?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-11-04', 'quiz-11', 4, 'single', 'Question 4 for Week 11?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-11-05', 'quiz-11', 5, 'single', 'Question 5 for Week 11?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO quizzes (id, week_id, title, description, time_limit, passing_score, is_published, created_at) VALUES ('quiz-12', 'week-12', 'Quiz Week 12', 'Test knowledge', 15, 60, 1, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-12-01', 'quiz-12', 1, 'single', 'Question 1 for Week 12?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-12-02', 'quiz-12', 2, 'single', 'Question 2 for Week 12?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-12-03', 'quiz-12', 3, 'single', 'Question 3 for Week 12?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-12-04', 'quiz-12', 4, 'single', 'Question 4 for Week 12?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
+INSERT INTO questions (id, quiz_id, order_index, type, content, options, correct_answer, explanation, points, created_at) VALUES ('q-12-05', 'quiz-12', 5, 'single', 'Question 5 for Week 12?', '["Option A", "Option B", "Option C", "Option D"]', '0', 'Explanation.', 10, unixepoch());
