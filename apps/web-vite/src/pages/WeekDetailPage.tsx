@@ -139,43 +139,69 @@ export default function WeekDetailPage() {
                         <span className="text-white">Tuần {week.weekNumber}</span>
                     </div>
 
-                    {/* Timeline Navigator */}
+                    {/* Timeline Navigator - Enhanced */}
                     <div className="mb-10">
-                        <div className="flex items-center justify-between relative">
+                        <p className="text-xs text-teal-200 font-medium uppercase tracking-wider mb-4">Chọn tuần học</p>
+                        <div className="relative">
                             {/* Connecting Line */}
-                            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/20 -z-0 rounded-full" />
+                            <div className="absolute top-1/2 left-0 w-full h-1 bg-white/15 -translate-y-1/2 rounded-full" />
 
-                            {/* Steps */}
-                            <div className="flex items-center justify-between w-full overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 mask-fade-sides">
-                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => {
-                                    const isActive = currentWeekNum === num;
-                                    const isPast = currentWeekNum > num;
+                            {/* Scroll Container with Gradient Masks */}
+                            <div className="relative overflow-x-auto hide-scrollbar">
+                                {/* Gradient Masks */}
+                                <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-arduino-teal to-transparent z-10 pointer-events-none" />
+                                <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-arduino-teal to-transparent z-10 pointer-events-none" />
 
-                                    return (
-                                        <Link
-                                            key={num}
-                                            to={`/weeks/week-${num.toString().padStart(2, '0')}`}
-                                            className="relative z-10 group flex-shrink-0 mx-1 first:ml-0 last:mr-0"
-                                        >
-                                            <div className={`
-                                                w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 border-2
-                                                ${isActive
-                                                    ? 'bg-white text-arduino-teal border-white scale-110 shadow-lg shadow-black/10'
-                                                    : isPast
-                                                        ? 'bg-teal-700 text-white border-teal-600 hover:bg-teal-600'
-                                                        : 'bg-teal-800/50 text-teal-300 border-transparent hover:bg-teal-700 hover:text-white'
-                                                }
-                                            `}>
-                                                {isPast ? <CheckCircle2 className="w-5 h-5" /> : num}
-                                            </div>
-                                            {isActive && (
-                                                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold uppercase tracking-wider text-white whitespace-nowrap">
-                                                    HIỆN TẠI
+                                {/* Week Buttons */}
+                                <div className="flex items-center gap-2 py-2 px-2 relative">
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => {
+                                        const isActive = currentWeekNum === num;
+                                        const isPast = currentWeekNum > num;
+
+                                        // Topic labels for tooltips
+                                        const topicLabels: Record<number, string> = {
+                                            1: 'Nhập môn',
+                                            2: 'GPIO',
+                                            3: 'ADC/PWM',
+                                            4: 'LED 7 đoạn',
+                                            5: 'Cảm biến',
+                                            6: 'Động cơ',
+                                            7: 'UART',
+                                            8: 'I2C',
+                                            9: 'WiFi',
+                                            10: 'MQTT',
+                                            11: 'App',
+                                            12: 'Dự án',
+                                        };
+
+                                        return (
+                                            <Link
+                                                key={num}
+                                                to={`/weeks/week-${num.toString().padStart(2, '0')}`}
+                                                className="relative z-10 group flex-shrink-0"
+                                                title={`Tuần ${num}: ${topicLabels[num]}`}
+                                            >
+                                                <div className={`
+                                                    w-12 h-12 md:w-14 md:h-14 rounded-xl flex flex-col items-center justify-center font-bold text-sm transition-all duration-300 border-2
+                                                    ${isActive
+                                                        ? 'bg-white text-arduino-teal border-white scale-110 shadow-lg shadow-black/20'
+                                                        : isPast
+                                                            ? 'bg-teal-600/50 text-white border-teal-500/50 hover:bg-teal-500 hover:scale-105'
+                                                            : 'bg-teal-800/40 text-teal-300 border-teal-700/30 hover:bg-teal-700 hover:text-white hover:scale-105'
+                                                    }
+                                                `}>
+                                                    {isPast ? <CheckCircle2 className="w-5 h-5" /> : <span className="text-base md:text-lg">{num}</span>}
+                                                    <span className={`text-[9px] mt-0.5 font-medium truncate max-w-[40px] ${isActive ? 'text-teal-600' : 'text-teal-300/80'}`}>
+                                                        {topicLabels[num]}
+                                                    </span>
                                                 </div>
-                                            )}
-                                        </Link>
-                                    );
-                                })}
+                                                {isActive && (
+                                                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full shadow-md" />
+                                                )}
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
                     </div>
