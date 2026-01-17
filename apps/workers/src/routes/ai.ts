@@ -9,6 +9,9 @@ import { aiChatLogs } from '../db/schema';
 import { requireAuth } from '../middleware/auth';
 import { generateId } from '../services/crypto';
 import type { Env, AuthUser } from '../types';
+import { findFAQMatch, getFAQStats } from '../services/faq';
+import { classifyIntent, isGreeting, getContextForIntent, type IntentType } from '../services/intent';
+import { generateKnowledgeContext, searchKnowledge } from '../services/knowledge';
 
 // Validation schema
 const attachmentSchema = z.object({
@@ -290,14 +293,11 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
 
     const { mode, lessonId, labId, userQuestion, selectedText, currentCode, errorLog, stream, attachments } = result.data;
 
-    // Detect Attachments & Model Switching
+    // 1. Check Attachments & Model Switching
     let selectedModel = MODEL_DEFAULT;
     let hasImages = false;
 
-    // Build context
-    let contextParts: string[] = [];
-
-    // Process attachments
+    // Detect Attachments
     const textAttachments: string[] = [];
     const imageAttachments: { url: string }[] = [];
 
@@ -306,7 +306,7 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
             if (file.type === 'text') {
                 textAttachments.push(`--- File: ${file.name || 'untitled'} ---\n${file.content}\n--- End File ---`);
             } else if (file.type === 'image') {
-                imageAttachments.push({ url: file.content }); // Content is Base64 Data URL
+                imageAttachments.push({ url: file.content });
                 hasImages = true;
             }
         }
@@ -317,7 +317,118 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
         console.log('[ai] Switching to Vision Model:', selectedModel);
     }
 
-    if (selectedText) contextParts.push(`Đoạn text được chọn:\n${selectedText}`);
+    const chatLogId = generateId();
+
+    // 2. Check FAQ (Instant Answer) - Chỉ khi không có ảnh/code/error
+    if (!hasImages && !currentCode && !errorLog && !selectedText) {
+        const faqMatch = findFAQMatch(userQuestion);
+        if (faqMatch) {
+            console.log('[ai] FAQ Hit:', faqMatch.category);
+            const responseData = {
+                response: faqMatch.answer,
+                chatLogId,
+                mode,
+                tokensUsed: 0,
+                remainingQuota: RATE_LIMIT - count, // Không trừ quota
+                isCached: true
+            };
+
+            // Nếu stream=true, giả lập stream cho FAQ
+            if (stream) {
+                const text = faqMatch.answer;
+                const encoder = new TextEncoder();
+                const stream = new ReadableStream({
+                    start(controller) {
+                        // Send chunks
+                        const chunkSize = 10;
+                        let i = 0;
+                        function push() {
+                            if (i >= text.length) {
+                                controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+                                    done: true,
+                                    chatLogId,
+                                    remainingQuota: RATE_LIMIT - count,
+                                    latencyMs: 5
+                                })}\n\n`));
+                                controller.close();
+                                return;
+                            }
+                            const chunk = text.slice(i, i + chunkSize);
+                            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: chunk })}\n\n`));
+                            i += chunkSize;
+                            setTimeout(push, 5); // Fast stream
+                        }
+                        push();
+                    }
+                });
+
+                return new Response(stream, {
+                    headers: {
+                        'Content-Type': 'text/event-stream',
+                        'Cache-Control': 'no-cache',
+                        'Connection': 'keep-alive',
+                    }
+                });
+            }
+
+            return c.json(responseData);
+        }
+    }
+
+    // 3. Classify Intent
+    const intent = classifyIntent(userQuestion);
+    console.log('[ai] Intent:', intent.type, 'Confidence:', intent.confidence);
+
+    // 4. Handle Greeting (Fast Response)
+    if (intent.type === 'greeting') {
+        const greeting = isGreeting(userQuestion);
+        if (greeting.isGreeting && greeting.response) {
+            if (stream) {
+                const text = greeting.response;
+                const encoder = new TextEncoder();
+                const stream = new ReadableStream({
+                    start(controller) {
+                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: text })}\n\n`));
+                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+                            done: true,
+                            chatLogId,
+                            latencyMs: 1
+                        })}\n\n`));
+                        controller.close();
+                    }
+                });
+                return new Response(stream, { headers: { 'Content-Type': 'text/event-stream' } });
+            }
+            return c.json({ response: greeting.response, chatLogId });
+        }
+    }
+
+    // 5. Select Model based on Intent (Tiered)
+    if (!hasImages) {
+        if (['syntax', 'formula'].includes(intent.type)) {
+            selectedModel = MODEL_DEFAULT; // Fast model
+        } else if (intent.type === 'debug' || intent.type === 'code_request') {
+            selectedModel = MODEL_DEFAULT; // Still use flash for speed, switch if complex
+        }
+    }
+
+    // 6. Inject Knowledge (In-Prompt)
+    let contextParts: string[] = [];
+
+    // Add Intent Context Hint
+    const intentHint = getContextForIntent(intent);
+    if (intentHint) contextParts.push(`CONTEXT HINT: ${intentHint}`);
+
+    // Search Knowledge Base (In-Memory RAG)
+    if (['syntax', 'formula', 'hardware', 'debug'].includes(intent.type)) {
+        const knowledge = searchKnowledge(userQuestion);
+        if (knowledge.length > 0) {
+            contextParts.push(`KIẾN THỨC LIÊN QUAN (References):\n${knowledge.join('\n\n')}`);
+        }
+    }
+
+    // Add User Context
+    if (selectedText) contextParts.push(`Đoạn text chọn:\n${selectedText}`);
     if (currentCode) contextParts.push(`Code hiện tại:\n\`\`\`cpp\n${currentCode}\n\`\`\``);
     if (errorLog) contextParts.push(`Error log:\n${errorLog}`);
     if (textAttachments.length > 0) contextParts.push(...textAttachments);
@@ -363,7 +474,6 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
     }
 
     const startTime = Date.now();
-    const chatLogId = generateId();
 
     // Update rate limit trước
     await c.env.AI_RATE_LIMIT.put(rateLimitKey, String(count + 1), {
