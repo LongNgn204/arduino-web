@@ -281,6 +281,33 @@ export const aiChatLogs = sqliteTable('ai_chat_logs', {
 }));
 
 // ==========================================
+// USER CHAT HISTORY (SYNC)
+// ==========================================
+
+export const chatConversations = sqliteTable('chat_conversations', {
+    id: text('id').primaryKey(),
+    userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    mode: text('mode', { enum: ['tutor', 'socratic', 'grader'] }).notNull().default('tutor'),
+    createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+    updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+}, (table) => ({
+    userIdIdx: index('chat_conversations_user_idx').on(table.userId),
+    updatedAtIdx: index('chat_conversations_updated_at_idx').on(table.updatedAt),
+}));
+
+export const chatMessages = sqliteTable('chat_messages', {
+    id: text('id').primaryKey(),
+    conversationId: text('conversation_id').notNull().references(() => chatConversations.id, { onDelete: 'cascade' }),
+    role: text('role', { enum: ['user', 'assistant'] }).notNull(),
+    content: text('content').notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+}, (table) => ({
+    conversationIdIdx: index('chat_messages_conversation_id_idx').on(table.conversationId),
+    createdAtIdx: index('chat_messages_created_at_idx').on(table.createdAt),
+}));
+
+// ==========================================
 // TYPE EXPORTS
 // ==========================================
 
@@ -298,3 +325,5 @@ export type QuizAttempt = typeof quizAttempts.$inferSelect;
 export type LabSubmission = typeof labSubmissions.$inferSelect;
 export type DrillSubmission = typeof drillSubmissions.$inferSelect;
 export type AiChatLog = typeof aiChatLogs.$inferSelect;
+export type ChatConversation = typeof chatConversations.$inferSelect;
+export type ChatMessage = typeof chatMessages.$inferSelect;

@@ -1,146 +1,143 @@
-# Arduino Learning Hub 🚀
+# 🚀 Arduino AI Learning System (Next-Gen LMS)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](LICENSE)
-[![Deploy: Cloudflare](https://img.shields.io/badge/Deploy-Cloudflare-orange.svg)](https://pages.cloudflare.com/)
-[![Node: 20+](https://img.shields.io/badge/Node-20+-green.svg)](https://nodejs.org/)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Status](https://img.shields.io/badge/status-Active-success.svg)
+![AI](https://img.shields.io/badge/AI-DeepSeek%20%26%20Gemini-purple)
 
-> **Nền tảng học tập "Lập trình hệ thống nhúng & IoT"** dành cho sinh viên Khoa Kỹ thuật & Công nghệ - ĐH Sư phạm Hà Nội.
+> **"Siêu Trí Tuệ Bách Khoa & Chuyên Gia Top 1"** - Hệ thống học tập thông minh tích hợp AI Trợ giảng hàng đầu, hỗ trợ Arduino, lập trình, và khoa học đa lĩnh vực.
 
----
+## 📖 Giới thiệu
 
-## ✨ Tính năng nổi bật
+Đây là nền tảng **Learning Management System (LMS)** thế hệ mới, được thiết kế tối ưu cho việc học lập trình nhúng (Arduino/ESP32) và các môn khoa học tự nhiên. Hệ thống tích hợp **AI Agent mạnh mẽ** đóng vai trò là một gia sư riêng (Personal Tutor), có khả năng giải đáp thắc mắc, chấm bài code, và hướng dẫn theo phương pháp Socratic.
 
-| Tính năng | Mô tả |
-|-----------|-------|
-| 🎓 **13 Tuần Giáo Trình** | Lộ trình từ Week 0 (Điện tử cơ bản) đến Week 12 (Dự án IoT) |
-| 🔌 **Dual-Board Support** | Hỗ trợ cả Arduino Uno và ESP32 |
-| 💻 **Web IDE Tích hợp** | Code editor với Syntax Highlighting, Auto-save |
-| 🎮 **Simulator Online** | Tích hợp Wokwi Simulator chạy code trên trình duyệt |
-| 🤖 **AI Agent** | Trợ lý AI hỗ trợ debug code và giải đáp thắc mắc |
-| 📝 **Quiz System** | Hệ thống quiz 12 tuần với review đáp án |
-| 🏆 **Gamification** | Leaderboard và challenges hàng tuần |
+Hệ thống không chỉ dừng lại ở Arduino mà còn mở rộng ra "Bách khoa toàn thư", hỗ trợ render công thức Toán/Lý chuẩn LaTeX và nhận diện ngữ cảnh thông minh.
 
----
+## ✨ Tính năng Nổi bật
+
+### 🤖 1. AI Trợ giảng "Top 1 Expert"
+-   **Context Awareness**: Tự động nhận diện chủ đề (Code, Toán, Lý, Đời sống) để trả lời phù hợp.
+-   **Encyclopedia Identity**: Kiến thức sâu rộng, giải thích cặn kẽ bản chất vấn đề.
+-   **Deep Reasoning**: Chế độ "Suy nghĩ sâu" (Brain Mode) cho các vấn đề phức tạp.
+-   **LaTeX Rendering**: Hiển thị công thức Toán/Lý đẹp mắt ($E=mc^2$).
+-   **Streaming Response**: Phản hồi mượt mà thời gian thực.
+
+### 📚 2. Hệ thống LMS Toàn diện
+-   **Lộ trình học tập**: Bài học (Video/Text), Bài thực hành (Lab), Quiz trắc nghiệm.
+-   **Luyện thi (Drill)**: Ngân hàng câu hỏi trắc nghiệm với giải thích chi tiết.
+-   **Thư viện (Library)**: Tra cứu nhanh linh kiện, hàm Arduino, và tài liệu tham khảo.
+-   **Tiến độ học tập**: Theo dõi % hoàn thành, bảng xếp hạng (Leaderboard).
+
+### 💻 3. Công cụ Mạnh mẽ
+-   **Web IDE**: Code và biên dịch giả lập ngay trên trình duyệt (tương lai).
+-   **Mermaid Diagrams**: Tự động vẽ sơ đồ nguyên lý hoặc lưu đồ thuật toán từ lời giải thích của AI.
+-   **Onboarding Tour**: Hướng dẫn người dùng mới làm quen hệ thống.
+-   **AI Dashboard**: Giao diện làm việc chuyên sâu với AI (Fullscreen mode).
 
 ## 🛠️ Tech Stack
 
-### Frontend (`apps/web-vite`)
-- **Framework**: Vite + React 19 + TypeScript
-- **Styling**: TailwindCSS v4 + Framer Motion
-- **AI UI**: React Markdown + KaTeX (LaTeX)
-- **State**: Zustand
+Dự án sử dụng công nghệ hiện đại nhất để đảm bảo hiệu năng và trải nghiệm người dùng:
 
-### Backend (`apps/workers`)
-- **Runtime**: Cloudflare Workers (Edge)
-- **Framework**: Hono
-- **Database**: Cloudflare D1 (SQLite) + Drizzle ORM
-- **AI**: OpenRouter API
+### **Frontend (Apps/Web-Vite)**
+-   **Framework**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/)
+-   **Language**: TypeScript
+-   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+-   **Icons**: [Lucide React](https://lucide.dev/)
+-   **Animation**: CSS Animations & Transitions
+-   **Markdown/Math**: `react-markdown`, `remark-math`, `rehype-katex`, `mermaid`
 
----
+### **Backend (Apps/Workers)**
+-   **Runtime**: [Cloudflare Workers](https://workers.cloudflare.com/) (Serverless & Edge)
+-   **Framework**: [Hono](https://hono.dev/) (Siêu nhẹ, siêu nhanh)
+-   **Database**: [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite at Edge)
+-   **Cache/Session**: Cloudflare KV
+-   **AI Integration**: OpenRouter (DeepSeek, Gemini, Llama), Google AI Studio.
 
-## 🚀 Quick Start
-
-### Yêu cầu
-- Node.js 20+
-- npm hoặc pnpm
-
-### 1. Clone & Install
+## 📂 Cấu trúc Dự án
 
 ```bash
-git clone https://github.com/LongNgn204/arduino-web.git
-cd arduino-web
-```
-
-### 2. Chạy Frontend
-
-```bash
-cd apps/web-vite
-npm install
-npm run dev
-```
-→ Truy cập: `http://localhost:5173`
-
-### 3. Chạy Backend (tuỳ chọn)
-
-```bash
-cd apps/workers
-npm install
-npm run dev
-```
-→ API: `http://localhost:8787`
-
-### 4. Seed Database (local)
-
-```bash
-cd apps/workers
-npx wrangler d1 execute arduino-db --local --file=src/db/seed_lms_2026.sql
-```
-
----
-
-## 📁 Project Structure
-
-```
 arduino-web/
 ├── apps/
-│   ├── web-vite/          # Frontend (Vite + React)
+│   ├── web-vite/          # Frontend Application
 │   │   ├── src/
-│   │   │   ├── components/  # UI Components
-│   │   │   ├── pages/       # Route pages
-│   │   │   └── stores/      # Zustand stores
-│   │   └── package.json
-│   │
-│   └── workers/           # Backend (Cloudflare Workers)
+│   │   │   ├── components/# React Components (UI, Chat, Sidebar...)
+│   │   │   ├── pages/     # Page Components (Dashboard, Quiz, AI...)
+│   │   │   ├── stores/    # Zustand State Management
+│   │   │   └── ...
+│   │   └── ...
+│   └── workers/           # Backend API Service
 │       ├── src/
-│       │   ├── db/          # SQL schemas & seeds
-│       │   └── index.ts     # API routes (Hono)
-│       └── wrangler.toml
-│
-├── curriculum/            # Nội dung giáo trình (.md)
-│   ├── week-00-intro.md   # Nhập môn Điện tử (BẮT BUỘC)
-│   ├── week-01-gpio-led.md
-│   └── ...
-│
-└── scripts/               # Utility scripts
+│       │   ├── db/        # Database Schemas (Drizzle ORM)
+│       │   ├── routes/    # API Endpoints (Auth, AI, Courses...)
+│       │   ├── services/  # Business Logic (AI, Crypto, Intent...)
+│       │   └── ...
+│       ├── wrangler.toml  # Cloudflare Config
+│       └── ...
+├── scripts/               # Utility scripts (Hash gen, deploy helper)
+└── ...
 ```
 
----
+## 🚀 Hướng dẫn Cài đặt & Chạy Local
 
-## 📚 Curriculum Overview
+### Yêu cầu
+-   Node.js (v18+)
+-   npm hoặc pnpm
+-   Tài khoản Cloudflare (để deploy backend)
 
-| Week | Chủ đề | Nội dung chính |
-|------|--------|----------------|
-| **0** | Nhập môn Điện tử ⚡ | Định luật Ohm, Điện trở, LED, Breadboard **(BẮT BUỘC)** |
-| 1-4 | Foundation | GPIO, Digital I/O, Analog/PWM, LED 7 đoạn |
-| 5-6 | Sensors & Logic | Cảm biến DHT11, LDR, Servo, Relay |
-| 7-8 | Communication | UART, I2C, SPI |
-| 9-11 | IoT & Cloud | WiFi, MQTT, Web Server, App |
-| 12 | Capstone | Dự án cuối khóa |
+### 1. Backend (Workers)
 
----
+```bash
+cd apps/workers
+npm install
 
-## 🌍 Deployment
+# Setup local database (D1)
+npx wrangler d1 execute arduino-db --local --file=./src/db/schema.sql
 
-Chi tiết tại [DEPLOY.md](./DEPLOY.md)
+# Chạy backend local
+npm run dev
+```
 
-- **Frontend**: Cloudflare Pages
-- **Backend**: Cloudflare Workers  
-- **Database**: Cloudflare D1
-
----
-
-## 🧪 Testing
+### 2. Frontend (Web-Vite)
 
 ```bash
 cd apps/web-vite
-npm run test          # Unit tests
-npm run test:coverage # Coverage report
+npm install
+
+# Tạo file .env nếu cần
+# VITE_API_URL=http://localhost:8787/api
+
+# Chạy frontend local
+npm run dev
 ```
 
----
+Truy cập `http://localhost:5173` để trải nghiệm.
+
+## ☁️ Deployment
+
+Hệ thống được thiết kế để deploy hoàn toàn trên hệ sinh thái Cloudflare.
+
+### Deploy Backend
+```bash
+cd apps/workers
+npx wrangler deploy
+# Chạy migration DB trên production (lần đầu)
+npx wrangler d1 execute arduino-db --remote --file=./src/db/schema.sql
+```
+
+### Deploy Frontend
+```bash
+cd apps/web-vite
+npm run build
+npx wrangler pages deploy dist --project-name=arduino-web
+```
+
+## 🤝 Contributing
+
+Mọi đóng góp đều được hoan nghênh! Vui lòng tạo Pull Request hoặc tra cứu Issues để biết thêm chi tiết.
 
 ## 📝 License
 
-MIT © 2024 [Nguyễn Hoàng Long](https://github.com/LongNgn204)
+Dự án này thuộc bản quyền **MIT License**.
+Copyright © 2026 Nguyen Hoang Long (HNUE).
 
-**Đơn vị**: Khoa Kỹ thuật & Công nghệ - HNUE
+---
+*Built with ❤️ & ☕ by LongNgn204*

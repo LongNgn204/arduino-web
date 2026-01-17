@@ -1,8 +1,10 @@
-// chatStore.ts - Zustand store quản lý lịch sử chat AI với localStorage sync
-// Chú thích: Store này quản lý nhiều cuộc hội thoại, mỗi conversation có danh sách messages riêng
-
+// chatStore.ts - Zustand store quản lý lịch sử chat AI (Sync with Backend)
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+
+const API_BASE = import.meta.env.PROD
+    ? 'https://arduino-workers.stu725114073.workers.dev'
+    : '';
 
 // ==========================================
 // INTERFACES
@@ -13,7 +15,6 @@ export interface Message {
     role: 'user' | 'assistant';
     content: string;
     timestamp: Date;
-    // Chú thích: Có thể mở rộng thêm attachments, reactions, etc.
 }
 
 export interface Conversation {
@@ -30,6 +31,7 @@ interface ChatState {
     messages: Record<string, Message[]>; // conversationId -> messages[]
     activeConversationId: string | null;
     isChatSidebarOpen: boolean;
+    isLoadingHistory: boolean;
 
     // Actions
     openChatSidebar: () => void;
@@ -38,11 +40,15 @@ interface ChatState {
 
     createConversation: (mode?: 'tutor' | 'socratic' | 'grader') => string;
     setActiveConversation: (id: string | null) => void;
-    updateConversationTitle: (id: string, title: string) => void;
 
+    // API Actions
+    fetchConversations: () => Promise<void>;
+    loadConversationDetails: (id: string) => Promise<void>;
+    deleteConversation: (id: string) => Promise<void>;
+
+    // Local/Optimistic Actions
     addMessage: (conversationId: string, message: Omit<Message, 'id' | 'timestamp'>) => void;
-    deleteConversation: (id: string) => void;
-    clearAllHistory: () => void;
+    updateConversationTitle: (id: string, title: string) => void;
 
     // Helpers
     getActiveMessages: () => Message[];
@@ -53,17 +59,8 @@ interface ChatState {
 // UTILS
 // ==========================================
 
-// Chú thích: Generate ID đơn giản, có thể thay bằng uuid nếu cần
 const generateId = () => `conv_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 const generateMessageId = () => `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-
-// Chú thích: Tạo tiêu đề tự động từ nội dung tin nhắn đầu tiên
-const generateTitle = (content: string): string => {
-    const maxLen = 40;
-    const cleaned = content.replace(/\n/g, ' ').trim();
-    if (cleaned.length <= maxLen) return cleaned;
-    return cleaned.slice(0, maxLen) + '...';
-};
 
 // ==========================================
 // STORE
@@ -77,15 +74,85 @@ export const useChatStore = create<ChatState>()(
             messages: {},
             activeConversationId: null,
             isChatSidebarOpen: false,
+            isLoadingHistory: false,
 
             // Sidebar controls
-            openChatSidebar: () => set({ isChatSidebarOpen: true }),
+            openChatSidebar: () => {
+                set({ isChatSidebarOpen: true });
+                get().fetchConversations(); // Sync on open
+            },
             closeChatSidebar: () => set({ isChatSidebarOpen: false }),
-            toggleChatSidebar: () => set((state) => ({ isChatSidebarOpen: !state.isChatSidebarOpen })),
+            toggleChatSidebar: () => {
+                const isOpen = !get().isChatSidebarOpen;
+                set({ isChatSidebarOpen: isOpen });
+                if (isOpen) get().fetchConversations();
+            },
+
+            // API Actions
+            fetchConversations: async () => {
+                set({ isLoadingHistory: true });
+                try {
+                    const res = await fetch(`${API_BASE}/api/ai/history`);
+                    if (res.ok) {
+                        const { data } = await res.json();
+                        // Parse dates
+                        const parsed = data.map((c: any) => ({
+                            ...c,
+                            createdAt: new Date(c.createdAt),
+                            updatedAt: new Date(c.updatedAt)
+                        }));
+                        set({ conversations: parsed, isLoadingHistory: false });
+                    }
+                } catch (e) {
+                    console.error('Failed to fetch conversations', e);
+                    set({ isLoadingHistory: false });
+                }
+            },
+
+            loadConversationDetails: async (id) => {
+                const { messages } = get();
+                if (messages[id] && messages[id].length > 0) return; // Cache hit
+
+                try {
+                    const res = await fetch(`${API_BASE}/api/ai/history/${id}`);
+                    if (res.ok) {
+                        const { data } = await res.json();
+                        const parsedMessages = data.messages.map((m: any) => ({
+                            id: m.id,
+                            role: m.role,
+                            content: m.content,
+                            timestamp: new Date(m.createdAt)
+                        }));
+                        set((state) => ({
+                            messages: { ...state.messages, [id]: parsedMessages }
+                        }));
+                    }
+                } catch (e) {
+                    console.error('Failed to load conversation details', e);
+                }
+            },
+
+            deleteConversation: async (id) => {
+                // Optimistic UI
+                set((state) => ({
+                    conversations: state.conversations.filter(c => c.id !== id),
+                    activeConversationId: state.activeConversationId === id ? null : state.activeConversationId
+                }));
+
+                try {
+                    await fetch(`${API_BASE}/api/ai/history/${id}`, { method: 'DELETE' });
+                } catch (e) {
+                    console.error('Failed to delete conversation', e);
+                    get().fetchConversations(); // Rollback/Sync on error
+                }
+            },
 
             // Conversation management
             createConversation: (mode = 'tutor') => {
-                const id = generateId();
+                const id = generateId(); // Temp ID, backend sync later? 
+                // Note: For now we use local ID, backend will create entry on first message sync.
+                // Or better: we let backend create ID. But to be fast, we use local ID.
+
                 const now = new Date();
                 const newConversation: Conversation = {
                     id,
@@ -106,6 +173,7 @@ export const useChatStore = create<ChatState>()(
 
             setActiveConversation: (id) => {
                 set({ activeConversationId: id });
+                if (id) get().loadConversationDetails(id);
             },
 
             updateConversationTitle: (id, title) => {
@@ -127,18 +195,15 @@ export const useChatStore = create<ChatState>()(
                     const existingMessages = state.messages[conversationId] || [];
                     const newMessages = [...existingMessages, message];
 
-                    // Chú thích: Tự động cập nhật title từ tin nhắn đầu tiên của user
+                    // Optimistic update title if first message
                     let updatedConversations = state.conversations;
                     if (messageData.role === 'user' && existingMessages.length === 0) {
+                        const maxLen = 40;
+                        const cleaned = messageData.content.replace(/\n/g, ' ').trim();
+                        const title = cleaned.length <= maxLen ? cleaned : cleaned.slice(0, maxLen) + '...';
+
                         updatedConversations = state.conversations.map((conv) =>
-                            conv.id === conversationId
-                                ? { ...conv, title: generateTitle(messageData.content), updatedAt: new Date() }
-                                : conv
-                        );
-                    } else {
-                        // Cập nhật updatedAt
-                        updatedConversations = state.conversations.map((conv) =>
-                            conv.id === conversationId ? { ...conv, updatedAt: new Date() } : conv
+                            conv.id === conversationId ? { ...conv, title, updatedAt: new Date() } : conv
                         );
                     }
 
@@ -146,33 +211,6 @@ export const useChatStore = create<ChatState>()(
                         messages: { ...state.messages, [conversationId]: newMessages },
                         conversations: updatedConversations,
                     };
-                });
-            },
-
-            deleteConversation: (id) => {
-                set((state) => {
-                    const { [id]: removed, ...restMessages } = state.messages;
-                    const newConversations = state.conversations.filter((c) => c.id !== id);
-
-                    // Chú thích: Nếu đang xem conversation bị xóa, reset về null hoặc conversation khác
-                    let newActiveId = state.activeConversationId;
-                    if (state.activeConversationId === id) {
-                        newActiveId = newConversations.length > 0 ? newConversations[0].id : null;
-                    }
-
-                    return {
-                        conversations: newConversations,
-                        messages: restMessages,
-                        activeConversationId: newActiveId,
-                    };
-                });
-            },
-
-            clearAllHistory: () => {
-                set({
-                    conversations: [],
-                    messages: {},
-                    activeConversationId: null,
                 });
             },
 
@@ -188,31 +226,12 @@ export const useChatStore = create<ChatState>()(
             },
         }),
         {
-            name: 'arduino-chat-history', // localStorage key
+            name: 'arduino-chat-store-v2', // New key to avoid conflict
             storage: createJSONStorage(() => localStorage),
-            // Chú thích: Chỉ persist những field cần thiết, bỏ qua UI state
             partialize: (state) => ({
-                conversations: state.conversations,
-                messages: state.messages,
+                // Only persist UI preference, data comes from API
+                isChatSidebarOpen: state.isChatSidebarOpen
             }),
-            // Chú thích: Deserialize dates từ JSON
-            onRehydrateStorage: () => (state) => {
-                if (state) {
-                    // Convert date strings back to Date objects
-                    state.conversations = state.conversations.map((conv) => ({
-                        ...conv,
-                        createdAt: new Date(conv.createdAt),
-                        updatedAt: new Date(conv.updatedAt),
-                    }));
-
-                    Object.keys(state.messages).forEach((convId) => {
-                        state.messages[convId] = state.messages[convId].map((msg) => ({
-                            ...msg,
-                            timestamp: new Date(msg.timestamp),
-                        }));
-                    });
-                }
-            },
         }
     )
 );

@@ -5,7 +5,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
-import { aiChatLogs } from '../db/schema';
+import { aiChatLogs, chatConversations, chatMessages } from '../db/schema';
 import { requireAuth } from '../middleware/auth';
 import { generateId } from '../services/crypto';
 import type { Env, AuthUser } from '../types';
@@ -32,6 +32,7 @@ const tutorRequestSchema = z.object({
     attachments: z.array(attachmentSchema).optional(),
     stream: z.boolean().optional().default(true), // Mặc định bật streaming
     deepThink: z.boolean().optional(), // Chế độ suy nghĩ sâu
+    conversationId: z.string().optional(), // Để sync history
 });
 
 const feedbackSchema = z.object({
@@ -49,7 +50,7 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 // Models
 const MODEL_DEFAULT = 'xiaomi/mimo-v2-flash:free';
 const MODEL_VISION = 'google/gemini-2.0-flash-exp:free'; // Free model with Vision & Large Context
-const MODEL_REASONING = 'deepseek/deepseek-r1:free'; // Free Reasoning Model
+const MODEL_REASONING = 'tngtech/deepseek-r1t2-chimera:free'; // Free Reasoning Model
 
 // System prompts tối ưu cho AI trợ giảng Arduino - Enhanced với RAG grounding
 // Chú thích: Prompt engineering để giảm hallucination và tăng accuracy
@@ -575,23 +576,73 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
                                 ));
 
                                 // Log to DB (không block)
-                                db.insert(aiChatLogs).values({
-                                    id: chatLogId,
-                                    userId: user.id,
-                                    mode,
-                                    lessonId: lessonId || null,
-                                    labId: labId || null,
-                                    userQuestion,
-                                    aiResponse: fullResponse,
-                                    contextData: JSON.stringify({
-                                        selectedText,
-                                        currentCode,
-                                        errorLog,
-                                        hasAttachments: !!attachments
-                                    }),
-                                    tokensUsed: 0, // Không có trong streaming
-                                    latencyMs,
-                                }).run().catch(err => console.error('[ai] Log error:', err));
+                                const saveToDb = async () => {
+                                    try {
+                                        // 1. Log analytics (giữ nguyên)
+                                        await db.insert(aiChatLogs).values({
+                                            id: chatLogId,
+                                            userId: user.id,
+                                            mode,
+                                            lessonId: lessonId || null,
+                                            labId: labId || null,
+                                            userQuestion,
+                                            aiResponse: fullResponse,
+                                            contextData: JSON.stringify({
+                                                selectedText,
+                                                currentCode,
+                                                errorLog,
+                                                hasAttachments: !!attachments
+                                            }),
+                                            tokensUsed: 0,
+                                            latencyMs,
+                                        }).run();
+
+                                        // 2. Sync Chat History (New)
+                                        const conversationId = body.conversationId || generateId();
+                                        const now = new Date();
+
+                                        // Ensure conversation exists or update it
+                                        const existingConv = await db.select().from(chatConversations).where(sql`${chatConversations.id} = ${conversationId}`).limit(1);
+
+                                        if (existingConv.length === 0) {
+                                            await db.insert(chatConversations).values({
+                                                id: conversationId,
+                                                userId: user.id,
+                                                title: userQuestion.slice(0, 40) + '...',
+                                                mode: mode,
+                                                createdAt: now,
+                                                updatedAt: now
+                                            }).run();
+                                        } else {
+                                            await db.update(chatConversations)
+                                                .set({ updatedAt: now })
+                                                .where(sql`${chatConversations.id} = ${conversationId}`)
+                                                .run();
+                                        }
+
+                                        // Save User Message
+                                        await db.insert(chatMessages).values({
+                                            id: generateId(),
+                                            conversationId,
+                                            role: 'user',
+                                            content: userQuestion,
+                                            createdAt: new Date(Date.now() - latencyMs) // Estimate timestamp
+                                        }).run();
+
+                                        // Save Assistant Message
+                                        await db.insert(chatMessages).values({
+                                            id: generateId(),
+                                            conversationId,
+                                            role: 'assistant',
+                                            content: fullResponse,
+                                            createdAt: now
+                                        }).run();
+
+                                    } catch (err) {
+                                        console.error('[ai] Log/Sync error:', err);
+                                    }
+                                };
+                                c.executionCtx.waitUntil(saveToDb());
 
                                 continue;
                             }
@@ -860,5 +911,86 @@ aiRoutes.post('/agent', requireAuth(), async (c) => {
         }, 500);
     }
 });
+
+// ==========================================
+// CHAT HISTORY ENDPOINTS
+// ==========================================
+
+// GET /api/ai/history - Lấy danh sách hội thoại
+aiRoutes.get('/history', requireAuth(), async (c) => {
+    try {
+        const user = c.get('user') as AuthUser;
+        const db = drizzle(c.env.DB);
+
+        // Lấy danh sách conversation, sắp xếp mới nhất trước
+        // Chỉ select các trường cần thiết cho sidebar list
+        const conversations = await db.select({
+            id: chatConversations.id,
+            title: chatConversations.title,
+            mode: chatConversations.mode,
+            createdAt: chatConversations.createdAt,
+            updatedAt: chatConversations.updatedAt,
+        })
+            .from(chatConversations)
+            .where(sql`${chatConversations.userId} = ${user.id}`)
+            .orderBy(sql`${chatConversations.updatedAt} DESC`)
+            .limit(50); // Limit 50 cuộc hội thoại gần nhất
+
+        return c.json({ data: conversations });
+    } catch (e) {
+        console.error('[history] Error fetching list:', e);
+        return c.json({ error: 'Failed to fetch history' }, 500);
+    }
+});
+
+// GET /api/ai/history/:id - Lấy chi tiết tin nhắn của 1 hội thoại
+aiRoutes.get('/history/:id', requireAuth(), async (c) => {
+    try {
+        const user = c.get('user') as AuthUser;
+        const conversationId = c.req.param('id');
+        const db = drizzle(c.env.DB);
+
+        // Verify ownership
+        const [conversation] = await db.select()
+            .from(chatConversations)
+            .where(sql`${chatConversations.id} = ${conversationId} AND ${chatConversations.userId} = ${user.id}`)
+            .limit(1);
+
+        if (!conversation) {
+            return c.json({ error: 'Conversation not found' }, 404);
+        }
+
+        const messages = await db.select()
+            .from(chatMessages)
+            .where(sql`${chatMessages.conversationId} = ${conversationId}`)
+            .orderBy(chatMessages.createdAt); // Sắp xếp cũ -> mới để hiển thị
+
+        return c.json({ data: { conversation, messages } });
+    } catch (e) {
+        console.error('[history] Error fetching details:', e);
+        return c.json({ error: 'Failed to fetch conversation' }, 500);
+    }
+});
+
+// DELETE /api/ai/history/:id - Xóa hội thoại
+aiRoutes.delete('/history/:id', requireAuth(), async (c) => {
+    try {
+        const user = c.get('user') as AuthUser;
+        const conversationId = c.req.param('id');
+        const db = drizzle(c.env.DB);
+
+        await db.delete(chatConversations)
+            .where(sql`${chatConversations.id} = ${conversationId} AND ${chatConversations.userId} = ${user.id}`);
+
+        return c.json({ success: true });
+    } catch (e) {
+        console.error('[history] Error deleting:', e);
+        return c.json({ error: 'Failed to delete conversation' }, 500);
+    }
+});
+
+// POST /api/ai/tutor (Update: Sync to DB)
+// Note: Logic cũ dài, ta cần inject phần save DB vào flow hiện có.
+// Do file quá dài để replace all, ta sẽ dùng kỹ thuật replace một phần logic xử lý response.
 
 export default aiRoutes;

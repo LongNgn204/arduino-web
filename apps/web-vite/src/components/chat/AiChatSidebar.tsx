@@ -7,6 +7,7 @@ import {
     ClipboardCheck,
     ChevronLeft,
     MessageSquare,
+    ArrowDown
 } from 'lucide-react';
 import { useChatStore } from '../../stores/chatStore';
 import type { Message } from '../../stores/chatStore';
@@ -46,7 +47,23 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
     const [showHistory, setShowHistory] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messages = getActiveMessages();
+    const [showScrollButton, setShowScrollButton] = useState(false); // State nút cuộn
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
     const activeConversation = activeConversationId ? getConversationById(activeConversationId) : null;
+
+    // Scroll handlers
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        setShowScrollButton(false);
+    };
+
+    const handleScroll = () => {
+        if (!scrollContainerRef.current) return;
+        const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+        // Show button if scrolled up more than 100px from bottom
+        const isBottom = scrollHeight - scrollTop - clientHeight < 100;
+        setShowScrollButton(!isBottom);
+    };
 
     // Scroll to bottom on new messages
     useEffect(() => {
@@ -183,8 +200,12 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                     </div>
 
                     {/* Messages Layer */}
-                    <div className="flex-1 flex flex-col w-full">
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 scroll-smooth scrollbar-thin scrollbar-thumb-gray-200">
+                    <div className="flex-1 flex flex-col w-full relative">
+                        <div
+                            ref={scrollContainerRef}
+                            onScroll={handleScroll}
+                            className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 scroll-smooth scrollbar-thin scrollbar-thumb-gray-200"
+                        >
                             {messages.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-full text-center p-8 text-gray-500 space-y-4">
                                     <div className="w-16 h-16 rounded-2xl bg-teal-50 text-arduino-teal flex items-center justify-center mb-2">
@@ -260,6 +281,16 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                             )}
                             <div ref={messagesEndRef} />
                         </div>
+
+                        {/* Scroll to Bottom Button */}
+                        {showScrollButton && (
+                            <button
+                                onClick={scrollToBottom}
+                                className="absolute bottom-20 right-1/2 translate-x-1/2 bg-white/80 backdrop-blur shadow-lg border border-gray-200 text-gray-500 hover:text-arduino-teal hover:scale-110 p-2 rounded-full transition-all animate-bounce z-10"
+                            >
+                                <ArrowDown className="w-5 h-5" />
+                            </button>
+                        )}
 
                         {/* Input Area */}
                         <ChatInput
