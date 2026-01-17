@@ -7,7 +7,6 @@ import {
     ClipboardCheck,
     ChevronLeft,
     MessageSquare,
-    Loader2
 } from 'lucide-react';
 import { useChatStore } from '../../stores/chatStore';
 import type { Message } from '../../stores/chatStore';
@@ -28,9 +27,10 @@ const API_BASE = import.meta.env.PROD
 
 interface AiChatSidebarProps {
     className?: string;
+    embedded?: boolean; // New prop
 }
 
-export default function AiChatSidebar({ className }: AiChatSidebarProps) {
+export default function AiChatSidebar({ className, embedded = false }: AiChatSidebarProps) {
     const {
         isChatSidebarOpen,
         closeChatSidebar,
@@ -42,7 +42,7 @@ export default function AiChatSidebar({ className }: AiChatSidebarProps) {
     } = useChatStore();
 
     const [isLoading, setIsLoading] = useState(false);
-    const [deepThink, setDeepThink] = useState(false); // State cho Deep Reasoning
+    const [deepThink, setDeepThink] = useState(false);
     const [showHistory, setShowHistory] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messages = getActiveMessages();
@@ -116,28 +116,35 @@ export default function AiChatSidebar({ className }: AiChatSidebarProps) {
 
     const ModeIcon = activeConversation ? modeConfig[activeConversation.mode].icon : Sparkles;
 
+    // Embedded Logic Override
+    const shouldRender = embedded || isChatSidebarOpen;
+    if (!shouldRender) return null;
+
     return (
         <>
-            {/* Backdrop for mobile */}
-            {isChatSidebarOpen && (
+            {/* Backdrop for mobile (only if not embedded) */}
+            {!embedded && isChatSidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+                    className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
                     onClick={closeChatSidebar}
                 />
             )}
 
             {/* Main Panel */}
             <div className={cn(
-                "fixed inset-y-0 right-0 z-50 w-full sm:w-[450px] bg-white border-l border-gray-200 shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col",
-                isChatSidebarOpen ? "translate-x-0" : "translate-x-full",
+                "bg-white border-l border-gray-200 shadow-2xl flex flex-col transition-all duration-300 ease-in-out",
+                embedded
+                    ? "relative w-full h-full shadow-none border-none rounded-none z-0 translate-x-0"
+                    : "fixed inset-y-0 right-0 z-50 w-full sm:w-[500px] transform",
+                !embedded && (isChatSidebarOpen ? "translate-x-0" : "translate-x-full"),
                 className
             )}>
                 {/* Header */}
-                <div className="h-16 border-b border-gray-100 flex items-center justify-between px-4 bg-white/80 backdrop-blur z-10 shrink-0">
+                <div className="h-16 border-b border-gray-100 flex items-center justify-between px-4 bg-white/95 backdrop-blur-xl z-10 shrink-0 shadow-sm sticky top-0">
                     <div className="flex items-center gap-3 overflow-hidden">
                         <button
                             onClick={() => setShowHistory(!showHistory)}
-                            className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors"
+                            className="p-2 hover:bg-gray-50 rounded-xl text-gray-500 hover:text-arduino-teal transition-all active:scale-95"
                         >
                             {showHistory ? <ChevronLeft className="w-5 h-5" /> : <MessageSquare className="w-5 h-5" />}
                         </button>
@@ -155,12 +162,14 @@ export default function AiChatSidebar({ className }: AiChatSidebarProps) {
                         </div>
                     </div>
 
-                    <button
-                        onClick={closeChatSidebar}
-                        className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
+                    {!embedded && (
+                        <button
+                            onClick={closeChatSidebar}
+                            className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    )}
                 </div>
 
                 {/* Content Area */}
@@ -194,10 +203,10 @@ export default function AiChatSidebar({ className }: AiChatSidebarProps) {
                                         )}
                                     >
                                         <div className={cn(
-                                            "max-w-[85%] rounded-2xl p-4 text-sm shadow-sm",
+                                            "max-w-[85%] rounded-2xl p-4 text-sm shadow-sm relative group transition-all",
                                             msg.role === 'user'
-                                                ? "bg-arduino-teal text-white rounded-tr-none"
-                                                : "bg-white border border-gray-200 text-gray-800 rounded-tl-none"
+                                                ? "bg-gradient-to-br from-arduino-teal to-teal-600 text-white rounded-tr-sm shadow-arduino-teal/20"
+                                                : "bg-white border border-gray-100 text-gray-800 rounded-tl-sm shadow-gray-200/50"
                                         )}>
                                             {msg.role === 'assistant' ? (
                                                 <div className="prose prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-gray-900 prose-pre:text-gray-50">
@@ -238,10 +247,14 @@ export default function AiChatSidebar({ className }: AiChatSidebarProps) {
                                 ))
                             )}
                             {isLoading && (
-                                <div className="flex justify-start animate-fade-in">
-                                    <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2 shadow-sm">
-                                        <Loader2 className="w-4 h-4 animate-spin text-teal-600" />
-                                        <span className="text-xs text-gray-500">Đang suy nghĩ...</span>
+                                <div className="flex justify-start animate-fade-in pl-2">
+                                    <div className="bg-white border border-gray-100 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2 shadow-sm">
+                                        <div className="flex gap-1">
+                                            <span className="w-2 h-2 bg-arduino-teal/60 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                            <span className="w-2 h-2 bg-arduino-teal/60 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                            <span className="w-2 h-2 bg-arduino-teal/60 rounded-full animate-bounce"></span>
+                                        </div>
+                                        <span className="text-xs text-gray-400 font-medium ml-1">AI đang suy nghĩ...</span>
                                     </div>
                                 </div>
                             )}

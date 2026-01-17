@@ -22,6 +22,7 @@ const LessonPage = lazy(() => import('./pages/LessonPage'));
 const LabPage = lazy(() => import('./pages/LabPage'));
 const QuizPage = lazy(() => import('./pages/QuizPage'));
 const WebIdePage = lazy(() => import('./pages/WebIdePage'));
+const AiAssistantPage = lazy(() => import('./pages/AiAssistantPage'));
 
 // Named exports - cần wrap trong object
 const ExamDrillPage = lazy(() =>
@@ -111,6 +112,9 @@ function AppContent() {
           } />
           <Route path="/ide" element={
             <Sidebar><WebIdePage /></Sidebar>
+          } />
+          <Route path="/ai-assistant" element={
+            <Sidebar><AiAssistantPage /></Sidebar>
           } />
           <Route path="/library" element={
             <Sidebar><LibraryPage /></Sidebar>

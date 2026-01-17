@@ -487,7 +487,7 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
     // Nếu streaming được bật
     if (stream) {
         try {
-            const response = await fetch(OPENROUTER_URL, {
+            let response = await fetch(OPENROUTER_URL, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${c.env.OPENROUTER_API_KEY}`,
@@ -499,9 +499,28 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
                     model: selectedModel,
                     messages,
                     stream: true,
-                    max_tokens: 4096, // Increased tokens for vision models
+                    max_tokens: 4096,
                 }),
             });
+
+            // Retry/Fallback Logic
+            if (!response.ok && selectedModel === MODEL_REASONING) {
+                console.warn('[ai] DeepSeek failed, falling back to default model...');
+                response = await fetch(OPENROUTER_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${c.env.OPENROUTER_API_KEY}`,
+                        'Content-Type': 'application/json',
+                        'HTTP-Referer': 'https://arduino-web.pages.dev',
+                        'X-Title': 'Arduino Learning Hub (Fallback)',
+                    },
+                    body: JSON.stringify({
+                        model: MODEL_DEFAULT,
+                        messages,
+                        stream: true,
+                    }),
+                });
+            }
 
             if (!response.ok || !response.body) {
                 console.error('[ai] OpenRouter error:', response.status);

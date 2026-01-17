@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import mermaid from 'mermaid';
 
 // Define mermaid types
 declare global {
@@ -19,19 +20,15 @@ export default function MermaidDiagram({ code }: { code: string }) {
             if (!containerRef.current) return;
 
             try {
-                // Dynamic import from CDN if not present
-                if (!window.mermaid) {
-                    // @ts-ignore
-                    await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
-                    window.mermaid.initialize({
-                        startOnLoad: false,
-                        theme: 'default',
-                        securityLevel: 'loose',
-                    });
-                }
+                // Initialize mermaid
+                mermaid.initialize({
+                    startOnLoad: false,
+                    theme: 'default',
+                    securityLevel: 'loose',
+                });
 
                 const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
-                const { svg } = await window.mermaid.render(id, code);
+                const { svg } = await mermaid.render(id, code);
 
                 if (isMounted) {
                     setSvg(svg);
@@ -40,7 +37,6 @@ export default function MermaidDiagram({ code }: { code: string }) {
             } catch (err) {
                 console.error("Mermaid error:", err);
                 if (isMounted) {
-                    // Fallback to simpler error message or raw code
                     setError('Diagram syntax error');
                 }
             }

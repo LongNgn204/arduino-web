@@ -17,7 +17,8 @@ import {
     ClipboardCheck,
     Bookmark,
     MessageSquare,
-    Library
+    Library,
+    Sparkles
 } from 'lucide-react';
 import { cn } from './ui/Card'; // Use utility
 import { useChatStore } from '../stores/chatStore';
@@ -49,6 +50,7 @@ export default function Sidebar({ children }: SidebarProps) {
         { type: 'divider' },
         { icon: Bookmark, label: 'Đã lưu', href: '/saved', color: 'purple' },
         { icon: Library, label: 'Thư viện', href: '/library', color: 'indigo' },
+        { icon: Sparkles, label: 'AI Studio', href: '/ai-assistant', color: 'rose' },
         { icon: Terminal, label: 'Web IDE', href: '/ide', color: 'green' },
         { icon: Trophy, label: 'Bảng xếp hạng', href: '/leaderboard', color: 'yellow' },
         { icon: Award, label: 'Chứng nhận', href: '/certificate', color: 'purple' },
@@ -137,6 +139,7 @@ export default function Sidebar({ children }: SidebarProps) {
                                     collapsed ? "justify-center px-2" : ""
                                 )}
                                 title={collapsed ? label : undefined}
+                                id={href === '/library' ? 'sidebar-library' : undefined}
                             >
                                 <Icon className={cn(
                                     "w-5 h-5 shrink-0 transition-colors",
@@ -165,6 +168,7 @@ export default function Sidebar({ children }: SidebarProps) {
                             collapsed ? "justify-center px-0 aspect-square" : ""
                         )}
                         title={collapsed ? "AI Assistant" : undefined}
+                        id="ai-chat-toggle"
                     >
                         <MessageSquare className={cn(
                             "w-5 h-5 shrink-0 transition-transform duration-300",

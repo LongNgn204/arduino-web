@@ -134,8 +134,8 @@ export default function ChatInput({
                 </div>
             )}
 
-            <div className="flex items-end gap-2 bg-gray-50 p-2 rounded-2xl border border-gray-200 focus-within:ring-2 focus-within:ring-arduino-teal/20 focus-within:border-arduino-teal transition-all shadow-sm">
-                <label className="p-2 text-gray-400 hover:text-arduino-teal cursor-pointer transition-colors rounded-xl hover:bg-white flex-shrink-0">
+            <div className="flex items-end gap-2 bg-gray-50/80 backdrop-blur p-2 rounded-2xl border border-gray-200 focus-within:ring-2 focus-within:ring-arduino-teal/20 focus-within:border-arduino-teal transition-all shadow-sm hover:shadow-md hover:bg-white group">
+                <label className="p-2 text-gray-400 hover:text-arduino-teal cursor-pointer transition-colors rounded-xl hover:bg-indigo-50 flex-shrink-0 active:scale-95">
                     <Paperclip className="w-5 h-5" />
                     <input
                         type="file"
@@ -150,16 +150,16 @@ export default function ChatInput({
                     <button
                         onClick={onToggleDeepThink}
                         className={cn(
-                            "p-2 rounded-xl transition-all flex-shrink-0 relative group",
+                            "p-2 rounded-xl transition-all flex-shrink-0 relative active:scale-95",
                             deepThink
-                                ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100"
-                                : "text-gray-400 hover:text-indigo-500 hover:bg-white"
+                                ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                                : "text-gray-400 hover:text-indigo-500 hover:bg-gray-100"
                         )}
                         title={deepThink ? "Tắt Suy nghĩ sâu" : "Bật Suy nghĩ sâu (Reasoning)"}
                     >
                         <BrainCircuit className={cn("w-5 h-5", deepThink && "animate-pulse")} />
                         {deepThink && (
-                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-indigo-500 rounded-full border-2 border-white" />
+                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-indigo-500 rounded-full border-2 border-white animate-bounce-in" />
                         )}
                     </button>
                 )}
@@ -171,14 +171,14 @@ export default function ChatInput({
                     onKeyDown={handleKeyDown}
                     placeholder={placeholder}
                     rows={1}
-                    className="flex-1 bg-transparent border-none focus:ring-0 text-gray-800 text-sm py-2 px-1 max-h-32 resize-none placeholder:text-gray-400"
+                    className="flex-1 bg-transparent border-none focus:ring-0 text-gray-800 text-sm py-2 px-1 max-h-32 resize-none placeholder:text-gray-400 leading-relaxed"
                     disabled={isLoading}
                 />
 
                 <button
                     onClick={handleSubmit}
                     disabled={(!input.trim() && attachments.length === 0) || isLoading}
-                    className="p-2 bg-arduino-teal hover:bg-teal-600 disabled:bg-gray-300 text-white rounded-xl transition-all shadow-md shadow-arduino-teal/20 disabled:shadow-none flex-shrink-0"
+                    className="p-2 bg-gradient-to-br from-arduino-teal to-teal-600 hover:from-teal-500 hover:to-teal-700 disabled:from-gray-300 disabled:to-gray-400 text-white rounded-xl transition-all shadow-md shadow-arduino-teal/20 disabled:shadow-none flex-shrink-0 active:scale-95"
                 >
                     <Send className="w-4 h-4" />
                 </button>
