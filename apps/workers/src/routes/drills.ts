@@ -12,6 +12,31 @@ import type { Env, AuthUser } from '../types';
 const drillsRoutes = new Hono<{ Bindings: Env }>();
 
 /**
+ * GET /api/drills
+ * Lấy danh sách tất cả exam drills
+ */
+drillsRoutes.get('/drills', requireAuth(), async (c) => {
+    const db = drizzle(c.env.DB);
+
+    const allDrills = await db.select({
+        id: examDrills.id,
+        title: examDrills.title,
+        description: examDrills.description,
+        difficulty: examDrills.difficulty,
+        timeLimit: examDrills.timeLimit,
+        weekId: examDrills.weekId,
+        weekNumber: weeks.weekNumber,
+        weekTitle: weeks.title,
+    })
+        .from(examDrills)
+        .leftJoin(weeks, eq(examDrills.weekId, weeks.id))
+        .where(eq(examDrills.isPublished, true))
+        .all();
+
+    return c.json({ drills: allDrills });
+});
+
+/**
  * GET /api/drills/:id
  * Lấy chi tiết exam drill
  */
@@ -40,24 +65,14 @@ drillsRoutes.get('/drills/:id', requireAuth(), async (c) => {
         .where(eq(weeks.id, drill.weekId))
         .get();
 
-    // Parse rubric
-    let parsedRubric = null;
-    if (drill.rubric) {
-        try {
-            parsedRubric = JSON.parse(drill.rubric);
-        } catch {
-            parsedRubric = null;
-        }
-    }
-
     return c.json({
         drill: {
             id: drill.id,
             title: drill.title,
             description: drill.description,
             content: drill.content,
-            rubric: parsedRubric,
-            timeLimit: drill.timeLimit, // phút
+            difficulty: drill.difficulty,
+            timeLimit: drill.timeLimit,
         },
         week,
     });

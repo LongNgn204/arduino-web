@@ -39,6 +39,7 @@ const SavedPage = lazy(() => import('./pages/SavedPage'));
 const QuizListingPage = lazy(() => import('./pages/QuizListingPage'));
 const ExamDrillListingPage = lazy(() => import('./pages/ExamDrillListingPage'));
 const LibraryPage = lazy(() => import('./pages/LibraryPage'));
+const QuizHistoryPage = lazy(() => import('./pages/QuizHistoryPage'));
 
 // ==========================================
 // APP CONTENT
@@ -83,6 +84,9 @@ function AppContent() {
           } />
           <Route path="/quizzes/:quizId" element={
             <Sidebar><QuizPage /></Sidebar>
+          } />
+          <Route path="/history" element={
+            <Sidebar><QuizHistoryPage /></Sidebar>
           } />
           <Route path="/drills" element={
             <Sidebar><ExamDrillListingPage /></Sidebar>

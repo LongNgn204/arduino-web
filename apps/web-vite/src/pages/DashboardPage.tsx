@@ -199,23 +199,37 @@ export default function DashboardPage() {
                                     </div>
                                     <span className="bg-white/20 text-xs font-bold px-2 py-1 rounded-md">NEW</span>
                                 </div>
-                                <h3 className="text-xl font-bold mb-2">Daily Streak</h3>
-                                <p className="text-indigo-100 text-sm mb-4">Bạn đã học 3 ngày liên tiếp. Cố lên!</p>
+                                <h3 className="text-xl font-bold mb-2">Tiến độ học tập</h3>
+                                <p className="text-indigo-100 text-sm mb-4">
+                                    Bạn đã hoàn thành {progress.lessons.completed}/{progress.lessons.total} bài học. Tiếp tục nào!
+                                </p>
                                 <div className="flex gap-2 mb-4">
-                                    {['M', 'T', 'W'].map(day => (
-                                        <div key={day} className="w-8 h-8 rounded-full bg-green-400 flex items-center justify-center text-xs font-bold text-green-900 border-2 border-white/20">
-                                            {day}
+                                    {/* Hiển thị tiến độ bài học */}
+                                    {Array.from({ length: Math.min(7, progress.lessons.total) }).map((_, idx) => {
+                                        const isCompleted = idx < progress.lessons.completed;
+                                        return (
+                                            <div
+                                                key={idx}
+                                                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 ${isCompleted
+                                                    ? 'bg-green-400 text-green-900 border-white/20'
+                                                    : 'bg-white/10 text-white/50 border-transparent'
+                                                    }`}
+                                            >
+                                                {idx + 1}
+                                            </div>
+                                        );
+                                    })}
+                                    {progress.lessons.total > 7 && (
+                                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs text-white/50">
+                                            +{progress.lessons.total - 7}
                                         </div>
-                                    ))}
-                                    {['T', 'F', 'S', 'S'].map(day => (
-                                        <div key={day} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs text-white/50 border-2 border-transparent">
-                                            {day}
-                                        </div>
-                                    ))}
+                                    )}
                                 </div>
-                                <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 border-0 font-bold shadow-none">
-                                    Học tiếp ngay <ChevronRight className="w-4 h-4 ml-1" />
-                                </Button>
+                                <Link to={courses[0]?.weeks?.[0]?.id ? `/weeks/${courses[0].weeks[0].id}` : '/dashboard'}>
+                                    <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 border-0 font-bold shadow-none">
+                                        Học tiếp ngay <ChevronRight className="w-4 h-4 ml-1" />
+                                    </Button>
+                                </Link>
                             </div>
                         </Card>
 
@@ -311,12 +325,16 @@ function CourseCard({ course, progress }: { course: Course; progress: number }) 
                     </div>
 
                     <div className="shrink-0 flex md:flex-col gap-3">
-                        <Button className="w-full md:w-auto shadow-lg shadow-arduino-teal/20 bg-arduino-teal hover:bg-teal-600 border-none h-12 px-6 rounded-xl text-base">
-                            Tiếp tục học <PlayCircle className="w-5 h-5 ml-2" />
-                        </Button>
-                        <Button variant="secondary" className="w-full md:w-auto h-12 px-6 rounded-xl text-base border-gray-100 bg-gray-50 text-gray-600 hover:bg-white hover:border-gray-200">
-                            Chi tiết
-                        </Button>
+                        <Link to={course.weeks?.[0]?.id ? `/weeks/${course.weeks[0].id}` : '/dashboard'}>
+                            <Button className="w-full md:w-auto shadow-lg shadow-arduino-teal/20 bg-arduino-teal hover:bg-teal-600 border-none h-12 px-6 rounded-xl text-base">
+                                Tiếp tục học <PlayCircle className="w-5 h-5 ml-2" />
+                            </Button>
+                        </Link>
+                        <Link to={`/weeks/${course.weeks?.[0]?.id || ''}`}>
+                            <Button variant="secondary" className="w-full md:w-auto h-12 px-6 rounded-xl text-base border-gray-100 bg-gray-50 text-gray-600 hover:bg-white hover:border-gray-200">
+                                Chi tiết
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </div>

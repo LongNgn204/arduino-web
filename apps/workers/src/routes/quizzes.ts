@@ -25,7 +25,7 @@ quizzesRoutes.get('/quizzes', requireAuth(), async (c) => {
         title: quizzes.title,
         description: quizzes.description,
         weekId: quizzes.weekId,
-        duration: quizzes.duration,
+        timeLimit: quizzes.timeLimit,
         passingScore: quizzes.passingScore,
         weekNumber: weeks.weekNumber,
         weekTitle: weeks.title,
@@ -232,6 +232,35 @@ quizzesRoutes.post('/quizzes/:id/submit', requireAuth(), async (c) => {
         passingScore: quiz.passingScore,
         results,
     });
+});
+
+/**
+ * GET /api/quizzes/history
+ * Lấy toàn bộ lịch sử làm quiz của user
+ */
+quizzesRoutes.get('/quizzes/history', requireAuth(), async (c) => {
+    const db = drizzle(c.env.DB);
+    const user = c.get('user') as AuthUser;
+
+    // Lấy tất cả attempts của user kèm thông tin quiz
+    const allAttempts = await db.select({
+        id: quizAttempts.id,
+        quizId: quizAttempts.quizId,
+        score: quizAttempts.score,
+        maxScore: quizAttempts.maxScore,
+        passed: quizAttempts.passed,
+        submittedAt: quizAttempts.submittedAt,
+        quizTitle: quizzes.title,
+        weekNumber: weeks.weekNumber,
+    })
+        .from(quizAttempts)
+        .leftJoin(quizzes, eq(quizAttempts.quizId, quizzes.id))
+        .leftJoin(weeks, eq(quizzes.weekId, weeks.id))
+        .where(eq(quizAttempts.userId, user.id))
+        .orderBy(desc(quizAttempts.submittedAt))
+        .all();
+
+    return c.json({ attempts: allAttempts });
 });
 
 /**
