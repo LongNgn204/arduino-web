@@ -63,6 +63,14 @@ percent = raw * 100.0 / 1023;   // 0% - 100%
 - 2.5V → raw = 512 (khoảng giữa)
 - 5V → raw = 1023
 
+> [!WARNING]
+> **Đối với ESP32**:
+> - **ADC Resolution**: 12-bit (0 - 4095).
+> - **Điện áp tham chiếu**: 3.3V (Uno là 5V).
+> - **Công thức**: `voltage = raw * 3.3 / 4095.0`
+> - **Lưu ý**: Không dùng ADC2 khi đang bật WiFi (gây nhiễu/lỗi).
+
+
 ### 1.3 Potentiometer (Biến trở)
 
 **Potentiometer** (pot) là biến trở điều chỉnh được, dùng để thay đổi điện áp analog.
@@ -92,17 +100,21 @@ percent = raw * 100.0 / 1023;   // 0% - 100%
 #### Duty Cycle (Chu kỳ làm việc):
 
 ```
-100% Duty:  _______________
-            |             |
-            
- 50% Duty:  ___     ___
-            |  |   |  |
-            ───────────
+Duty Cycle minh họa:
 
- 25% Duty:  __      __
-            | |    | |
-            ─────────────
+100% Duty:  ████████████████  (LED sáng tối đa)
+            
+ 50% Duty:  ████    ████      (LED sáng trung bình)
+            
+ 25% Duty:  ██      ██        (LED sáng yếu)
+
+Thời gian →
 ```
+
+> [!NOTE]
+> PWM bật/tắt rất nhanh (490-980Hz) nên mắt người thấy LED sáng "mờ" thay vì nhấp nháy.
+
+
 
 **Công thức**:
 ```
@@ -117,6 +129,10 @@ Duty Cycle (%) = (Thời gian HIGH / Chu kỳ) × 100
 | Dải giá trị | 0 - 255 |
 | Chân PWM (Uno) | 3, 5, 6, 9, 10, 11 |
 | Tần số | ~490 Hz (pin 3,9,10,11) hoặc ~980 Hz (pin 5,6) |
+
+> [!TIP]
+> **ESP32 PWM**:
+> ESP32 sử dụng bộ điều khiển LEDC chuyên dụng, nhưng bạn vẫn có thể dùng hàm `analogWrite()` quen thuộc trên các chân GPIO hỗ trợ output.
 
 ```cpp
 analogWrite(9, 0);    // 0% duty → LED tắt
@@ -184,6 +200,7 @@ void loop() {
     int raw = analogRead(POT_PIN);
     
     // Chuyển sang điện áp (V)
+    // Lưu ý: Với ESP32 (3.3V, 12-bit), công thức là: raw * 3.3 / 4095.0
     float voltage = raw * 5.0 / 1023.0;
     
     // Chuyển sang phần trăm (%)

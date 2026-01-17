@@ -19,6 +19,7 @@ import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
+import MermaidDiagram from '../MermaidDiagram';
 
 // Config
 const API_BASE = import.meta.env.PROD
@@ -210,6 +211,12 @@ export default function AiChatSidebar({ className }: AiChatSidebarProps) {
                                                             code(props: any) {
                                                                 const { node, inline, className, children, ...rest } = props;
                                                                 const match = /language-(\w+)/.exec(className || '');
+                                                                const codeText = String(children).replace(/\n$/, '');
+
+                                                                if (!inline && match && match[1] === 'mermaid') {
+                                                                    return <MermaidDiagram code={codeText} />;
+                                                                }
+
                                                                 return !inline && match ? (
                                                                     <code className={className} {...rest}>
                                                                         {children}

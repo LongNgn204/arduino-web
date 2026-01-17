@@ -16,6 +16,7 @@ import {
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
+import ReactMarkdown from 'react-markdown';
 
 const API_BASE = import.meta.env.PROD
     ? 'https://arduino-workers.stu725114073.workers.dev'
@@ -273,7 +274,14 @@ export default function WeekDetailPage() {
                         <div className="lg:col-span-2 space-y-8">
                             <div className="prose prose-lg prose-teal max-w-none text-gray-600">
                                 <h3 className="text-gray-900 font-bold text-2xl mb-4">Giới thiệu</h3>
-                                <div className="whitespace-pre-wrap leading-relaxed">{getOverview()}</div>
+                                <ReactMarkdown
+                                    components={{
+                                        strong: ({ children }) => <strong className="font-bold text-gray-800">{children}</strong>,
+                                        p: ({ children }) => <p className="mb-3 leading-relaxed">{children}</p>,
+                                    }}
+                                >
+                                    {getOverview()}
+                                </ReactMarkdown>
                             </div>
 
                             {/* Objectives List */}

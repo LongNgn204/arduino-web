@@ -90,9 +90,14 @@ if (Serial.available() > 0) {
 }
 ```
 
-### 1.5 SoftwareSerial - Mở rộng cổng UART
+### 1.5 Hardware Serial vs SoftwareSerial
 
-Arduino Uno chỉ có **1 cổng hardware UART** (D0-TX, D1-RX). Dùng **SoftwareSerial** để tạo thêm:
+**Arduino Uno** chỉ có **1 cổng Hardware UART** (Serial - D0/D1). Để giao tiếp với nhiều thiết bị, ta dùng thư viện **SoftwareSerial** (giả lập UART bằng phần mềm, tốn tài nguyên CPU).
+
+> [!NOTE]
+> **ESP32** có tới **3 cổng Hardware UART** (Serial, Serial1, Serial2).
+> - Bạn có thể map Serial1/Serial2 sang bất kỳ chân GPIO nào.
+> - **Khuyên dùng**: Luôn ưu tiên HardwareSerial trên ESP32 thay vì SoftwareSerial.
 
 ```cpp
 #include <SoftwareSerial.h>
@@ -247,14 +252,22 @@ void loop() {
 **Master Arduino:**
 ```cpp
 /*
- * Bài 7.3a: Arduino Master
- * Gửi lệnh đến Slave, nhận phản hồi
- * 
- * Kết nối:
- * - Master D10 (RX) <-> Slave D11 (TX)
  * - Master D11 (TX) <-> Slave D10 (RX)
  * - GND chung
  */
+
+```mermaid
+sequenceDiagram
+    participant PC
+    participant Master
+    participant Slave
+    
+    PC->>Master: "LED=ON"
+    Master->>Slave: "LED=ON" (Forward)
+    Note right of Slave: Bật LED
+    Slave-->>Master: "OK LED=ON"
+    Master-->>PC: "[RECV] OK LED=ON"
+```
 
 #include <SoftwareSerial.h>
 

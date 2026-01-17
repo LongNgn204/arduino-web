@@ -1,7 +1,8 @@
 # Tuần 1: Tổng quan Hệ thống Nhúng & GPIO (Điều khiển LED)
 
+> [!IMPORTANT]
 > **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
-> **Mục tiêu**: Làm quen Arduino Uno, hiểu cấu trúc chương trình, điều khiển LED cơ bản
+> **Mục tiêu**: Làm quen Arduino Uno/ESP32, hiểu cấu trúc chương trình, điều khiển LED cơ bản
 
 ---
 
@@ -39,7 +40,13 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ### 1.2 Arduino Uno - Board học tập lý tưởng
 
-**Arduino Uno** là board vi điều khiển (MCU) sử dụng chip **ATmega328P**, được thiết kế cho người mới bắt đầu học lập trình nhúng.
+**Arduino Uno** là board vi điều khiển phổ biến nhất cho người mới (chip ATmega328P, 5V).
+**ESP32** là dòng chip mạnh mẽ hơn, tích hợp WiFi/Bluetooth (chip 32-bit, 3.3V).
+
+> [!CAUTION]
+> **Lưu ý Quan trọng về Điện áp**:
+> - **Arduino Uno**: Logic **5V**.
+> - **ESP32**: Logic **3.3V**. Cấp 5V vào chân GPIO của ESP32 có thể làm cháy chip!
 
 #### Thông số kỹ thuật:
 | Thông số | Giá trị |
@@ -90,9 +97,14 @@ void loop() {
 }
 ```
 
-#### Ví dụ minh họa luồng thực thi:
-```
-[Cấp nguồn] → [setup() chạy 1 lần] → [loop() lần 1] → [loop() lần 2] → ... → [vô hạn]
+#### Luồng thực thi:
+
+```mermaid
+flowchart TD
+    start([Cấp nguồn / Reset]) --> setup[Chạy setup\n(1 lần duy nhất)]
+    setup --> loop{Vòng lặp loop}
+    loop -->|Lần 1| logic[Thực thi Code chính]
+    logic -->|Lặp lại| loop
 ```
 
 ### 1.4 GPIO - General Purpose Input/Output

@@ -22,19 +22,35 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 **I2C (Inter-Integrated Circuit)** là giao thức truyền thông **đồng bộ** 2 dây, phát minh bởi Philips.
 
+```mermaid
+graph TD
+    subgraph Arduino["Arduino Uno - Master"]
+        A4["SDA / A4"]
+        A5["SCL / A5"]
+        GND1["GND"]
+    end
+    
+    subgraph Slave["I2C Device - Slave"]
+        SDA_S["SDA"]
+        SCL_S["SCL"]
+        GND2["GND"]
+    end
+    
+    VCC("+5V") -- "4.7kΩ Pull-up" --> A4
+    VCC -- "4.7kΩ Pull-up" --> A5
+    
+    A4 <--> SDA_S
+    A5 --> SCL_S
+    GND1 --- GND2
+    
+    style Arduino fill:#00979C,stroke:#005f63,color:white
+    style Slave fill:#E5AD24,stroke:#cf9500,color:white
+    style VCC fill:#FF5733,stroke:#c42500,color:white
 ```
-Arduino (Master)     Thiết bị I2C (Slave)
-     SDA ◄──────────────► SDA
-     SCL ──────────────► SCL
-     GND ────────────────── GND
-     
-     (Pull-up 4.7kΩ)
-        ┌──── SDA
-        │
-       +5V
-        │
-        └──── SCL
-```
+
+> [!TIP]
+> **Điện trở Pull-up**: Rất quan trọng! Nếu module I2C (như màn hình LCD) đã tích hợp sẵn điện trở này thì bạn không cần mắc thêm. Nếu dùng chip trần (như DS1307 rời), bắt buộc phải có.
+
 
 ### 1.2 Đặc điểm I2C
 

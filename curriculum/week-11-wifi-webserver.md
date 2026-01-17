@@ -28,8 +28,9 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 | ESP32 | Có + BLE | Trung bình | Mạnh hơn |
 | Arduino Uno + Shield | Cần module | Đắt | Ít dùng |
 
-### 1.2 ESP8266 Pinout (NodeMCU)
+### 1.2 ESP8266 & ESP32 Pinout
 
+#### ESP8266 NodeMCU:
 ```
         ┌─────USB─────┐
      D0 │ 16 ●   ● A0 │ ADC
@@ -45,6 +46,30 @@ Sau khi hoàn thành tuần này, bạn sẽ:
      D8 │ 15 ●   ● EN │
      RX │  3 ●   ● RST│
      TX │  1 ●   ● GND│
+        └─────────────┘
+```
+
+#### ESP32 DevKit V1:
+```
+        ┌─────USB─────┐
+     EN │ ●         ● │ 23 (MOSI)
+     VP │ ●         ● │ 22 (SCL)
+     VN │ ●         ● │  1 (TX0)
+     34 │ ●         ● │  3 (RX0)
+     35 │ ●         ● │ 21 (SDA)
+     32 │ ●         ● │ GND
+     33 │ ●         ● │ 19 (MISO)
+     25 │ ●         ● │ 18 (SCK)
+     26 │ ●         ● │  5 (SS)
+     27 │ ●         ● │ 17 (TX2)
+     14 │ ●         ● │ 16 (RX2)
+     12 │ ●         ● │  4
+    GND │ ●         ● │  0
+     13 │ ●         ● │  2 (LED)
+     D2 │ ●         ● │ 15
+     D3 │ ●         ● │ D1
+CMD(11) │ ●         ● │ D0
+    5V  │ ●         ● │ 3.3V
         └─────────────┘
 ```
 
@@ -66,6 +91,25 @@ Browser                     ESP8266
    │ ◄────── 200 OK ────────── │  Response + HTML
    │                           │
 ```
+
+#### Cấu trúc xử lý:
+
+```mermaid
+classDiagram
+    class WebServer {
+        +on(path, handler)
+        +begin()
+        +handleClient()
+        +send(code, type, content)
+    }
+    class CallbackFunctions {
+        +handleRoot()
+        +handleOn()
+        +handleOff()
+    }
+    WebServer ..> CallbackFunctions : triggers
+```
+
 
 ---
 

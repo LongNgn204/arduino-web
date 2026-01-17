@@ -53,8 +53,8 @@ export function AuthLayout({ children, title, subtitle }: { children: React.Reac
                                 </div>
                                 <Sparkles className="absolute -top-2 -right-2 h-5 w-5 text-yellow-400 animate-pulse" />
                             </div>
-                            <span className="text-2xl font-black text-gray-900 tracking-tight">
-                                Arduino<span className="text-arduino-teal">Hub</span>
+                            <span className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500 tracking-tight">
+                                KNTT STEM
                             </span>
                         </Link>
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>

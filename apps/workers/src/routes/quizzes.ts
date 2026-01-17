@@ -13,6 +13,46 @@ import type { Env, AuthUser } from '../types';
 const quizzesRoutes = new Hono<{ Bindings: Env }>();
 
 /**
+ * GET /api/quizzes
+ * Lấy danh sách tất cả quiz
+ */
+quizzesRoutes.get('/quizzes', requireAuth(), async (c) => {
+    const db = drizzle(c.env.DB);
+
+    // Lấy tất cả quizzes kèm thông tin week
+    const allQuizzes = await db.select({
+        id: quizzes.id,
+        title: quizzes.title,
+        description: quizzes.description,
+        weekId: quizzes.weekId,
+        duration: quizzes.duration,
+        passingScore: quizzes.passingScore,
+        weekNumber: weeks.weekNumber,
+        weekTitle: weeks.title,
+    })
+        .from(quizzes)
+        .leftJoin(weeks, eq(quizzes.weekId, weeks.id))
+        .orderBy(asc(weeks.weekNumber))
+        .all();
+
+    // Đếm số câu hỏi cho mỗi quiz
+    const quizzesWithCount = await Promise.all(
+        allQuizzes.map(async (quiz) => {
+            const questionCount = await db.select({ count: questions.id })
+                .from(questions)
+                .where(eq(questions.quizId, quiz.id))
+                .all();
+            return {
+                ...quiz,
+                questionCount: questionCount.length,
+            };
+        })
+    );
+
+    return c.json({ quizzes: quizzesWithCount });
+});
+
+/**
  * GET /api/quizzes/:id
  * Lấy chi tiết quiz với các câu hỏi
  */

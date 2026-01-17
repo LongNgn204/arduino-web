@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import {
@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import MermaidDiagram from '../components/MermaidDiagram';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { cn } from '../components/ui/Card';
@@ -343,6 +344,54 @@ function LessonNotFound() {
     );
 }
 
+// Custom Copy Button for Code Blocks
+const CopyButton = ({ text }: { text: string }) => {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+        }
+    };
+
+    return (
+        <button
+            onClick={handleCopy}
+            className="flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium text-gray-500 hover:text-arduino-teal hover:bg-gray-100 transition-all"
+            title="Copy code"
+        >
+            {copied ? (
+                <>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                    <span className="text-green-600">Copied!</span>
+                </>
+            ) : (
+                <>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                    </svg>
+                    <span>Copy</span>
+                </>
+            )}
+        </button>
+    );
+};
+
 // Markdown Renderer with TOC ID injection
 function MarkdownRenderer({ content, toc }: { content: string, toc: TOCItem[] }) {
     // Helper to find ID for a heading content
@@ -406,6 +455,7 @@ function MarkdownRenderer({ content, toc }: { content: string, toc: TOCItem[] })
                         return <code className="px-1.5 py-0.5 bg-gray-100 rounded-md text-pink-600 text-sm font-mono border border-gray-200">{children}</code>;
                     }
                     const language = className?.replace('language-', '') || 'text';
+                    const codeText = String(children).replace(/\n$/, '');
 
                     // Mermaid Diagram Support
                     if (language === 'mermaid') {
@@ -413,14 +463,17 @@ function MarkdownRenderer({ content, toc }: { content: string, toc: TOCItem[] })
                     }
 
                     return (
-                        <div className="my-8 rounded-xl overflow-hidden border border-gray-200 shadow-md">
+                        <div className="my-8 rounded-xl overflow-hidden border border-gray-200 shadow-md group">
                             <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
                                 <div className="flex items-center gap-1.5">
                                     <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                                     <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
                                     <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                                    <span className="text-xs text-gray-500 font-mono font-bold uppercase ml-2">{language}</span>
                                 </div>
-                                <span className="text-xs text-gray-500 font-mono font-bold uppercase">{language}</span>
+                                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <CopyButton text={codeText} />
+                                </div>
                             </div>
                             <pre className="bg-[#1e1e1e] p-5 overflow-x-auto m-0">
                                 <code className="text-sm text-gray-300 font-mono leading-relaxed whitespace-pre">{children}</code>
@@ -428,11 +481,64 @@ function MarkdownRenderer({ content, toc }: { content: string, toc: TOCItem[] })
                         </div>
                     );
                 },
-                blockquote: ({ children }) => (
-                    <blockquote className="my-8 pl-6 border-l-4 border-arduino-teal bg-arduino-mint/10 py-4 pr-6 rounded-r-lg text-gray-700 italic">
-                        {children}
-                    </blockquote>
-                ),
+                // GitHub Alerts Support
+                blockquote: ({ children }) => {
+                    const childrenArray = React.Children.toArray(children);
+                    const firstChild = childrenArray[0] as React.ReactElement<{ children?: React.ReactNode }>;
+                    let textContent = '';
+
+                    if (firstChild && firstChild.props && firstChild.props.children) {
+                        const grandchildren = React.Children.toArray(firstChild.props.children);
+                        if (grandchildren.length > 0 && typeof grandchildren[0] === 'string') {
+                            textContent = grandchildren[0] as string;
+                        }
+                    }
+
+                    const alertTypeMatch = textContent.match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/);
+
+                    if (alertTypeMatch) {
+                        const type = alertTypeMatch[1];
+
+                        let styles = "bg-gray-50 border-l-4 border-gray-500 text-gray-700";
+                        let icon = "ℹ️";
+
+                        switch (type) {
+                            case 'NOTE':
+                                styles = "bg-blue-50 border-l-4 border-blue-500 text-blue-800";
+                                icon = "📝";
+                                break;
+                            case 'TIP':
+                                styles = "bg-green-50 border-l-4 border-green-500 text-green-800";
+                                icon = "💡";
+                                break;
+                            case 'IMPORTANT':
+                                styles = "bg-purple-50 border-l-4 border-purple-500 text-purple-800";
+                                icon = "💬";
+                                break;
+                            case 'WARNING':
+                                styles = "bg-yellow-50 border-l-4 border-yellow-500 text-yellow-800";
+                                icon = "⚠️";
+                                break;
+                            case 'CAUTION':
+                                styles = "bg-red-50 border-l-4 border-red-500 text-red-800";
+                                icon = "🛑";
+                                break;
+                        }
+
+                        return (
+                            <blockquote className={`my-8 pl-4 py-4 pr-4 rounded-r-lg ${styles} not-italic`}>
+                                <strong className="block mb-1 font-bold flex items-center gap-2">{icon} {type}</strong>
+                                <div className="pl-0">{children}</div>
+                            </blockquote>
+                        );
+                    }
+
+                    return (
+                        <blockquote className="my-8 pl-6 border-l-4 border-arduino-teal bg-arduino-mint/10 py-4 pr-6 rounded-r-lg text-gray-700 italic">
+                            {children}
+                        </blockquote>
+                    );
+                },
                 img: ({ src, alt }) => (
                     <img src={src} alt={alt} className="rounded-2xl shadow-lg border border-gray-100 my-8 w-full object-cover" loading="lazy" />
                 )
@@ -462,67 +568,4 @@ function Loader2({ className }: { className?: string }) {
     );
 }
 
-function MermaidDiagram({ code }: { code: string }) {
-    const [svg, setSvg] = useState('');
-    const [error, setError] = useState(false);
-    // Unique ID for this diagram
-    const [id] = useState(`mermaid-${Math.random().toString(36).substr(2, 9)}`);
 
-    useEffect(() => {
-        const renderDiagram = async () => {
-            try {
-                // @ts-ignore
-                if (!window.mermaid) {
-                    // Load script if not present
-                    const script = document.createElement('script');
-                    script.src = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
-                    script.onload = () => initMermaid();
-                    document.head.appendChild(script);
-                } else {
-                    initMermaid();
-                }
-            } catch (e) {
-                console.error('Mermaid load error:', e);
-                setError(true);
-            }
-        };
-
-        const initMermaid = async () => {
-            try {
-                // @ts-ignore
-                window.mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
-                // @ts-ignore
-                const { svg } = await window.mermaid.render(id, code);
-                setSvg(svg);
-            } catch (e) {
-                console.error('Mermaid render error:', e);
-                setError(true);
-            }
-        };
-
-        renderDiagram();
-    }, [code, id]);
-
-    if (error) {
-        return (
-            <div className="my-8 p-4 bg-red-50 border border-red-100 rounded-xl text-xs font-mono text-red-600 overflow-auto">
-                <div className="font-bold mb-2">Mermaid Render Error:</div>
-                {code}
-            </div>
-        );
-    }
-
-    if (!svg) {
-        return (
-            <div className="my-8 flex justify-center py-12 bg-gray-50 rounded-xl border border-gray-100 animate-pulse">
-                <Loader2 className="w-6 h-6 text-gray-300 animate-spin" />
-            </div>
-        );
-    }
-
-    return (
-        <div className="my-8 flex justify-center bg-white p-6 rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
-            <div dangerouslySetInnerHTML={{ __html: svg }} />
-        </div>
-    );
-}

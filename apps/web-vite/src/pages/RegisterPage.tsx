@@ -82,7 +82,7 @@ export default function RegisterPage() {
     return (
         <AuthLayout
             title="Tạo tài khoản mới 🚀"
-            subtitle="Tham gia cộng đồng học tập Arduino lớn nhất Việt Nam ngay hôm nay."
+            subtitle="Tham gia cộng đồng giáo viên STEM tương lai ngay hôm nay."
         >
             <form onSubmit={handleSubmit} className="space-y-4">
                 {error && (

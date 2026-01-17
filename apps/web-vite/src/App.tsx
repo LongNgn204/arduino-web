@@ -38,6 +38,7 @@ const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'));
 const SavedPage = lazy(() => import('./pages/SavedPage'));
 const QuizListingPage = lazy(() => import('./pages/QuizListingPage'));
 const ExamDrillListingPage = lazy(() => import('./pages/ExamDrillListingPage'));
+const LibraryPage = lazy(() => import('./pages/LibraryPage'));
 
 // ==========================================
 // APP CONTENT
@@ -106,6 +107,9 @@ function AppContent() {
           } />
           <Route path="/ide" element={
             <Sidebar><WebIdePage /></Sidebar>
+          } />
+          <Route path="/library" element={
+            <Sidebar><LibraryPage /></Sidebar>
           } />
         </Routes>
       </Suspense>

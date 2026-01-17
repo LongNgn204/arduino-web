@@ -16,7 +16,8 @@ import {
     Terminal,
     ClipboardCheck,
     Bookmark,
-    MessageSquare
+    MessageSquare,
+    Library
 } from 'lucide-react';
 import { cn } from './ui/Card'; // Use utility
 import { useChatStore } from '../stores/chatStore';
@@ -47,6 +48,7 @@ export default function Sidebar({ children }: SidebarProps) {
         { icon: Zap, label: 'Exam Drills', href: '/drills', color: 'cyan' },
         { type: 'divider' },
         { icon: Bookmark, label: 'Đã lưu', href: '/saved', color: 'purple' },
+        { icon: Library, label: 'Thư viện', href: '/library', color: 'indigo' },
         { icon: Terminal, label: 'Web IDE', href: '/ide', color: 'green' },
         { icon: Trophy, label: 'Bảng xếp hạng', href: '/leaderboard', color: 'yellow' },
         { icon: Award, label: 'Chứng nhận', href: '/certificate', color: 'purple' },
@@ -91,10 +93,10 @@ export default function Sidebar({ children }: SidebarProps) {
                         </div>
                         {!collapsed && (
                             <div className="animate-fade-in flex flex-col">
-                                <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-arduino-teal to-teal-600">
-                                    ArduinoHub
+                                <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500">
+                                    KNTT STEM
                                 </h1>
-                                <span className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">Learning System</span>
+                                <span className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">Kết Nối Tri Thức</span>
                             </div>
                         )}
                     </Link>

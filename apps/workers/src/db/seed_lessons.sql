@@ -235,8 +235,9 @@ graph LR
 | **Rãnh giữa** | KHÔNG nối | Chia đôi board |
 
 ---', 1);
-INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES ('l-01-01', 'week-01', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
-> **Mục tiêu**: Làm quen Arduino Uno, hiểu cấu trúc chương trình, điều khiển LED cơ bản
+INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES ('l-01-01', 'week-01', 1, 'Lý thuyết & Bài học', '> [!IMPORTANT]
+> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
+> **Mục tiêu**: Làm quen Arduino Uno/ESP32, hiểu cấu trúc chương trình, điều khiển LED cơ bản
 
 ---
 
@@ -274,7 +275,13 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ### 1.2 Arduino Uno - Board học tập lý tưởng
 
-**Arduino Uno** là board vi điều khiển (MCU) sử dụng chip **ATmega328P**, được thiết kế cho người mới bắt đầu học lập trình nhúng.
+**Arduino Uno** là board vi điều khiển phổ biến nhất cho người mới (chip ATmega328P, 5V).
+**ESP32** là dòng chip mạnh mẽ hơn, tích hợp WiFi/Bluetooth (chip 32-bit, 3.3V).
+
+> [!CAUTION]
+> **Lưu ý Quan trọng về Điện áp**:
+> - **Arduino Uno**: Logic **5V**.
+> - **ESP32**: Logic **3.3V**. Cấp 5V vào chân GPIO của ESP32 có thể làm cháy chip!
 
 #### Thông số kỹ thuật:
 | Thông số | Giá trị |
@@ -325,9 +332,14 @@ void loop() {
 }
 ```
 
-#### Ví dụ minh họa luồng thực thi:
-```
-[Cấp nguồn] → [setup() chạy 1 lần] → [loop() lần 1] → [loop() lần 2] → ... → [vô hạn]
+#### Luồng thực thi:
+
+```mermaid
+flowchart TD
+    start([Cấp nguồn / Reset]) --> setup[Chạy setup\n(1 lần duy nhất)]
+    setup --> loop{Vòng lặp loop}
+    loop -->|Lần 1| logic[Thực thi Code chính]
+    logic -->|Lặp lại| loop
 ```
 
 ### 1.4 GPIO - General Purpose Input/Output
@@ -2056,6 +2068,14 @@ percent = raw * 100.0 / 1023;   // 0% - 100%
 - 2.5V → raw = 512 (khoảng giữa)
 - 5V → raw = 1023
 
+> [!WARNING]
+> **Đối với ESP32**:
+> - **ADC Resolution**: 12-bit (0 - 4095).
+> - **Điện áp tham chiếu**: 3.3V (Uno là 5V).
+> - **Công thức**: `voltage = raw * 3.3 / 4095.0`
+> - **Lưu ý**: Không dùng ADC2 khi đang bật WiFi (gây nhiễu/lỗi).
+
+
 ### 1.3 Potentiometer (Biến trở)
 
 **Potentiometer** (pot) là biến trở điều chỉnh được, dùng để thay đổi điện áp analog.
@@ -2085,17 +2105,21 @@ percent = raw * 100.0 / 1023;   // 0% - 100%
 #### Duty Cycle (Chu kỳ làm việc):
 
 ```
-100% Duty:  _______________
-            |             |
-            
- 50% Duty:  ___     ___
-            |  |   |  |
-            ───────────
+Duty Cycle minh họa:
 
- 25% Duty:  __      __
-            | |    | |
-            ─────────────
+100% Duty:  ████████████████  (LED sáng tối đa)
+            
+ 50% Duty:  ████    ████      (LED sáng trung bình)
+            
+ 25% Duty:  ██      ██        (LED sáng yếu)
+
+Thời gian →
 ```
+
+> [!NOTE]
+> PWM bật/tắt rất nhanh (490-980Hz) nên mắt người thấy LED sáng "mờ" thay vì nhấp nháy.
+
+
 
 **Công thức**:
 ```
@@ -2110,6 +2134,10 @@ Duty Cycle (%) = (Thời gian HIGH / Chu kỳ) × 100
 | Dải giá trị | 0 - 255 |
 | Chân PWM (Uno) | 3, 5, 6, 9, 10, 11 |
 | Tần số | ~490 Hz (pin 3,9,10,11) hoặc ~980 Hz (pin 5,6) |
+
+> [!TIP]
+> **ESP32 PWM**:
+> ESP32 sử dụng bộ điều khiển LEDC chuyên dụng, nhưng bạn vẫn có thể dùng hàm `analogWrite()` quen thuộc trên các chân GPIO hỗ trợ output.
 
 ```cpp
 analogWrite(9, 0);    // 0% duty → LED tắt
@@ -2177,6 +2205,7 @@ void loop() {
     int raw = analogRead(POT_PIN);
     
     // Chuyển sang điện áp (V)
+    // Lưu ý: Với ESP32 (3.3V, 12-bit), công thức là: raw * 3.3 / 4095.0
     float voltage = raw * 5.0 / 1023.0;
     
     // Chuyển sang phần trăm (%)
@@ -3821,19 +3850,35 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 **I2C (Inter-Integrated Circuit)** là giao thức truyền thông **đồng bộ** 2 dây, phát minh bởi Philips.
 
+```mermaid
+graph TD
+    subgraph Arduino["Arduino Uno - Master"]
+        A4["SDA / A4"]
+        A5["SCL / A5"]
+        GND1["GND"]
+    end
+    
+    subgraph Slave["I2C Device - Slave"]
+        SDA_S["SDA"]
+        SCL_S["SCL"]
+        GND2["GND"]
+    end
+    
+    VCC("+5V") -- "4.7kΩ Pull-up" --> A4
+    VCC -- "4.7kΩ Pull-up" --> A5
+    
+    A4 <--> SDA_S
+    A5 --> SCL_S
+    GND1 --- GND2
+    
+    style Arduino fill:#00979C,stroke:#005f63,color:white
+    style Slave fill:#E5AD24,stroke:#cf9500,color:white
+    style VCC fill:#FF5733,stroke:#c42500,color:white
 ```
-Arduino (Master)     Thiết bị I2C (Slave)
-     SDA ◄──────────────► SDA
-     SCL ──────────────► SCL
-     GND ────────────────── GND
-     
-     (Pull-up 4.7kΩ)
-        ┌──── SDA
-        │
-       +5V
-        │
-        └──── SCL
-```
+
+> [!TIP]
+> **Điện trở Pull-up**: Rất quan trọng! Nếu module I2C (như màn hình LCD) đã tích hợp sẵn điện trở này thì bạn không cần mắc thêm. Nếu dùng chip trần (như DS1307 rời), bắt buộc phải có.
+
 
 ### 1.2 Đặc điểm I2C
 
@@ -4706,8 +4751,9 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 | ESP32 | Có + BLE | Trung bình | Mạnh hơn |
 | Arduino Uno + Shield | Cần module | Đắt | Ít dùng |
 
-### 1.2 ESP8266 Pinout (NodeMCU)
+### 1.2 ESP8266 & ESP32 Pinout
 
+#### ESP8266 NodeMCU:
 ```
         ┌─────USB─────┐
      D0 │ 16 ●   ● A0 │ ADC
@@ -4723,6 +4769,30 @@ Sau khi hoàn thành tuần này, bạn sẽ:
      D8 │ 15 ●   ● EN │
      RX │  3 ●   ● RST│
      TX │  1 ●   ● GND│
+        └─────────────┘
+```
+
+#### ESP32 DevKit V1:
+```
+        ┌─────USB─────┐
+     EN │ ●         ● │ 23 (MOSI)
+     VP │ ●         ● │ 22 (SCL)
+     VN │ ●         ● │  1 (TX0)
+     34 │ ●         ● │  3 (RX0)
+     35 │ ●         ● │ 21 (SDA)
+     32 │ ●         ● │ GND
+     33 │ ●         ● │ 19 (MISO)
+     25 │ ●         ● │ 18 (SCK)
+     26 │ ●         ● │  5 (SS)
+     27 │ ●         ● │ 17 (TX2)
+     14 │ ●         ● │ 16 (RX2)
+     12 │ ●         ● │  4
+    GND │ ●         ● │  0
+     13 │ ●         ● │  2 (LED)
+     D2 │ ●         ● │ 15
+     D3 │ ●         ● │ D1
+CMD(11) │ ●         ● │ D0
+    5V  │ ●         ● │ 3.3V
         └─────────────┘
 ```
 
@@ -4744,6 +4814,25 @@ Browser                     ESP8266
    │ ◄────── 200 OK ────────── │  Response + HTML
    │                           │
 ```
+
+#### Cấu trúc xử lý:
+
+```mermaid
+classDiagram
+    class WebServer {
+        +on(path, handler)
+        +begin()
+        +handleClient()
+        +send(code, type, content)
+    }
+    class CallbackFunctions {
+        +handleRoot()
+        +handleOn()
+        +handleOff()
+    }
+    WebServer ..> CallbackFunctions : triggers
+```
+
 
 ---
 

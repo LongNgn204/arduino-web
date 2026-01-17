@@ -3,7 +3,7 @@
 
 import { Link } from 'react-router-dom';
 import {
-    Cpu, BookOpen, Code, Brain, Zap,
+    BookOpen, Code, Brain, Zap,
     ChevronRight, Play
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
@@ -36,8 +36,30 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-arduino-base/30 text-arduino-text-primary font-sans overflow-hidden">
+            {/* Header Sticky */}
+            <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100/50 py-3 transition-all">
+                <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+                    {/* Logo */}
+                    <Link to="/" className="flex items-center gap-2 group">
+                        <img src="/assets/logo.png" alt="Logo" className="h-8 w-auto group-hover:scale-110 transition-transform" />
+                        <span className="font-bold text-gray-900 text-lg hidden sm:block">KNTT STEM</span>
+                    </Link>
+                    {/* Actions */}
+                    <div className="flex items-center gap-3">
+                        <Link to="/login">
+                            <Button variant="ghost" className="font-semibold text-gray-600 hover:text-teal-600 px-3 sm:px-4">Đăng nhập</Button>
+                        </Link>
+                        <Link to="/register">
+                            <Button className="rounded-xl bg-teal-500 hover:bg-teal-600 shadow-lg shadow-teal-500/20 text-white font-bold px-4 sm:px-6">
+                                Đăng ký
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            </header>
+
             {/* Hero Section */}
-            <section className="relative min-h-[95vh] flex items-center justify-center px-4 overflow-hidden pt-24 md:pt-0">
+            <section className="relative min-h-[90vh] flex items-center justify-center px-4 overflow-hidden pt-28 pb-10 md:pt-20">
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
 
@@ -49,22 +71,32 @@ export default function LandingPage() {
                     {/* Left Content */}
                     <div className="text-center lg:text-left order-2 lg:order-1">
                         {/* Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-teal-100 shadow-sm mb-8 animate-fade-in hover:scale-105 transition-transform cursor-default">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-teal-100 shadow-sm mb-6 animate-fade-in hover:scale-105 transition-transform cursor-default">
                             <span className="relative flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-teal-500"></span>
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-violet-500"></span>
                             </span>
-                            <span className="text-sm font-semibold text-gray-1000">Nền tảng học IoT cho sinh viên</span>
+                            <span className="text-sm font-semibold text-gray-1000">Hành Trang Sư Phạm Số</span>
+                        </div>
+
+                        {/* Mobile Hero Image */}
+                        <div className="lg:hidden relative w-full max-w-[280px] mx-auto mb-8 animate-float z-20">
+                            <div className="absolute inset-0 bg-violet-500/20 rounded-full blur-3xl transform scale-90 translate-y-4"></div>
+                            <img
+                                src="/assets/hero_teacher.png"
+                                alt="AI STEM Teacher"
+                                className="relative w-full h-auto object-contain filter drop-shadow-xl"
+                            />
                         </div>
 
                         {/* Heading */}
                         <h1 className="text-5xl lg:text-7xl font-bold mb-6 animate-slide-up text-gray-900 tracking-tight leading-[1.1]">
-                            Chinh Phục <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-emerald-500">Arduino</span> <br />
-                            Với AI Trợ Giảng
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600">KNTT STEM</span> <br />
+                            Ươm Mầm Giáo Viên Tương Lai
                         </h1>
 
                         <p className="text-lg lg:text-xl text-gray-600 mb-10 animate-slide-up font-medium leading-relaxed max-w-2xl mx-auto lg:mx-0" style={{ animationDelay: '0.2s' }}>
-                            Không còn lo bí code. Học lập trình nhúng qua các dự án thực tế, được AI sửa lỗi và giải thích chi tiết từng dòng code 24/7.
+                            Nền tảng bồi dưỡng năng lực dạy học STEM/IoT dành riêng cho sinh viên sư phạm. Trang bị kiến thức công nghệ vững chắc để tự tin truyền cảm hứng.
                         </p>
 
                         {/* CTA Buttons */}
@@ -95,16 +127,13 @@ export default function LandingPage() {
 
                     {/* Right Visual - 3D Robot & Interactive Elements */}
                     <div className="relative animate-slide-up hidden lg:block order-1 lg:order-2 h-[600px]" style={{ animationDelay: '0.3s' }}>
-                        {/* Main Robot Image with Floating Animation */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] z-20 animate-float drop-shadow-2xl">
+                        {/* Main Teacher Image */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] z-20 animate-float drop-shadow-2xl">
                             <img
-                                src="/assets/robot_mascot.png"
-                                alt="AI Tutor Robot"
-                                className="w-full h-full object-contain filter drop-shadow-[0_20px_50px_rgba(20,184,166,0.3)] hover:scale-105 transition-transform duration-500"
+                                src="/assets/hero_teacher.png"
+                                alt="AI STEM Teacher"
+                                className="w-full h-full object-contain filter drop-shadow-[0_20px_50px_rgba(139,92,246,0.3)] hover:scale-105 transition-transform duration-500"
                             />
-                            {/* Sparkling Eyes Effect (Simulated via overlay if needed, but image has glow) */}
-                            <div className="absolute top-[30%] left-[35%] w-3 h-3 bg-white rounded-full blur-[2px] animate-ping" style={{ animationDuration: '3s' }}></div>
-                            <div className="absolute top-[30%] right-[35%] w-3 h-3 bg-white rounded-full blur-[2px] animate-ping" style={{ animationDuration: '3s', animationDelay: '0.5s' }}></div>
                         </div>
 
                         {/* Floating Cards - Background Elements */}
@@ -134,8 +163,8 @@ export default function LandingPage() {
             <section className="py-24 px-4 bg-white relative">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">Lộ Trình Học Tinh Gọn</h2>
-                        <p className="text-gray-500 text-lg max-w-2xl mx-auto">Đi từ con số 0 đến tự tay làm thiết bị IoT trong 12 tuần</p>
+                        <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">Lộ Trình Phát Triển Năng Lực</h2>
+                        <p className="text-gray-500 text-lg max-w-2xl mx-auto">Từng bước làm chủ công nghệ để xây dựng bài giảng STEM hấp dẫn</p>
                     </div>
 
                     <div className="relative">
@@ -146,10 +175,10 @@ export default function LandingPage() {
                             {/* Phase 1 */}
                             <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16 relative">
                                 <div className="flex-1 text-center lg:text-right">
-                                    <h3 className="text-2xl font-bold text-teal-600 mb-2">Phase 1: Foundation</h3>
-                                    <p className="text-gray-600 mb-4">Làm chủ Arduino Uno, GPIO, LED và các linh kiện cơ bản.</p>
+                                    <h3 className="text-2xl font-bold text-teal-600 mb-2">Giai đoạn 1: Nền tảng Tư duy</h3>
+                                    <p className="text-gray-600 mb-4">Hiểu rõ bản chất Lập trình & Điện tử để giải thích cặn kẽ cho học sinh.</p>
                                     <div className="inline-flex gap-2 flex-wrap justify-center lg:justify-end">
-                                        {['Tuần 1-4', 'LED', 'Keypad', 'LCD'].map(tag => (
+                                        {['Tư duy máy tính', 'Cấu trúc mạch', 'GPIO', 'Flowchart'].map(tag => (
                                             <span key={tag} className="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-medium border border-teal-100">{tag}</span>
                                         ))}
                                     </div>
@@ -158,12 +187,13 @@ export default function LandingPage() {
                                     <span className="text-white font-bold">1</span>
                                 </div>
                                 <div className="flex-1">
-                                    <div className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all h-48 bg-gray-100">
-                                        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-transparent z-10" />
-                                        <div className="absolute inset-0 flex items-center justify-center text-gray-400 group-hover:scale-105 transition-transform">
-                                            {/* Placeholder for project image */}
-                                            <Cpu className="w-16 h-16 opacity-50" />
-                                        </div>
+                                    <div className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all h-64 bg-white border border-gray-100">
+                                        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/5 to-transparent z-10" />
+                                        <img
+                                            src="/assets/phase_1.png"
+                                            alt="Mạch Arduino cơ bản"
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 aspect-video lg:aspect-auto"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -171,10 +201,10 @@ export default function LandingPage() {
                             {/* Phase 2 */}
                             <div className="flex flex-col lg:flex-row-reverse items-center gap-8 lg:gap-16 relative">
                                 <div className="flex-1 text-center lg:text-left">
-                                    <h3 className="text-2xl font-bold text-purple-600 mb-2">Phase 2: Sensors & Display</h3>
-                                    <p className="text-gray-600 mb-4">Đọc cảm biến, hiển thị thông tin và xử lý tín hiệu Analog.</p>
+                                    <h3 className="text-2xl font-bold text-purple-600 mb-2">Giai đoạn 2: Ứng dụng Sư phạm</h3>
+                                    <p className="text-gray-600 mb-4">Kết nối cảm biến và thiết bị hiển thị - Nguyên liệu cho các thí nghiệm trực quan.</p>
                                     <div className="inline-flex gap-2 flex-wrap justify-center lg:justify-start">
-                                        {['Tuần 5-8', 'Temp Sensor', 'OLED', 'Motor'].map(tag => (
+                                        {['Thí nghiệm số', 'Đo đạc môi trường', 'Hiển thị OLED', 'Sơ đồ khối'].map(tag => (
                                             <span key={tag} className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium border border-purple-100">{tag}</span>
                                         ))}
                                     </div>
@@ -183,11 +213,13 @@ export default function LandingPage() {
                                     <span className="text-white font-bold">2</span>
                                 </div>
                                 <div className="flex-1">
-                                    <div className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all h-48 bg-gray-100">
-                                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent z-10" />
-                                        <div className="absolute inset-0 flex items-center justify-center text-gray-400 group-hover:scale-105 transition-transform">
-                                            <Zap className="w-16 h-16 opacity-50" />
-                                        </div>
+                                    <div className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all h-64 bg-white border border-gray-100">
+                                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent z-10" />
+                                        <img
+                                            src="/assets/phase_2.png"
+                                            alt="Cảm biến và Hiển thị"
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 aspect-video lg:aspect-auto"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -195,10 +227,10 @@ export default function LandingPage() {
                             {/* Phase 3 */}
                             <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16 relative">
                                 <div className="flex-1 text-center lg:text-right">
-                                    <h3 className="text-2xl font-bold text-amber-500 mb-2">Phase 3: Final Project</h3>
-                                    <p className="text-gray-600 mb-4">Kết hợp tất cả kiến thức để xây dựng hệ thống IoT hoàn chỉnh.</p>
+                                    <h3 className="text-2xl font-bold text-amber-500 mb-2">Giai đoạn 3: Thiết kế Bài giảng STEM</h3>
+                                    <p className="text-gray-600 mb-4">Xây dựng mô hình dạy học dự án: Nhà thông minh, Vườn IoT... theo định hướng GDPT 2018.</p>
                                     <div className="inline-flex gap-2 flex-wrap justify-center lg:justify-end">
-                                        {['Tuần 9-12', 'IoT', 'WiFi', 'Smart Home'].map(tag => (
+                                        {['Dạy học Dự án', 'IoT', 'Web Server', 'Smart Home'].map(tag => (
                                             <span key={tag} className="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-medium border border-amber-100">{tag}</span>
                                         ))}
                                     </div>
@@ -207,11 +239,13 @@ export default function LandingPage() {
                                     <span className="text-white font-bold">3</span>
                                 </div>
                                 <div className="flex-1">
-                                    <div className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all h-48 bg-gray-100">
-                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent z-10" />
-                                        <div className="absolute inset-0 flex items-center justify-center text-gray-400 group-hover:scale-105 transition-transform">
-                                            <Brain className="w-16 h-16 opacity-50" />
-                                        </div>
+                                    <div className="group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all h-64 bg-white border border-gray-100">
+                                        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent z-10" />
+                                        <img
+                                            src="/assets/phase_3.png"
+                                            alt="Dự án Nhà thông minh"
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 aspect-video lg:aspect-auto"
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -220,54 +254,6 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Testimonials Section */}
-            <section className="py-24 px-4 bg-arduino-base/50">
-                <div className="max-w-6xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">Sinh Viên Nói Gì?</h2>
-                        <p className="text-gray-500 text-lg">Cộng đồng hàng nghìn sinh viên đang học tập hiệu quả</p>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            {
-                                name: "Nguyễn Văn A",
-                                role: "Sinh viên K72 - CNTT",
-                                content: "Nhờ AI Tutor mà mình hiểu rõ bản chất của ngắt (interrupt) thay vì chỉ copy code. Rất đáng học!",
-                                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
-                            },
-                            {
-                                name: "Trần Thị B",
-                                role: "Sinh viên K73 - Sư phạm Lý",
-                                content: "Giao diện đẹp, bài giảng chi tiết. Phần thực hành trên Wokwi giúp mình test mạch ngay trên web.",
-                                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka"
-                            },
-                            {
-                                name: "Lê Văn C",
-                                role: "Sinh viên K71 - Điện tử",
-                                content: "Tính năng chấm điểm code giúp mình tối ưu thuật toán rất nhiều. 10 điểm cho team phát triển!",
-                                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Milo"
-                            }
-                        ].map((testimonial, idx) => (
-                            <div key={idx} className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
-                                <div className="flex items-center gap-4 mb-6">
-                                    <img src={testimonial.avatar} alt={testimonial.name} className="w-12 h-12 rounded-full bg-gray-100" />
-                                    <div>
-                                        <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
-                                        <p className="text-xs text-gray-500">{testimonial.role}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-1 mb-4">
-                                    {[1, 2, 3, 4, 5].map(star => (
-                                        <span key={star} className="text-amber-400 text-sm">★</span>
-                                    ))}
-                                </div>
-                                <p className="text-gray-600 italic">"{testimonial.content}"</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
 
             {/* Features Section (Simplified) */}
             <section className="relative py-24 px-4 bg-white">
@@ -320,10 +306,10 @@ export default function LandingPage() {
 
                         <div className="relative z-10">
                             <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white tracking-tight">
-                                Sẵn sàng trở thành Master IoT?
+                                Sẵn sàng đổi mới phương pháp dạy học?
                             </h2>
                             <p className="text-gray-300 mb-10 max-w-2xl mx-auto text-lg">
-                                Tham gia cộng đồng học tập thông minh ngay hôm nay.
+                                Tham gia cộng đồng giáo viên STEM tương lai ngay hôm nay.
                             </p>
                             <Link to="/register">
                                 <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 border-none shadow-xl text-lg px-10 py-5 h-auto rounded-2xl font-bold hover:scale-105 transition-transform">
@@ -340,7 +326,7 @@ export default function LandingPage() {
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="flex items-center gap-3">
                         <img src="/assets/logo.png" alt="Logo" className="h-8 opacity-80" />
-                        <span className="font-bold text-gray-800 text-lg">ArduinoHub</span>
+                        <span className="font-bold text-gray-800 text-lg">KNTT STEM</span>
                     </div>
                     <div className="flex gap-6 text-sm font-medium">
                         <Link to="#" className="hover:text-teal-600">Về chúng tôi</Link>
