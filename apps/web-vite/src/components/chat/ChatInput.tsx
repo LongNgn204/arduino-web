@@ -1,6 +1,6 @@
 // ChatInput.tsx
 import { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, FileText, X } from 'lucide-react';
+import { Send, Paperclip, FileText, X, BrainCircuit } from 'lucide-react';
 import { cn } from '../ui/Card';
 
 interface Attachment {
@@ -13,10 +13,19 @@ interface ChatInputProps {
     onSend: (message: string, attachments: Attachment[]) => Promise<void>;
     isLoading?: boolean;
     placeholder?: string;
-    className?: string; // Add className prop
+    className?: string;
+    deepThink?: boolean;
+    onToggleDeepThink?: () => void;
 }
 
-export default function ChatInput({ onSend, isLoading, placeholder = "Nhập tin nhắn...", className }: ChatInputProps) {
+export default function ChatInput({
+    onSend,
+    isLoading,
+    placeholder = "Nhập tin nhắn...",
+    className,
+    deepThink = false,
+    onToggleDeepThink
+}: ChatInputProps) {
     const [input, setInput] = useState('');
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -135,6 +144,25 @@ export default function ChatInput({ onSend, isLoading, placeholder = "Nhập tin
                         onChange={handleFileSelect}
                     />
                 </label>
+
+                {/* Deep Think Toggle */}
+                {onToggleDeepThink && (
+                    <button
+                        onClick={onToggleDeepThink}
+                        className={cn(
+                            "p-2 rounded-xl transition-all flex-shrink-0 relative group",
+                            deepThink
+                                ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100"
+                                : "text-gray-400 hover:text-indigo-500 hover:bg-white"
+                        )}
+                        title={deepThink ? "Tắt Suy nghĩ sâu" : "Bật Suy nghĩ sâu (Reasoning)"}
+                    >
+                        <BrainCircuit className={cn("w-5 h-5", deepThink && "animate-pulse")} />
+                        {deepThink && (
+                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-indigo-500 rounded-full border-2 border-white" />
+                        )}
+                    </button>
+                )}
 
                 <textarea
                     ref={inputRef}

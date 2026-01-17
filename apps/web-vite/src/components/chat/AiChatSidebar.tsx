@@ -42,7 +42,8 @@ export default function AiChatSidebar({ className }: AiChatSidebarProps) {
     } = useChatStore();
 
     const [isLoading, setIsLoading] = useState(false);
-    const [showHistory, setShowHistory] = useState(false); // Mobile toggling logic or panel switching
+    const [deepThink, setDeepThink] = useState(false); // State cho Deep Reasoning
+    const [showHistory, setShowHistory] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messages = getActiveMessages();
     const activeConversation = activeConversationId ? getConversationById(activeConversationId) : null;
@@ -64,13 +65,9 @@ export default function AiChatSidebar({ className }: AiChatSidebarProps) {
     const handleSendMessage = async (input: string, attachments: any[]) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         if (!activeConversationId) return;
 
-        // Optimistic UI update handled by store? No, store adds message.
-        // Add user message to store
         addMessage(activeConversationId, {
             role: 'user',
-            content: input, // Append attachments info if logic requires
-            // For now simple text. Attachments handling in backend needs to be mirrored here?
-            // Simplified: just passing text. Attachments logic is complex.
+            content: input,
         });
 
         setIsLoading(true);
@@ -84,7 +81,8 @@ export default function AiChatSidebar({ className }: AiChatSidebarProps) {
                     mode: activeConversation?.mode || 'tutor',
                     userQuestion: input,
                     attachments: attachments.length > 0 ? attachments : undefined,
-                    stream: false // Simplified for now
+                    stream: false,
+                    deepThink, // Truyền cờ Deep Think
                 }),
             });
 
@@ -251,7 +249,12 @@ export default function AiChatSidebar({ className }: AiChatSidebarProps) {
                         </div>
 
                         {/* Input Area */}
-                        <ChatInput onSend={handleSendMessage} isLoading={isLoading} />
+                        <ChatInput
+                            onSend={handleSendMessage}
+                            isLoading={isLoading}
+                            deepThink={deepThink}
+                            onToggleDeepThink={() => setDeepThink(!deepThink)}
+                        />
                     </div>
                 </div>
             </div>

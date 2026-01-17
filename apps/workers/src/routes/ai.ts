@@ -31,6 +31,7 @@ const tutorRequestSchema = z.object({
     errorLog: z.string().optional(),
     attachments: z.array(attachmentSchema).optional(),
     stream: z.boolean().optional().default(true), // Mặc định bật streaming
+    deepThink: z.boolean().optional(), // Chế độ suy nghĩ sâu
 });
 
 const feedbackSchema = z.object({
@@ -48,6 +49,7 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 // Models
 const MODEL_DEFAULT = 'xiaomi/mimo-v2-flash:free';
 const MODEL_VISION = 'google/gemini-2.0-flash-exp:free'; // Free model with Vision & Large Context
+const MODEL_REASONING = 'deepseek/deepseek-r1:free'; // Free Reasoning Model
 
 // System prompts tối ưu cho AI trợ giảng Arduino - Enhanced với RAG grounding
 // Chú thích: Prompt engineering để giảm hallucination và tăng accuracy
@@ -291,7 +293,7 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
         }, 400);
     }
 
-    const { mode, lessonId, labId, userQuestion, selectedText, currentCode, errorLog, stream, attachments } = result.data;
+    const { mode, lessonId, labId, userQuestion, selectedText, currentCode, errorLog, stream, attachments, deepThink } = result.data;
 
     // 1. Check Attachments & Model Switching
     let selectedModel = MODEL_DEFAULT;
@@ -405,7 +407,9 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
 
     // 5. Select Model based on Intent (Tiered)
     if (!hasImages) {
-        if (['syntax', 'formula'].includes(intent.type)) {
+        if (deepThink) {
+            selectedModel = MODEL_REASONING;
+        } else if (['syntax', 'formula'].includes(intent.type)) {
             selectedModel = MODEL_DEFAULT; // Fast model
         } else if (intent.type === 'debug' || intent.type === 'code_request') {
             selectedModel = MODEL_DEFAULT; // Still use flash for speed, switch if complex
