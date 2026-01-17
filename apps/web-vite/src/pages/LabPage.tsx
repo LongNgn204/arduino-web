@@ -127,6 +127,23 @@ export default function LabPage() {
             });
             if (res.ok) {
                 const data = await res.json();
+
+                // Mark lab as completed in progress
+                try {
+                    await fetch(`${API_BASE}/api/progress/mark`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            labId: lab.id,
+                            status: 'completed'
+                        })
+                    });
+                    console.log('[progress] Lab marked as completed:', lab.id);
+                } catch (progressError) {
+                    console.error('[progress] Failed to mark lab complete:', progressError);
+                }
+
                 alert(data.message || 'Nộp bài thành công!');
             }
         } catch (error) {

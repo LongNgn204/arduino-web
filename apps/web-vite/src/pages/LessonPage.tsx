@@ -105,6 +105,29 @@ export default function LessonPage() {
         fetchLesson();
     }, [lessonId]);
 
+    // Fetch progress status for this lesson
+    useEffect(() => {
+        async function fetchProgress() {
+            if (!lessonId || !week?.id) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/progress/week/${week.id}`, {
+                    credentials: 'include',
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    // Kiểm tra lesson này đã completed chưa
+                    const lessonProgress = data.lessons?.find((l: { id: string; status: string }) => l.id === lessonId);
+                    if (lessonProgress?.status === 'completed') {
+                        setCompleted(true);
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to fetch progress:', e);
+            }
+        }
+        fetchProgress();
+    }, [lessonId, week?.id]);
+
     const handleSave = async () => {
         setIsSaved(!isSaved);
         // Mock API call
@@ -133,8 +156,27 @@ export default function LessonPage() {
 
     const handleMarkComplete = async () => {
         if (!lesson || completed) return;
-        setCompleted(true);
-        // Real app would fetch API here
+
+        try {
+            const res = await fetch(`${API_BASE}/api/progress/mark`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    lessonId: lesson.id,
+                    status: 'completed'
+                })
+            });
+
+            if (res.ok) {
+                setCompleted(true);
+                console.log('[progress] Lesson marked as completed:', lesson.id);
+            } else {
+                console.error('[progress] Failed to mark complete:', await res.text());
+            }
+        } catch (error) {
+            console.error('[progress] API error:', error);
+        }
     };
 
     if (loading) return <LessonSkeleton />;
