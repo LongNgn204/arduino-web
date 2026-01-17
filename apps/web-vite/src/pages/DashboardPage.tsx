@@ -294,6 +294,15 @@ function StatCard({ icon, label, value, color }: { icon: React.ReactNode, label:
 }
 
 function CourseCard({ course, progress }: { course: Course; progress: number }) {
+    const navigate = useNavigate();
+    const firstWeekId = course.weeks?.[0]?.id;
+
+    const handleContinue = () => {
+        if (firstWeekId) {
+            navigate(`/weeks/${firstWeekId}`);
+        }
+    };
+
     return (
         <Card className="p-0 overflow-hidden border-none shadow-card hover:shadow-hover transition-all duration-300 group bg-white">
             <div className="p-6 md:p-8">
@@ -325,16 +334,21 @@ function CourseCard({ course, progress }: { course: Course; progress: number }) 
                     </div>
 
                     <div className="shrink-0 flex md:flex-col gap-3">
-                        <Link to={course.weeks?.[0]?.id ? `/weeks/${course.weeks[0].id}` : '/dashboard'}>
-                            <Button className="w-full md:w-auto shadow-lg shadow-arduino-teal/20 bg-arduino-teal hover:bg-teal-600 border-none h-12 px-6 rounded-xl text-base">
-                                Tiếp tục học <PlayCircle className="w-5 h-5 ml-2" />
-                            </Button>
-                        </Link>
-                        <Link to={`/weeks/${course.weeks?.[0]?.id || ''}`}>
-                            <Button variant="secondary" className="w-full md:w-auto h-12 px-6 rounded-xl text-base border-gray-100 bg-gray-50 text-gray-600 hover:bg-white hover:border-gray-200">
-                                Chi tiết
-                            </Button>
-                        </Link>
+                        <Button
+                            onClick={handleContinue}
+                            disabled={!firstWeekId}
+                            className="w-full md:w-auto shadow-lg shadow-arduino-teal/20 bg-arduino-teal hover:bg-teal-600 border-none h-12 px-6 rounded-xl text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Tiếp tục học <PlayCircle className="w-5 h-5 ml-2" />
+                        </Button>
+                        <Button
+                            onClick={handleContinue}
+                            disabled={!firstWeekId}
+                            variant="secondary"
+                            className="w-full md:w-auto h-12 px-6 rounded-xl text-base border-gray-100 bg-gray-50 text-gray-600 hover:bg-white hover:border-gray-200 disabled:opacity-50"
+                        >
+                            Chi tiết
+                        </Button>
                     </div>
                 </div>
             </div>
