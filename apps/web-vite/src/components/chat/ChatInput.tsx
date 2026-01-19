@@ -109,7 +109,7 @@ export default function ChatInput({
     };
 
     return (
-        <div className={cn("bg-white border-t border-gray-100 p-4", className)}>
+        <div className={cn("bg-white border-t border-gray-100 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]", className)}>
             {/* Attachments Preview */}
             {attachments.length > 0 && (
                 <div className="flex gap-2 overflow-x-auto py-2 mb-2 scrollbar-thin">

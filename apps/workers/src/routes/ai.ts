@@ -309,7 +309,7 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
         }, 400);
     }
 
-    const { mode, lessonId, labId, userQuestion, selectedText, currentCode, errorLog, stream, attachments, deepThink } = result.data;
+    const { mode, lessonId, labId, userQuestion, selectedText, currentCode, errorLog, stream, attachments, deepThink, conversationId: requestConversationId } = result.data;
 
     // 1. Check Attachments & Model Switching
     let selectedModel = MODEL_DEFAULT;
@@ -537,7 +537,7 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
                                         }).run();
 
                                         // 2. Sync Chat History (New)
-                                        const conversationId = body.conversationId || generateId();
+                                        const conversationId = requestConversationId || generateId();
                                         const now = new Date();
 
                                         // Ensure conversation exists or update it

@@ -98,7 +98,7 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                     mode: activeConversation?.mode || 'tutor',
                     userQuestion: input,
                     attachments: attachments.length > 0 ? attachments : undefined,
-                    stream: false,
+                    stream: true,
                     deepThink, // Truyền cờ Deep Think
                 }),
             });
@@ -161,7 +161,7 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                     <div className="flex items-center gap-3 overflow-hidden">
                         <button
                             onClick={() => setShowHistory(!showHistory)}
-                            className="p-2 hover:bg-gray-50 rounded-xl text-gray-500 hover:text-arduino-teal transition-all active:scale-95"
+                            className="p-3 hover:bg-gray-50 rounded-xl text-gray-500 hover:text-arduino-teal transition-all active:scale-95 min-w-[44px] min-h-[44px] flex items-center justify-center"
                         >
                             {showHistory ? <ChevronLeft className="w-5 h-5" /> : <MessageSquare className="w-5 h-5" />}
                         </button>
@@ -205,6 +205,11 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                             ref={scrollContainerRef}
                             onScroll={handleScroll}
                             className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 scroll-smooth scrollbar-thin scrollbar-thumb-gray-200"
+                            style={{
+                                touchAction: 'pan-y',
+                                WebkitOverflowScrolling: 'touch',
+                                overscrollBehavior: 'contain'
+                            }}
                         >
                             {messages.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-full text-center p-8 text-gray-500 space-y-4">

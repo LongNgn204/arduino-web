@@ -48,6 +48,7 @@ interface ChatState {
 
     // Local/Optimistic Actions
     addMessage: (conversationId: string, message: Omit<Message, 'id' | 'timestamp'>) => void;
+    updateLastMessage: (conversationId: string, content: string) => void; // For streaming
     updateConversationTitle: (id: string, title: string) => void;
 
     // Helpers
@@ -210,6 +211,25 @@ export const useChatStore = create<ChatState>()(
                     return {
                         messages: { ...state.messages, [conversationId]: newMessages },
                         conversations: updatedConversations,
+                    };
+                });
+            },
+
+            // Update content of last message in conversation (for streaming)
+            updateLastMessage: (conversationId, content) => {
+                set((state) => {
+                    const existingMessages = state.messages[conversationId] || [];
+                    if (existingMessages.length === 0) return state;
+
+                    const updatedMessages = [...existingMessages];
+                    const lastIndex = updatedMessages.length - 1;
+                    updatedMessages[lastIndex] = {
+                        ...updatedMessages[lastIndex],
+                        content
+                    };
+
+                    return {
+                        messages: { ...state.messages, [conversationId]: updatedMessages }
                     };
                 });
             },
