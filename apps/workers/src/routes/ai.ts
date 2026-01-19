@@ -337,89 +337,28 @@ aiRoutes.post('/tutor', requireAuth(), async (c) => {
 
     const chatLogId = generateId();
 
-    // 2. Check FAQ (Instant Answer) - Chỉ khi không có ảnh/code/error
+    // 2. FAQ Check đã bị tắt - tất cả câu hỏi đều gọi AI để suy nghĩ
+    // (Giữ lại code cũ để tham khảo, đã comment out)
+    /*
     if (!hasImages && !currentCode && !errorLog && !selectedText) {
         const faqMatch = findFAQMatch(userQuestion);
         if (faqMatch) {
-            console.log('[ai] FAQ Hit:', faqMatch.category);
-            const responseData = {
-                response: faqMatch.answer,
-                chatLogId,
-                mode,
-                tokensUsed: 0,
-                remainingQuota: RATE_LIMIT - count, // Không trừ quota
-                isCached: true
-            };
-
-            // Nếu stream=true, giả lập stream cho FAQ
-            if (stream) {
-                const text = faqMatch.answer;
-                const encoder = new TextEncoder();
-                const stream = new ReadableStream({
-                    start(controller) {
-                        // Send chunks
-                        const chunkSize = 10;
-                        let i = 0;
-                        function push() {
-                            if (i >= text.length) {
-                                controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-                                    done: true,
-                                    chatLogId,
-                                    remainingQuota: RATE_LIMIT - count,
-                                    latencyMs: 5
-                                })}\n\n`));
-                                controller.close();
-                                return;
-                            }
-                            const chunk = text.slice(i, i + chunkSize);
-                            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: chunk })}\n\n`));
-                            i += chunkSize;
-                            setTimeout(push, 5); // Fast stream
-                        }
-                        push();
-                    }
-                });
-
-                return new Response(stream, {
-                    headers: {
-                        'Content-Type': 'text/event-stream',
-                        'Cache-Control': 'no-cache',
-                        'Connection': 'keep-alive',
-                    }
-                });
-            }
-
-            return c.json(responseData);
+            // ... FAQ instant response logic (disabled)
         }
     }
+    */
 
     // 3. Classify Intent
     const intent = classifyIntent(userQuestion);
     console.log('[ai] Intent:', intent.type, 'Confidence:', intent.confidence);
 
-    // 4. Handle Greeting (Fast Response)
+    // 4. Greeting Fast Response đã bị tắt - để AI tự trả lời greeting
+    // (Tất cả câu hỏi kể cả chào hỏi đều đi qua AI suy nghĩ)
+    /*
     if (intent.type === 'greeting') {
-        const greeting = isGreeting(userQuestion);
-        if (greeting.isGreeting && greeting.response) {
-            if (stream) {
-                const text = greeting.response;
-                const encoder = new TextEncoder();
-                const stream = new ReadableStream({
-                    start(controller) {
-                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: text })}\n\n`));
-                        controller.enqueue(encoder.encode(`data: ${JSON.stringify({
-                            done: true,
-                            chatLogId,
-                            latencyMs: 1
-                        })}\n\n`));
-                        controller.close();
-                    }
-                });
-                return new Response(stream, { headers: { 'Content-Type': 'text/event-stream' } });
-            }
-            return c.json({ response: greeting.response, chatLogId });
-        }
+        // ... Greeting instant response logic (disabled)
     }
+    */
 
     // 5. Select Model based on Intent (Tiered)
     if (!hasImages) {

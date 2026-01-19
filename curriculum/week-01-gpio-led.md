@@ -101,9 +101,9 @@ void loop() {
 
 ```mermaid
 flowchart TD
-    start([Cấp nguồn / Reset]) --> setup[Chạy setup\n(1 lần duy nhất)]
-    setup --> loop{Vòng lặp loop}
-    loop -->|Lần 1| logic[Thực thi Code chính]
+    start(["Cấp nguồn / Reset"]) --> setup["Chạy setup<br/>(1 lần duy nhất)"]
+    setup --> loop{"Vòng lặp loop"}
+    loop -->|Lần 1| logic["Thực thi Code chính"]
     logic -->|Lặp lại| loop
 ```
 
