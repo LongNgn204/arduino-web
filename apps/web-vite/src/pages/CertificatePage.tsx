@@ -40,23 +40,23 @@ export function CertificatePage() {
     }, []);
 
     if (loading) return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center font-sans">
-            <div className="text-gray-500 flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-arduino-teal border-t-transparent rounded-full animate-spin" />
+        <div className="min-h-screen bg-background flex items-center justify-center font-sans">
+            <div className="text-muted-foreground flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin text-primary" />
                 Checking eligibility...
             </div>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 p-8 flex flex-col items-center font-sans">
+        <div className="min-h-screen bg-background p-8 flex flex-col items-center font-sans">
             {/* Header / Nav */}
             <div className="w-full max-w-4xl mb-8 flex justify-between items-center">
-                <Button variant="ghost" onClick={() => navigate('/dashboard')} className="text-gray-500 hover:text-arduino-teal gap-2">
+                <Button variant="ghost" onClick={() => navigate('/dashboard')} className="text-muted-foreground hover:text-foreground gap-2">
                     <Home className="w-4 h-4" /> Dashboard
                 </Button>
-                <div className="flex items-center gap-2 text-2xl font-bold text-gray-900">
-                    <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                <div className="flex items-center gap-2 text-2xl font-bold text-foreground">
+                    <div className="w-10 h-10 bg-amber-500/10 rounded-lg flex items-center justify-center">
                         <Award className="w-6 h-6 text-amber-600" />
                     </div>
                     Chứng Nhận
@@ -65,17 +65,17 @@ export function CertificatePage() {
 
             {!eligible ? (
                 // LOCKED STATE
-                <div className="max-w-md w-full bg-white rounded-3xl p-8 border border-gray-100 text-center shadow-xl shadow-gray-200/50">
-                    <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-100">
-                        <Lock className="w-10 h-10 text-gray-400" />
+                <div className="max-w-md w-full bg-card rounded-lg p-8 border border-border text-center shadow-lg">
+                    <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6 border border-border">
+                        <Lock className="w-10 h-10 text-muted-foreground" />
                     </div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">Chưa đủ điều kiện nhận bằng</h2>
-                    <p className="text-gray-500 mb-6">
+                    <h2 className="text-xl font-bold text-foreground mb-2">Chưa đủ điều kiện nhận bằng</h2>
+                    <p className="text-muted-foreground mb-6">
                         Bạn cần hoàn thành ít nhất 80% khóa học. Tiến độ hiện tại của bạn:
                     </p>
 
                     {/* Progress Bar */}
-                    <div className="w-full bg-gray-100 rounded-full h-4 mb-2 overflow-hidden">
+                    <div className="w-full bg-muted rounded-full h-4 mb-2 overflow-hidden">
                         <div
                             className="bg-amber-500 h-full rounded-full transition-all duration-1000"
                             style={{ width: `${progress}%` }}
@@ -87,7 +87,7 @@ export function CertificatePage() {
 
                     <Button
                         onClick={() => navigate('/dashboard')}
-                        className="w-full bg-arduino-teal hover:bg-teal-600 shadow-lg shadow-arduino-teal/20 py-6 text-lg"
+                        className="w-full py-6 text-lg"
                     >
                         Tiếp tục học
                     </Button>
@@ -98,7 +98,7 @@ export function CertificatePage() {
                     <div className="text-center mb-8">
                         <Button
                             onClick={() => window.print()}
-                            className="bg-green-600 hover:bg-green-700 text-white gap-2 shadow-lg shadow-green-600/20"
+                            className="gap-2"
                         >
                             <Download className="w-4 h-4" /> Tải xuống PDF
                         </Button>

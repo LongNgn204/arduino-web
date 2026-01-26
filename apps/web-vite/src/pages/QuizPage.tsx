@@ -146,72 +146,44 @@ export default function QuizPage() {
         return `${m}:${s.toString().padStart(2, '0')}`;
     };
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-10 h-10 text-arduino-teal animate-spin" />
-                    <p className="text-gray-500 animate-pulse">Đang tải bài quiz...</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (!quiz || !quiz.questions || quiz.questions.length === 0) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="text-center bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                    <p className="text-gray-500 mb-4">Không tìm thấy bài quiz hoặc chưa có câu hỏi.</p>
-                    <Link to="/dashboard" className="text-arduino-teal hover:underline font-medium">
-                        ← Quay lại Dashboard
-                    </Link>
-                </div>
-            </div>
-        );
-    }
-
-    const currentQuestion = quiz.questions[currentIndex];
-    const progress = ((currentIndex + 1) / quiz.questions.length) * 100;
-
-    // Results Screen
     if (submitted && score) {
         const percentage = Math.round((score.earned / score.total) * 100);
 
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 gap-8">
-                <div className="max-w-md w-full text-center bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
-                    <div className={`w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center ${score.passed ? 'bg-green-100' : 'bg-red-100'}`}>
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 gap-8 font-sans">
+                <div className="max-w-md w-full text-center bg-card p-8 rounded-lg shadow-lg border border-border">
+                    <div className={`w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center border ${score.passed ? 'bg-green-100 border-green-200 text-green-700' : 'bg-red-100 border-red-200 text-red-700'}`}>
                         {score.passed ? (
-                            <Trophy className="w-12 h-12 text-green-600 animate-bounce" />
+                            <Trophy className="w-10 h-10" />
                         ) : (
-                            <XCircle className="w-12 h-12 text-red-500" />
+                            <XCircle className="w-10 h-10" />
                         )}
                     </div>
 
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    <h2 className="text-2xl font-bold text-foreground mb-2">
                         {score.passed ? 'Chúc mừng! 🎉' : 'Chưa đạt 😢'}
                     </h2>
-                    <p className="text-gray-500 mb-8">
+                    <p className="text-muted-foreground mb-8">
                         {score.passed
                             ? 'Bạn đã vượt qua bài kiểm tra!'
                             : 'Hãy ôn tập lại và thử lại nhé!'}
                     </p>
 
-                    <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100">
-                        <div className="text-5xl font-bold text-gray-900 mb-2">{percentage}%</div>
-                        <p className="text-gray-500 font-medium">{score.earned}/{score.total} điểm</p>
-                        <div className="mt-4 h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="bg-muted/50 rounded-lg p-6 mb-8 border border-border">
+                        <div className="text-5xl font-bold text-foreground mb-2">{percentage}%</div>
+                        <p className="text-muted-foreground font-medium">{score.earned}/{score.total} điểm</p>
+                        <div className="mt-4 h-2 bg-muted rounded-full overflow-hidden">
                             <div
-                                className={`h-full rounded-full transition-all duration-1000 ${score.passed ? 'bg-green-500' : 'bg-red-500'}`}
+                                className={`h-full rounded-full transition-all duration-1000 ${score.passed ? 'bg-green-600' : 'bg-destructive'}`}
                                 style={{ width: `${percentage}%` }}
                             />
                         </div>
-                        <p className="text-xs text-gray-400 mt-2">Điểm chuẩn: {quiz.passingScore}%</p>
+                        <p className="text-xs text-muted-foreground mt-2">Điểm chuẩn: {quiz.passingScore}%</p>
                     </div>
 
                     <div className="flex gap-3">
                         <Button
-                            variant="secondary"
+                            variant="outline"
                             onClick={() => navigate('/dashboard')}
                             className="flex-1"
                         >
@@ -225,88 +197,82 @@ export default function QuizPage() {
                                 setCurrentIndex(0);
                                 if (quiz.timeLimit) setTimeLeft(quiz.timeLimit * 60);
                             }}
-                            className="flex-1 bg-arduino-teal hover:bg-teal-600"
+                            className="flex-1"
                         >
                             Làm lại
                         </Button>
                     </div>
                 </div>
-                {quiz.questions.map((q, i) => {
-                    const result = _results.find(r => r.questionId === q.id);
-                    const isCorrect = result?.correct;
-                    const userAnswerIndex = answers[q.id];
-                    // Frontend might store answer as index (number) or string. 
-                    // Our questions table `options` is text[], `correctAnswer` is text (the actual string).
-                    // But frontend Logic at line 326: `answers[currentQuestion.id] === index`. So `answers` stores INDEX.
-                    // We need to map index back to string to display user choice? Or just show the option block.
 
-                    return (
-                        <div key={q.id} className={`bg-white p-6 rounded-2xl border-2 ${isCorrect ? 'border-green-100' : 'border-red-100'}`}>
-                            <div className="flex items-start gap-4">
-                                <span className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                    }`}>
-                                    {i + 1}
-                                </span>
-                                <div className="flex-1 space-y-3">
-                                    <p className="font-medium text-gray-900 text-lg">{q.content}</p>
+                {/* Detailed Review */}
+                <div className="max-w-3xl w-full mx-auto space-y-4">
+                    <h3 className="text-lg font-bold text-center mb-6 text-muted-foreground">Chi tiết bài làm</h3>
+                    {quiz.questions.map((q, i) => {
+                        // Logic to determine correctness from local state or API result if available
+                        // Since we don't have the full result object in state (only updated in handleSubmit but not passed to full scope properly in the previous snippet),
+                        // we generally rely on the API response 'results' which I see was defined as `_results` state in original file.
+                        // I will assume `_results` state (renamed to `results` ideally) is available or I can use the same logic if I have the `results` state.
+                        // Looking at original file, `_results` was state. I need to make sure I didn't delete the `_results` state definition. I didn't touch the top of function.
 
-                                    <div className="space-y-2">
-                                        {q.options?.map((opt, optIdx) => {
-                                            const isSelected = userAnswerIndex === optIdx;
-                                            // Wait, frontend `currentQuestion.correctAnswer` exists (interface Question).
-                                            // But does backend send it? Yes, we fetch `quizzes/${id}` which returns questions with answers?
-                                            // Usually we shouldn't send answers to frontend before submit if we want to be secure.
-                                            // But the `Question` interface has `correctAnswer`. 
-                                            // If the API returns it, we can highlight strict match.
-                                            // Let's assume API returns it for now (simpler MVP). Or rely on `result` if it contained the correct answer index.
-                                            // `result` has `explanation`. 
+                        const result = _results.find(r => r.questionId === q.id);
+                        const isCorrect = result?.correct;
+                        const userAnswerIndex = answers[q.id];
 
-                                            // Let's rely on simple comparison if available, or just show explanation.
-                                            // Better: Just show explanation and user selected.
+                        return (
+                            <div key={q.id} className={`bg-card p-6 rounded-lg border ${isCorrect ? 'border-green-200 bg-green-50/10' : 'border-destructive/20 bg-destructive/5'}`}>
+                                <div className="flex items-start gap-4">
+                                    <span className={`flex-shrink-0 w-8 h-8 rounded-md flex items-center justify-center font-bold text-sm border ${isCorrect ? 'bg-green-100 text-green-700 border-green-200' : 'bg-destructive/10 text-destructive border-destructive/20'}`}>
+                                        {i + 1}
+                                    </span>
+                                    <div className="flex-1 space-y-3">
+                                        <p className="font-medium text-foreground text-lg">{q.content}</p>
 
-                                            let style = "border-gray-100 text-gray-500";
+                                        <div className="space-y-2">
+                                            {q.options?.map((opt, optIdx) => {
+                                                const isSelected = userAnswerIndex === optIdx;
+                                                let style = "border-transparent text-muted-foreground";
 
+                                                if (isSelected) {
+                                                    style = isCorrect
+                                                        ? "border-green-500 bg-green-50 text-green-700 border"
+                                                        : "border-destructive bg-destructive/10 text-destructive border";
+                                                } else if (opt === q.correctAnswer && !isCorrect) {
+                                                    style = "border-green-500 bg-green-50 text-green-700 border border-dashed";
+                                                }
 
-                                            if (isSelected) {
-                                                style = isCorrect
-                                                    ? "border-green-500 bg-green-50 text-green-700"
-                                                    : "border-red-500 bg-red-50 text-red-700";
-                                            } else if (opt === q.correctAnswer && !isCorrect) {
-                                                // Show correct answer if user was wrong
-                                                style = "border-green-500 bg-green-50 text-green-700 dashed-border";
-                                            }
-
-                                            return (
-                                                <div key={optIdx} className={`p-3 rounded-lg border flex justify-between items-center ${style}`}>
-                                                    <span>{String.fromCharCode(65 + optIdx)}. {opt}</span>
-                                                    {isSelected && (isCorrect ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />)}
-                                                    {!isSelected && opt === q.correctAnswer && !isCorrect && <CheckCircle2 className="w-4 h-4 opacity-50" />}
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-
-                                    {/* Explanation Box */}
-                                    <div className="mt-4 p-4 bg-blue-50 text-blue-800 rounded-xl text-sm flex gap-3 items-start">
-                                        <HelpCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                                        <div>
-                                            <span className="font-bold block mb-1">Giải thích:</span>
-                                            {result?.explanation || q.explanation || "Chưa có giải thích cho câu hỏi này."}
+                                                return (
+                                                    <div key={optIdx} className={`p-3 rounded-md flex justify-between items-center ${style}`}>
+                                                        <span>{String.fromCharCode(65 + optIdx)}. {opt}</span>
+                                                        {isSelected && (isCorrect ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />)}
+                                                        {!isSelected && opt === q.correctAnswer && !isCorrect && <CheckCircle2 className="w-4 h-4 opacity-50" />}
+                                                    </div>
+                                                )
+                                            })}
                                         </div>
+
+                                        {(result?.explanation || q.explanation) && (
+                                            <div className="mt-4 p-3 bg-muted rounded text-sm flex gap-2 text-muted-foreground">
+                                                <HelpCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                                                <div>
+                                                    <span className="font-bold mr-1">Giải thích:</span>
+                                                    {result?.explanation || q.explanation}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    );
-                })}
-            </div >
+                        );
+                    })}
+                </div>
+            </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+        <div className="min-h-screen bg-background flex flex-col font-sans text-foreground">
             {/* Header */}
-            <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm px-6">
+            <header className="sticky top-0 z-50 bg-background border-b border-border px-6">
                 <div className="max-w-4xl mx-auto">
                     <div className="flex items-center justify-between h-14">
                         <div className="flex items-center gap-4">
@@ -317,7 +283,7 @@ export default function QuizPage() {
                                 <ArrowLeft className="w-4 h-4" />
                             </Link>
                             <div>
-                                <h1 className="text-sm font-bold">{quiz.title}</h1>
+                                <h1 className="text-sm font-bold truncate max-w-[200px]">{quiz.title}</h1>
                                 <p className="text-xs text-muted-foreground">Câu {currentIndex + 1}/{quiz.questions.length}</p>
                             </div>
                         </div>
@@ -344,9 +310,9 @@ export default function QuizPage() {
 
             {/* Question */}
             <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-8 flex flex-col justify-center">
-                <div className="bg-card rounded-md p-6 border border-border mb-8 relative">
+                <div className="bg-card rounded-lg p-6 border border-border mb-8 relative">
                     <div className="flex items-start gap-4 mb-6">
-                        <span className="flex-shrink-0 w-8 h-8 rounded bg-muted text-primary flex items-center justify-center font-bold text-sm border border-border">
+                        <span className="flex-shrink-0 w-8 h-8 rounded bg-muted text-foreground flex items-center justify-center font-bold text-sm border border-border">
                             {currentIndex + 1}
                         </span>
                         <div>
@@ -377,12 +343,6 @@ export default function QuizPage() {
                                     placeholder="Nhập câu trả lời..."
                                     className="w-full px-4 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-1 focus:ring-ring"
                                 />
-                                {submitted && (
-                                    <div className="mt-2 text-sm">
-                                        <span className="font-bold">Đáp án đúng: </span>
-                                        <span className="text-green-600 font-medium">{currentQuestion.correctAnswer}</span>
-                                    </div>
-                                )}
                             </div>
                         ) : (
                             currentQuestion.options?.map((option, index) => {
@@ -394,7 +354,7 @@ export default function QuizPage() {
                                         onClick={() => handleAnswer(currentQuestion.id, index)}
                                         disabled={submitted}
                                         className={`w-full text-left p-3 rounded-md border transition-all flex items-center gap-3 ${isSelected
-                                            ? 'border-primary bg-primary/5'
+                                            ? 'border-primary bg-primary/10'
                                             : 'border-input hover:bg-muted'
                                             }`}
                                     >

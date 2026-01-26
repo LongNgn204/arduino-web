@@ -259,8 +259,8 @@ export default function LabPage() {
                     <div className="flex items-center gap-2">
                         {/* Save Status Indicator */}
                         {saveStatus === 'saved' && (
-                            <span className="text-xs text-green-600 flex items-center gap-1">
-                                <CheckCircle2 className="w-3 h-3" /> Đã lưu
+                            <span className="text-xs text-muted-foreground flex items-center gap-1 animate-in fade-in slide-in-from-right-2">
+                                <CheckCircle2 className="w-3 h-3 text-green-600" /> Đã lưu
                             </span>
                         )}
 
@@ -430,31 +430,32 @@ export default function LabPage() {
 
                         {/* AI Agent Result Panel */}
                         {showAgentResult && agentResult && (
-                            <div className={`shrink-0 px-4 py-3 border-b ${agentResult.success ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
+                            <div className={`shrink-0 px-4 py-3 border-b animate-in slide-in-from-top-2 ${agentResult.success ? 'bg-green-50/50 border-green-200 text-green-700' : 'bg-amber-50/50 border-amber-200 text-amber-700'}`}>
                                 <div className="flex items-start gap-3">
                                     <div className="flex-1 min-w-0">
-                                        <p className={`font-medium ${agentResult.success ? 'text-green-700' : 'text-amber-700'}`}>
-                                            {agentResult.success ? '✨ Đã sửa code!' : '⚠️ Kết quả'}
+                                        <p className="font-medium flex items-center gap-2">
+                                            {agentResult.success ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                                            {agentResult.success ? 'Đã sửa code' : 'Gợi ý từ AI'}
                                         </p>
-                                        <p className="text-sm text-gray-600 mt-1">{agentResult.summary}</p>
+                                        <p className="text-sm opacity-90 mt-1">{agentResult.summary}</p>
                                         {agentResult.changes.length > 0 && (
                                             <div className="mt-2 space-y-1">
                                                 {agentResult.changes.slice(0, 3).map((change, i) => (
-                                                    <p key={i} className="text-xs text-gray-500 font-mono">
+                                                    <p key={i} className="text-xs font-mono opacity-80">
                                                         • Dòng {change.line}: {change.description}
                                                     </p>
                                                 ))}
                                             </div>
                                         )}
                                         {agentResult.tips.length > 0 && (
-                                            <div className="mt-2 text-xs text-gray-500">
+                                            <div className="mt-2 text-xs opacity-75">
                                                 💡 {agentResult.tips[0]}
                                             </div>
                                         )}
                                     </div>
                                     <button
                                         onClick={() => setShowAgentResult(false)}
-                                        className="text-gray-500 hover:text-black"
+                                        className="text-current opacity-50 hover:opacity-100"
                                     >
                                         ×
                                     </button>

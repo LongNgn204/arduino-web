@@ -77,17 +77,17 @@ export default function QuizHistoryPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-10 h-10 text-arduino-teal animate-spin" />
-                    <p className="text-gray-500 font-medium animate-pulse">Đang tải lịch sử...</p>
+                    <Loader2 className="w-10 h-10 text-muted-foreground animate-spin" />
+                    <p className="text-muted-foreground font-medium animate-pulse">Đang tải lịch sử...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20 font-sans">
+        <div className="min-h-screen bg-background pb-20 font-sans">
             {/* Header */}
             <header className="bg-background border-b border-border pt-8 pb-12">
                 <div className="max-w-4xl mx-auto px-4">
@@ -100,7 +100,7 @@ export default function QuizHistoryPage() {
                     </Link>
 
                     <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-muted rounded-md flex items-center justify-center">
+                        <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
                             <Clock className="w-8 h-8 text-foreground" />
                         </div>
                         <div>
@@ -114,15 +114,15 @@ export default function QuizHistoryPage() {
             {/* Stats */}
             <div className="max-w-4xl mx-auto px-4 -mt-6">
                 <div className="grid grid-cols-3 gap-4 mb-8">
-                    <Card className="p-4 text-center bg-card border-border">
+                    <Card className="p-4 text-center bg-card border-border shadow-sm">
                         <div className="text-3xl font-bold text-foreground">{stats.totalAttempts}</div>
                         <div className="text-xs font-medium text-muted-foreground uppercase">Lần làm</div>
                     </Card>
-                    <Card className="p-4 text-center bg-card border-border">
+                    <Card className="p-4 text-center bg-card border-border shadow-sm">
                         <div className="text-3xl font-bold text-green-600">{stats.passedCount}</div>
                         <div className="text-xs font-medium text-muted-foreground uppercase">Đạt</div>
                     </Card>
-                    <Card className="p-4 text-center bg-card border-border">
+                    <Card className="p-4 text-center bg-card border-border shadow-sm">
                         <div className="text-3xl font-bold text-blue-600">{stats.avgScore}%</div>
                         <div className="text-xs font-medium text-muted-foreground uppercase">Điểm TB</div>
                     </Card>
@@ -150,7 +150,7 @@ export default function QuizHistoryPage() {
                             const passed = attempt.passed;
 
                             return (
-                                <Card key={attempt.id} className="p-6 bg-card border-border hover:bg-muted/50 transition-colors">
+                                <Card key={attempt.id} className="p-6 bg-card border-border hover:border-primary transition-colors group">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
                                             <div className={`w-12 h-12 rounded flex items-center justify-center border ${passed
@@ -163,7 +163,7 @@ export default function QuizHistoryPage() {
                                                 }
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-foreground">
+                                                <h3 className="font-bold text-foreground group-hover:text-primary transition-colors">
                                                     {attempt.quizTitle || `Quiz Tuần ${attempt.weekNumber}`}
                                                 </h3>
                                                 <div className="flex items-center gap-3 text-sm text-muted-foreground">

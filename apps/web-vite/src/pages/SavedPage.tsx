@@ -90,79 +90,81 @@ export default function SavedPage() {
         // Here we just simulate
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><Loader2 className="w-8 h-8 text-muted-foreground animate-spin" /></div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 text-muted-foreground animate-spin" /></div>;
 
     return (
-        <div className="font-sans min-h-screen">
-            <header className="mb-8">
-                <h1 className="text-3xl font-black text-gray-900 mb-2 flex items-center gap-3">
-                    <Bookmark className="w-8 h-8 text-arduino-teal" />
+        <div className="font-sans min-h-screen bg-background">
+            <header className="mb-8 pt-8 px-4 max-w-6xl mx-auto">
+                <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-3">
+                    <Bookmark className="w-8 h-8 text-foreground" />
                     Đã lưu
                 </h1>
-                <p className="text-gray-500 text-lg">Các bài học và dự án bạn đã đánh dấu để xem sau.</p>
+                <p className="text-muted-foreground text-lg">Các bài học và dự án bạn đã đánh dấu để xem sau.</p>
             </header>
 
-            {savedItems.length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-3xl border border-gray-100 shadow-sm">
-                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
-                        <Bookmark className="w-8 h-8" />
+            <main className="px-4 max-w-6xl mx-auto pb-20">
+                {savedItems.length === 0 ? (
+                    <div className="text-center py-20 bg-card rounded-lg border border-border">
+                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4 text-muted-foreground">
+                            <Bookmark className="w-8 h-8" />
+                        </div>
+                        <h3 className="text-lg font-bold text-foreground mb-1">Chưa có mục nào được lưu</h3>
+                        <p className="text-muted-foreground mb-6">Hãy khám phá bài học và dự án, sau đó nhấn nút lưu nhé!</p>
+                        <Link to="/dashboard">
+                            <Button variant="secondary">Khám phá ngay</Button>
+                        </Link>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">Chưa có mục nào được lưu</h3>
-                    <p className="text-gray-500 mb-6">Hãy khám phá bài học và dự án, sau đó nhấn nút lưu nhé!</p>
-                    <Link to="/dashboard">
-                        <Button variant="secondary">Khám phá ngay</Button>
-                    </Link>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {savedItems.map(item => (
-                        <Link
-                            to={item.itemType === 'lesson' ? `/lessons/${item.itemId}` : `/projects/${item.itemId}`}
-                            key={item.id}
-                            className="group block h-full"
-                        >
-                            <Card className="h-full flex flex-col hover:shadow-lg transition-all border-gray-100 group-hover:border-arduino-teal/30">
-                                {item.imageUrl && (
-                                    <div className="h-40 bg-gray-100 overflow-hidden relative">
-                                        <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                        <div className="absolute top-2 right-2">
-                                            <Badge variant="default" className="bg-white/90 backdrop-blur shadow-sm text-black">
-                                                {item.itemType === 'project' ? 'Project' : 'Lesson'}
-                                            </Badge>
-                                        </div>
-                                    </div>
-                                )}
-                                <div className="p-5 flex-1 flex flex-col">
-                                    {!item.imageUrl && (
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <Badge variant={item.itemType === 'lesson' ? 'secondary' : 'default'}>
-                                                {item.itemType === 'lesson' ? <BookOpen className="w-3 h-3 mr-1" /> : <Cpu className="w-3 h-3 mr-1" />}
-                                                {item.itemType === 'lesson' ? 'Bài học' : 'Dự án'}
-                                            </Badge>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {savedItems.map(item => (
+                            <Link
+                                to={item.itemType === 'lesson' ? `/lessons/${item.itemId}` : `/projects/${item.itemId}`}
+                                key={item.id}
+                                className="group block h-full"
+                            >
+                                <Card className="h-full flex flex-col hover:border-primary transition-all duration-300">
+                                    {item.imageUrl && (
+                                        <div className="h-40 bg-muted overflow-hidden relative">
+                                            <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <div className="absolute top-2 right-2">
+                                                <Badge variant="secondary" className="bg-background/90 backdrop-blur shadow-sm">
+                                                    {item.itemType === 'project' ? 'Project' : 'Lesson'}
+                                                </Badge>
+                                            </div>
                                         </div>
                                     )}
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-arduino-teal transition-colors line-clamp-2">
-                                        {item.title}
-                                    </h3>
-                                    <p className="text-sm text-gray-500 line-clamp-2 mb-4 flex-1">
-                                        {item.description}
-                                    </p>
-                                    <div className="flex items-center justify-between pt-4 border-t border-gray-50 mt-auto">
-                                        <span className="text-xs text-gray-400">Đã lưu {new Date(item.createdAt).toLocaleDateString('vi-VN')}</span>
-                                        <button
-                                            onClick={(e) => handleRemove(item.id, e)}
-                                            className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
-                                            title="Bỏ lưu"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+                                    <div className="p-5 flex-1 flex flex-col">
+                                        {!item.imageUrl && (
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <Badge variant={item.itemType === 'lesson' ? 'secondary' : 'outline'}>
+                                                    {item.itemType === 'lesson' ? <BookOpen className="w-3 h-3 mr-1" /> : <Cpu className="w-3 h-3 mr-1" />}
+                                                    {item.itemType === 'lesson' ? 'Bài học' : 'Dự án'}
+                                                </Badge>
+                                            </div>
+                                        )}
+                                        <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                                            {item.title}
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">
+                                            {item.description}
+                                        </p>
+                                        <div className="flex items-center justify-between pt-4 border-t border-border mt-auto">
+                                            <span className="text-xs text-muted-foreground">Đã lưu {new Date(item.createdAt).toLocaleDateString('vi-VN')}</span>
+                                            <button
+                                                onClick={(e) => handleRemove(item.id, e)}
+                                                className="p-2 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-md transition-colors"
+                                                title="Bỏ lưu"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            </Card>
-                        </Link>
-                    ))}
-                </div>
-            )}
+                                </Card>
+                            </Link>
+                        ))}
+                    </div>
+                )}
+            </main>
         </div>
     );
 }
