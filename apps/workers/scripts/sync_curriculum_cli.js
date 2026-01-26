@@ -95,15 +95,19 @@ function main() {
     console.log(`📝 Writing SQL to ${SQL_OUTPUT_PATH}...`);
     fs.writeFileSync(SQL_OUTPUT_PATH, sqlStatements.join('\n'));
 
-    console.log(`🚀 Executing SQL on D1 (${DB_NAME})...`);
     try {
-        // Use --file to avoid shell limits
+        const args = process.argv.slice(2);
+        const isRemote = args.includes('--remote');
+        const envFlag = isRemote ? '--remote' : '--local';
+
+        console.log(`🚀 Executing SQL on D1 (${DB_NAME}) [${isRemote ? 'REMOTE' : 'LOCAL'}]...`);
+
         // Run from apps/workers directory where wrangler.toml is located
         const workersDir = path.join(__dirname, '..');
         // SQL path relative to CWD (apps/workers) => scripts/curriculum_sync.sql
         const sqlRelativePath = 'scripts/curriculum_sync.sql';
 
-        execSync(`npx wrangler d1 execute ${DB_NAME} --local --file="${sqlRelativePath}"`, {
+        execSync(`npx wrangler d1 execute ${DB_NAME} ${envFlag} --file="${sqlRelativePath}"`, {
             stdio: 'inherit',
             cwd: workersDir
         });
