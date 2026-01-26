@@ -90,7 +90,7 @@ export default function SavedPage() {
         // Here we just simulate
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><Loader2 className="w-8 h-8 text-arduino-teal animate-spin" /></div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><Loader2 className="w-8 h-8 text-muted-foreground animate-spin" /></div>;
 
     return (
         <div className="font-sans min-h-screen">
@@ -126,7 +126,7 @@ export default function SavedPage() {
                                     <div className="h-40 bg-gray-100 overflow-hidden relative">
                                         <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         <div className="absolute top-2 right-2">
-                                            <Badge variant="mint" className="bg-white/90 backdrop-blur shadow-sm">
+                                            <Badge variant="default" className="bg-white/90 backdrop-blur shadow-sm text-black">
                                                 {item.itemType === 'project' ? 'Project' : 'Lesson'}
                                             </Badge>
                                         </div>
@@ -135,7 +135,7 @@ export default function SavedPage() {
                                 <div className="p-5 flex-1 flex flex-col">
                                     {!item.imageUrl && (
                                         <div className="flex items-center gap-2 mb-3">
-                                            <Badge variant={item.itemType === 'lesson' ? 'secondary' : 'mint'}>
+                                            <Badge variant={item.itemType === 'lesson' ? 'secondary' : 'default'}>
                                                 {item.itemType === 'lesson' ? <BookOpen className="w-3 h-3 mr-1" /> : <Cpu className="w-3 h-3 mr-1" />}
                                                 {item.itemType === 'lesson' ? 'Bài học' : 'Dự án'}
                                             </Badge>

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { cn } from './Card'; // Re-use cn utility
+import { cn } from './Card';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -21,41 +21,36 @@ export function Button({
     ...props
 }: ButtonProps) {
     const variants = {
-        primary: "bg-arduino-teal text-white shadow-lg shadow-arduino-teal/20 hover:shadow-xl hover:shadow-arduino-teal/30 hover:-translate-y-0.5 active:translate-y-0",
-        secondary: "bg-white text-arduino-teal border-2 border-arduino-teal/10 hover:bg-arduino-mint/20 hover:border-arduino-teal/30",
-        ghost: "text-arduino-text-secondary hover:text-arduino-teal hover:bg-gray-100/50",
-        danger: "bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700",
+        primary: "bg-foreground text-background hover:opacity-90",
+        secondary: "bg-background text-foreground border border-input hover:bg-muted",
+        ghost: "hover:bg-muted hover:text-foreground",
+        danger: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
     };
 
     const sizes = {
-        sm: "py-1.5 px-3 text-sm rounded-lg",
-        md: "py-2 px-6 text-base rounded-xl",
-        lg: "py-3 px-8 text-lg rounded-2xl",
-        icon: "p-2 w-10 h-10 rounded-xl flex items-center justify-center",
+        sm: "h-8 px-3 text-xs",
+        md: "h-9 px-4 py-2",
+        lg: "h-10 px-8",
+        icon: "h-9 w-9",
     };
 
     return (
         <button
             className={cn(
-                "font-semibold transition-all duration-200 flex items-center justify-center gap-2",
+                "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
                 variants[variant],
                 sizes[size],
-                isLoading && "opacity-70 cursor-wait",
-                props.disabled && "opacity-50 cursor-not-allowed hover:transform-none hover:shadow-none",
                 className
             )}
             disabled={isLoading || props.disabled}
             {...props}
         >
             {isLoading && (
-                <svg className="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                </svg>
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
             )}
-            {!isLoading && leftIcon}
+            {!isLoading && leftIcon && <span className="mr-2">{leftIcon}</span>}
             {children}
-            {!isLoading && rightIcon}
+            {!isLoading && rightIcon && <span className="ml-2">{rightIcon}</span>}
         </button>
     );
 }

@@ -17,7 +17,47 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 State Machine (Máy trạng thái) - Ví dụ "Chiếc quạt máy"
+
+Máy quạt nhà bạn có các nút 1, 2, 3.
+- **Trạng thái 1**: Quạt quay chậm.
+- **Trạng thái 2**: Quạt quay vừa.
+- **Trạng thái 3**: Quạt quay nhanh.
+
+Khi bạn bấm nút số 2 -> Máy chuyển sang **Trạng thái 2**.
+Code cũng vậy thôi:
+```cpp
+int state = 1; // 1=Chậm, 2=Vừa, 3=Nhanh
+if (nhấn nút) state = 2; // Chuyển trạng thái
+```
+Gọi là "Máy trạng thái" nghe cho sang, chứ bản chất nó là biến `state` ghi nhớ "mình đang ở đâu".
+
+### 1.2 Nguyên tắc "Đa nhiệm" (Multitasking)
+
+Làm sao để vừa quét LED 7 đoạn (liên tục) vừa đọc nút nhấn (liên tục) vừa nháy đèn (1s/lần)?
+Nếu dùng `delay(1000)` để nháy đèn -> LED 7 đoạn sẽ tắt ngúm 1 giây -> **TOANG!**.
+
+**Giải pháp: Ông đầu bếp giỏi**
+- Ông ta KHÔNG bao giờ đứng nhìn nồi canh sôi 10 phút (`delay`).
+- Ông ta đảo nồi thịt -> Ngó nồi canh -> Thái hành -> Quay lại đảo thịt.
+- Mỗi việc chỉ tốn 1 tích tắc.
+
+Trong Code:
+- Dùng `millis()` (cái đồng hồ treo tường) để canh giờ.
+- "Bây giờ là 10h00, thái hành. 10h01, đảo thịt".
+- Không ai được phép dừng lại (`delay`) cả.
+
+### 1.3 Quy trình chuẩn: IPO (Input - Process - Output)
+
+Để đỡ loạn code, hãy chia việc ra 3 khâu:
+
+1.  **INPUT (Đi chợ)**: Đọc hết các cảm biến, nút bấm, biến trở... cất vào biến.
+2.  **PROCESS (Nấu ăn)**: Tính toán xem đèn nào cần sáng, số nào cần hiện, dựa trên nguyên liệu vừa mua.
+3.  **OUTPUT (Dọn món)**: Ra lệnh cho đèn sáng, màn hình hiện.
+
+Đừng vừa đi chợ vừa nấu ăn, sẽ rất rối!
 
 ### 1.1 State Machine (Máy trạng thái)
 
@@ -99,7 +139,68 @@ void loop() {
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+Bài này cần nhiều đồ chơi hơn. Hãy cắm sẵn lên breadboard:
+
+**1. Input:**
+- **Nút nhấn**: Pin 2 (GND ── Nút ── Pin 2).
+- **Biến trở**: Chân giữa vào Pin A0.
+
+**2. Output:**
+- **LED đơn**: Pin 13 (Qua trở 220Ω).
+- **LED 7 đoạn (nếu có bài dùng)**: Đấu nối như tuần 2.
+
+*Dùng breadboard chia đôi nguồn 5V và GND dọc theo 2 thanh rail xanh đỏ để dễ cắm.*
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Nháy LED không dùng delay (Blink without Delay)
+**Mục tiêu**: Làm quen với `millis()`.
+
+```cpp
+unsigned long thoiGianCu = 0;
+
+void setup() {
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    // Kiểm tra đồng hồ, nếu trôi qua 1000ms thì làm việc
+    if (millis() - thoiGianCu >= 1000) {
+        thoiGianCu = millis(); // Cập nhật lại thời gian cũ
+        
+        // Đảo trạng thái đèn (đang tắt thành bật, đang bật thành tắt)
+        digitalWrite(13, !digitalRead(13));
+    }
+}
+```
+
+### 2.2 Drill 2: Công tắc bật đèn (State Variable)
+**Mục tiêu**: Dùng biến để nhớ trạng thái.
+
+```cpp
+int trangThaiDen = 0; // 0: Tắt, 1: Bật
+
+void setup() {
+    pinMode(2, INPUT_PULLUP); // Nút nhấn
+    pinMode(13, OUTPUT);      // Đèn
+}
+
+void loop() {
+    if (digitalRead(2) == LOW) { // Nếu nhấn nút
+        trangThaiDen = 1 - trangThaiDen; // Đảo 0 thành 1, 1 thành 0
+        digitalWrite(13, trangThaiDen);
+        delay(200); // Chống dội phím đơn giản
+    }
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 LED trang trí theo pot
 
@@ -574,7 +675,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 Chương trình "đứng" khi tích hợp
 
@@ -601,7 +702,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -624,7 +725,7 @@ void loop() {
 
 ---
 
-## 📋 Phần 5: Quiz tự kiểm tra
+## 📋 Phần 6: Quiz tự kiểm tra
 
 ### Câu 1:
 Tại sao nên dùng millis() thay vì delay() khi tích hợp nhiều I/O?

@@ -138,6 +138,38 @@ export const ARDUINO_KNOWLEDGE_BASE = {
         }
     },
 
+    // Hướng dẫn đấu nối chi tiết (Text-based wiring diagrams)
+    wiring_guide: [
+        {
+            component: 'LED',
+            guide: '1. Chân dài (Anode +) ──[Trở 220Ω]──> Pin Digital (VD: D13)\n2. Chân ngắn (Cathode -) ──> GND\n⚠️ Lưu ý: Không được quên điện trở hạn dòng!'
+        },
+        {
+            component: 'Button (Nút nhấn)',
+            guide: 'Cách 1 (INPUT_PULLUP - Khuyên dùng):\n1. Một chân nút ──> Pin Digital (VD: D2)\n2. Chân chéo đối diện ──> GND\n\nCách 2 (Điện trở ngoài):\n1. Một chân lên 5V\n2. Chân kia vào Pin Digital VÀ qua trở 10k xuống GND.'
+        },
+        {
+            component: 'Biến trở (Potentiometer)',
+            guide: '1. Chân trái ──> GND\n2. Chân giữa (Wiper) ──> Pin Analog (VD: A0)\n3. Chân phải ──> 5V\n(Có thể đổi chỗ chân trái/phải để đảo chiều tăng giảm)'
+        },
+        {
+            component: 'HC-SR04 (Siêu âm)',
+            guide: '1. VCC ──> 5V Arduino\n2. GND ──> GND Arduino\n3. TRIG ──> Pin Digital (VD: D9)\n4. ECHO ──> Pin Digital (VD: D10)'
+        },
+        {
+            component: 'LCD I2C (1602)',
+            guide: '1. GND ──> GND\n2. VCC ──> 5V\n3. SDA ──> A4 (Uno) hoặc D21 (ESP32)\n4. SCL ──> A5 (Uno) hoặc D22 (ESP32)'
+        },
+        {
+            component: 'DS18B20 (Nhiệt độ)',
+            guide: '1. GND (Chân trái) ──> GND\n2. DQ (Chân giữa) ──> Pin Digital (VD: D2)\n3. VCC (Chân phải) ──> 5V\n⚠️ QUAN TRỌNG: Phải có điện trở 4.7kΩ nối giữa chân DQ và VCC (Pull-up).'
+        },
+        {
+            component: 'Servo Motor',
+            guide: '1. Dây Nâu/Đen ──> GND\n2. Dây Đỏ ──> 5V\n3. Dây Cam/Vàng (Signal) ──> Pin PWM (VD: D9)'
+        }
+    ],
+
     // Common mistakes và cách sửa
     common_mistakes: [
         {
@@ -229,10 +261,18 @@ export function searchKnowledge(query: string): string[] {
         }
     }
 
+
     // Search hardware
     for (const [key, hw] of Object.entries(ARDUINO_KNOWLEDGE_BASE.hardware)) {
         if (keywords.some(kw => hw.name.toLowerCase().includes(kw) || key.includes(kw))) {
             results.push(`**${hw.name}**: ${JSON.stringify(hw, null, 2)}`);
+        }
+    }
+
+    // Search wiring guide
+    for (const item of ARDUINO_KNOWLEDGE_BASE.wiring_guide) {
+        if (keywords.some(kw => item.component.toLowerCase().includes(kw) || kw === 'wiring' || kw === 'dau noi')) {
+            results.push(`**ĐẤU NỐI (${item.component})**:\n\`\`\`\n${item.guide}\n\`\`\``);
         }
     }
 

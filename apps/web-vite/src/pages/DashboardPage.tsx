@@ -1,25 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import {
-    BookOpen,
-    GraduationCap,
-    Zap,
-    Clock,
-    ChevronRight,
-    LogOut,
-    Trophy,
-    Target,
-    Cpu,
-    Award,
-    Sparkles,
-    PlayCircle,
-    Flame
-} from 'lucide-react';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { cn } from '../components/ui/Card';
-import OnboardingTour from '../components/OnboardingTour';
 
 // API Base URL
 const API_BASE = import.meta.env.PROD
@@ -90,95 +71,54 @@ export default function DashboardPage() {
     };
 
     return (
-        <div className="min-h-screen bg-arduino-base pb-20 font-sans">
+        <div className="min-h-screen bg-background font-sans text-foreground">
             {/* Header - Mobile Only */}
-            <header className="lg:hidden sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <Link to="/" className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-arduino-teal flex items-center justify-center">
-                                <Cpu className="w-5 h-5 text-white" />
-                            </div>
-                            <span className="text-lg font-bold text-gray-800">KNTT STEM</span>
-                        </Link>
-                        <button
-                            onClick={handleLogout}
-                            className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-red-500 transition-colors"
-                        >
-                            <LogOut className="w-5 h-5" />
-                        </button>
-                    </div>
-                </div>
+            <header className="lg:hidden border-b border-border p-4 flex justify-between items-center">
+                <Link to="/" className="font-bold text-lg">KNTT STEM</Link>
+                <button
+                    onClick={handleLogout}
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                    Đăng xuất
+                </button>
             </header>
 
-            {/* Tour Guide */}
-            <OnboardingTour />
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="max-w-5xl mx-auto px-4 py-8">
                 {/* Welcome Section */}
-                <div id="dashboard-welcome" className="mb-10 text-center md:text-left animate-slide-up">
-                    <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-2 tracking-tight">
-                        Xin chào, <span className="text-arduino-teal">{user?.displayName || user?.username || 'Bạn hiền'}</span>! 👋
+                <div className="mb-8 p-6 border border-border rounded-lg bg-card">
+                    <h1 className="text-2xl font-bold mb-2">
+                        Xin chào, {user?.displayName || user?.username || 'Bạn hiền'}!
                     </h1>
-                    <p className="text-lg text-gray-500 max-w-2xl bg-white/50 inline-block px-4 py-1 rounded-full border border-gray-100 shadow-sm">
+                    <p className="text-muted-foreground">
                         Sẵn sàng cho bài học hôm nay chưa? Hãy tiếp tục hành trình chinh phục IoT.
                     </p>
                 </div>
 
                 {/* Stats Grid */}
-                <div id="dashboard-stats" className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-                    <StatCard
-                        icon={<BookOpen className="w-6 h-6" />}
-                        label="Bài học"
-                        value={`${progress.lessons.completed}/${progress.lessons.total}`}
-                        color="blue"
-                    />
-                    <StatCard
-                        icon={<Zap className="w-6 h-6" />}
-                        label="Labs"
-                        value={`${progress.labs.completed}/${progress.labs.total}`}
-                        color="orange"
-                    />
-                    <StatCard
-                        icon={<Trophy className="w-6 h-6" />}
-                        label="Điểm TB"
-                        value={`${progress.avgQuizScore ?? '--'}%`}
-                        color="purple"
-                    />
-                    <StatCard
-                        icon={<Target className="w-6 h-6" />}
-                        label="Tiến độ"
-                        value={`${progress.overall}%`}
-                        color="teal"
-                    />
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <StatCard label="Bài học" value={`${progress.lessons.completed}/${progress.lessons.total}`} />
+                    <StatCard label="Labs" value={`${progress.labs.completed}/${progress.labs.total}`} />
+                    <StatCard label="Điểm TB" value={`${progress.avgQuizScore ?? '--'}%`} />
+                    <StatCard label="Tiến độ" value={`${progress.overall}%`} />
                 </div>
 
                 {/* Main Dashboard Layout */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Courses */}
-                    <div className="lg:col-span-2 space-y-8 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-                        <section id="dashboard-courses">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                    <GraduationCap className="w-6 h-6 text-arduino-teal" />
-                                    Khóa học đang diễn ra
-                                </h2>
-                            </div>
+                    <div className="lg:col-span-2 space-y-8">
+                        <section>
+                            <h2 className="text-xl font-bold mb-4">Khóa học đang diễn ra</h2>
 
                             {loading ? (
-                                <div className="animate-pulse space-y-4">
-                                    <div className="h-48 bg-white rounded-3xl border border-gray-100 shadow-sm"></div>
-                                </div>
+                                <div className="p-4 border border-border rounded-lg text-muted-foreground">Đang tải...</div>
                             ) : courses.length === 0 ? (
-                                <Card className="p-10 text-center border-dashed border-2 border-gray-200 bg-white/50">
-                                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-gray-400">
-                                        <BookOpen className="w-8 h-8" />
-                                    </div>
-                                    <h3 className="text-lg font-bold text-gray-900">Chưa đăng ký khóa học nào</h3>
-                                    <p className="text-gray-500 mb-6">Hãy bắt đầu hành trình của bạn ngay hôm nay.</p>
-                                    <Button>Khám phá khóa học</Button>
-                                </Card>
+                                <div className="p-8 border border-border rounded-lg text-center bg-card">
+                                    <h3 className="text-lg font-bold mb-2">Chưa đăng ký khóa học nào</h3>
+                                    <p className="text-muted-foreground mb-4">Hãy bắt đầu hành trình của bạn ngay hôm nay.</p>
+                                    <button className="px-4 py-2 bg-foreground text-background rounded font-medium">Khám phá khóa học</button>
+                                </div>
                             ) : (
-                                <div className="space-y-6">
+                                <div className="space-y-4">
                                     {courses.map((course) => (
                                         <CourseCard key={course.id} course={course} progress={progress.overall} />
                                     ))}
@@ -187,83 +127,31 @@ export default function DashboardPage() {
                         </section>
                     </div>
 
-                    {/* Right Column: Quick Actions & Leaderboard */}
-                    <div className="space-y-8 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-                        {/* Make Learning a Habit */}
-                        <Card id="dashboard-challenges" className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-xl shadow-indigo-500/20 overflow-hidden relative group">
-                            <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
-                            <div className="relative z-10 p-6">
-                                <div className="flex justify-between items-start">
-                                    <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
-                                        <Flame className="w-6 h-6 text-yellow-300 animate-pulse-soft" />
-                                    </div>
-                                    <span className="bg-white/20 text-xs font-bold px-2 py-1 rounded-md">NEW</span>
-                                </div>
-                                <h3 className="text-xl font-bold mb-2">Tiến độ học tập</h3>
-                                <p className="text-indigo-100 text-sm mb-4">
-                                    Bạn đã hoàn thành {progress.lessons.completed}/{progress.lessons.total} bài học. Tiếp tục nào!
-                                </p>
-                                <div className="flex gap-2 mb-4">
-                                    {/* Hiển thị tiến độ bài học */}
-                                    {Array.from({ length: Math.min(7, progress.lessons.total) }).map((_, idx) => {
-                                        const isCompleted = idx < progress.lessons.completed;
-                                        return (
-                                            <div
-                                                key={idx}
-                                                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 ${isCompleted
-                                                    ? 'bg-green-400 text-green-900 border-white/20'
-                                                    : 'bg-white/10 text-white/50 border-transparent'
-                                                    }`}
-                                            >
-                                                {idx + 1}
-                                            </div>
-                                        );
-                                    })}
-                                    {progress.lessons.total > 7 && (
-                                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs text-white/50">
-                                            +{progress.lessons.total - 7}
-                                        </div>
-                                    )}
-                                </div>
-                                <Link to={courses[0]?.weeks?.[0]?.id ? `/weeks/${courses[0].weeks[0].id}` : '/dashboard'}>
-                                    <Button className="w-full bg-white text-indigo-600 hover:bg-indigo-50 border-0 font-bold shadow-none">
-                                        Học tiếp ngay <ChevronRight className="w-4 h-4 ml-1" />
-                                    </Button>
-                                </Link>
+                    {/* Right Column: Quick Actions */}
+                    <div className="space-y-8">
+                        {/* Progress Summary Card */}
+                        <div className="p-6 border border-border rounded-lg bg-card">
+                            <div className="flex justify-between items-start mb-4">
+                                <h3 className="text-lg font-bold">Tiến độ học tập</h3>
                             </div>
-                        </Card>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                Bạn đã hoàn thành {progress.lessons.completed}/{progress.lessons.total} bài học.
+                            </p>
+                            <Link to={courses[0]?.weeks?.[0]?.id ? `/weeks/${courses[0].weeks[0].id}` : '/dashboard'}>
+                                <button className="w-full py-2 bg-foreground text-background rounded font-medium hover:opacity-90 transition-opacity">
+                                    Học tiếp ngay
+                                </button>
+                            </Link>
+                        </div>
 
                         {/* Quick Links */}
                         <section>
-                            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <Zap className="w-5 h-5 text-amber-500" />
-                                Truy cập nhanh
-                            </h2>
-                            <div className="space-y-3">
-                                <QuickLink
-                                    icon={<Trophy className="w-5 h-5" />}
-                                    label="Bảng xếp hạng"
-                                    href="/leaderboard"
-                                    color="yellow"
-                                />
-                                <QuickLink
-                                    icon={<Zap className="w-5 h-5" />}
-                                    label="Luyện tập (Exam Drills)"
-                                    href="/drills"
-                                    color="orange"
-                                />
-                                <QuickLink
-                                    icon={<Clock className="w-5 h-5" />}
-                                    label="Lịch sử Quiz"
-                                    href="/history"
-                                    color="blue"
-                                />
-                                <QuickLink
-                                    icon={<Award className="w-5 h-5" />}
-                                    label="Chứng chỉ"
-                                    href="/certificate"
-                                    color="purple"
-                                />
+                            <h2 className="text-lg font-bold mb-4">Truy cập nhanh</h2>
+                            <div className="grid grid-cols-1 gap-2">
+                                <QuickLink label="Bảng xếp hạng" href="/leaderboard" />
+                                <QuickLink label="Luyện tập (Exam Drills)" href="/drills" />
+                                <QuickLink label="Lịch sử Quiz" href="/history" />
+                                <QuickLink label="Chứng chỉ" href="/certificate" />
                             </div>
                         </section>
                     </div>
@@ -274,22 +162,12 @@ export default function DashboardPage() {
 }
 
 // Components
-function StatCard({ icon, label, value, color }: { icon: React.ReactNode, label: string, value: string, color: 'blue' | 'orange' | 'purple' | 'teal' }) {
-    const colors = {
-        blue: 'bg-arduino-sky text-blue-600',
-        orange: 'bg-orange-50 text-orange-600',
-        purple: 'bg-arduino-lavender text-purple-600',
-        teal: 'bg-arduino-mint text-arduino-teal'
-    };
-
+function StatCard({ label, value }: { label: string, value: string }) {
     return (
-        <Card className="p-5 flex flex-col items-center justify-center hover:shadow-hover transition-all border-none bg-white shadow-soft hover:scale-[1.02] cursor-default">
-            <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-3 transition-colors shadow-sm", colors[color])}>
-                {icon}
-            </div>
-            <span className="text-2xl font-black text-gray-800 tabular-nums mb-0.5 tracking-tight">{value}</span>
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{label}</span>
-        </Card>
+        <div className="p-4 border border-border rounded-lg bg-card">
+            <span className="block text-2xl font-bold mb-1">{value}</span>
+            <span className="text-xs text-muted-foreground uppercase">{label}</span>
+        </div>
     );
 }
 
@@ -304,58 +182,51 @@ function CourseCard({ course, progress }: { course: Course; progress: number }) 
     };
 
     return (
-        <Card className="p-0 overflow-hidden border-none shadow-card hover:shadow-hover transition-all duration-300 group bg-white">
-            <div className="p-6 md:p-8">
-                <div className="flex flex-col md:flex-row gap-6 md:items-start justify-between">
-                    <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-3">
-                            <span className="bg-arduino-mint text-arduino-teal text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-                                {course.code}
-                            </span>
-                            <span className="text-gray-400 text-xs font-medium flex items-center gap-1">
-                                <Sparkles className="w-3 h-3" /> Official Course
-                            </span>
-                        </div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-arduino-teal transition-colors">
-                            {course.title}
-                        </h3>
-                        <p className="text-gray-500 leading-relaxed mb-6 font-medium">{course.description}</p>
+        <div className="p-6 border border-border rounded-lg bg-card hover:bg-muted/30 transition-colors">
+            <div className="flex flex-col md:flex-row gap-6 justify-between mb-6">
+                <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-bold px-2 py-0.5 border border-border rounded uppercase">
+                            {course.code}
+                        </span>
+                        <span className="text-xs text-muted-foreground">Official Course</span>
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">{course.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-4">{course.description}</p>
 
-                        {/* Progress Bar */}
-                        <div className="space-y-2 max-w-md">
-                            <div className="flex justify-between text-sm font-bold">
-                                <span className="text-gray-400">Tiến độ khóa học</span>
-                                <span className="text-arduino-teal">{progress}%</span>
-                            </div>
-                            <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-arduino-teal to-teal-400 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(20,184,166,0.3)]" style={{ width: `${progress}%` }} />
-                            </div>
+                    {/* Progress Bar */}
+                    <div className="max-w-md">
+                        <div className="flex justify-between text-xs font-medium mb-1">
+                            <span className="text-muted-foreground">Tiến độ khóa học</span>
+                            <span>{progress}%</span>
+                        </div>
+                        <div className="h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-foreground" style={{ width: `${progress}%` }} />
                         </div>
                     </div>
+                </div>
 
-                    <div className="shrink-0 flex md:flex-col gap-3">
-                        <Button
-                            onClick={handleContinue}
-                            disabled={!firstWeekId}
-                            className="w-full md:w-auto shadow-lg shadow-arduino-teal/20 bg-arduino-teal hover:bg-teal-600 border-none h-12 px-6 rounded-xl text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Tiếp tục học <PlayCircle className="w-5 h-5 ml-2" />
-                        </Button>
-                        <Button
-                            onClick={handleContinue}
-                            disabled={!firstWeekId}
-                            variant="secondary"
-                            className="w-full md:w-auto h-12 px-6 rounded-xl text-base border-gray-100 bg-gray-50 text-gray-600 hover:bg-white hover:border-gray-200 disabled:opacity-50"
-                        >
-                            Chi tiết
-                        </Button>
-                    </div>
+                <div className="flex md:flex-col gap-2 shrink-0">
+                    <button
+                        onClick={handleContinue}
+                        disabled={!firstWeekId}
+                        className="px-4 py-2 bg-foreground text-background rounded font-medium hover:opacity-90 disabled:opacity-50"
+                    >
+                        Tiếp tục học
+                    </button>
+                    <button
+                        onClick={handleContinue}
+                        disabled={!firstWeekId}
+                        className="px-4 py-2 border border-border rounded font-medium hover:bg-muted disabled:opacity-50 text-center"
+                    >
+                        Chi tiết
+                    </button>
                 </div>
             </div>
 
-            {/* Weeks Strip */}
-            <div className="bg-arduino-base/50 border-t border-gray-50 p-4 overflow-x-auto scrollbar-hide">
-                <div className="flex gap-2 min-w-max">
+            {/* Weeks Strip (Simplified) */}
+            <div className="border-t border-border pt-4 overflow-x-auto">
+                <div className="flex gap-2">
                     {course.weeks.map((week, idx) => {
                         const isCompleted = idx < 1;
                         const isCurrent = idx === 1;
@@ -364,12 +235,10 @@ function CourseCard({ course, progress }: { course: Course; progress: number }) 
                             <Link
                                 key={week.id}
                                 to={`/weeks/${week.id}`}
-                                className={cn(
-                                    "w-12 h-12 rounded-xl flex items-center justify-center text-sm font-bold transition-all border",
-                                    isCompleted ? "bg-arduino-teal text-white border-arduino-teal shadow-md shadow-arduino-teal/20" :
-                                        isCurrent ? "bg-white text-arduino-teal border-arduino-teal ring-2 ring-arduino-teal/20 shadow-lg scale-105" :
-                                            "bg-white text-gray-300 border-gray-100 hover:border-gray-300 hover:text-gray-500 hover:scale-105"
-                                )}
+                                className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold border transition-colors ${isCompleted ? "bg-foreground text-background border-foreground" :
+                                        isCurrent ? "bg-background text-foreground border-foreground ring-1 ring-foreground" :
+                                            "bg-background text-muted-foreground border-border hover:border-muted-foreground"
+                                    }`}
                                 title={week.title}
                             >
                                 {week.weekNumber}
@@ -378,29 +247,15 @@ function CourseCard({ course, progress }: { course: Course; progress: number }) 
                     })}
                 </div>
             </div>
-        </Card>
+        </div>
     );
 }
 
-function QuickLink({ icon, label, href, color }: { icon: React.ReactNode, label: string, href: string, color: 'yellow' | 'orange' | 'blue' | 'purple' }) {
-    const colors = {
-        yellow: 'text-amber-500 bg-amber-50 group-hover:bg-amber-100',
-        orange: 'text-orange-500 bg-orange-50 group-hover:bg-orange-100',
-        blue: 'text-blue-500 bg-blue-50 group-hover:bg-blue-100',
-        purple: 'text-purple-500 bg-purple-50 group-hover:bg-purple-100',
-    };
-
+function QuickLink({ label, href }: { label: string, href: string }) {
     return (
-        <Link to={href} className="flex items-center gap-4 p-4 rounded-2xl border border-transparent bg-white shadow-soft hover:shadow-card hover:-translate-y-0.5 transition-all group">
-            <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center transition-colors", colors[color])}>
-                {icon}
-            </div>
-            <span className="flex-1 font-bold text-gray-700 group-hover:text-gray-900 transition-colors">
-                {label}
-            </span>
-            <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-arduino-teal group-hover:text-white transition-all">
-                <ChevronRight className="w-4 h-4" />
-            </div>
+        <Link to={href} className="block p-3 border border-border rounded bg-card hover:bg-muted transition-colors text-sm font-medium">
+            {label}
+            <span className="float-right text-muted-foreground">&rarr;</span>
         </Link>
     );
 }

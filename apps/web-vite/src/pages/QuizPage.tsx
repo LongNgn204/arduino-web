@@ -308,24 +308,24 @@ export default function QuizPage() {
             {/* Header */}
             <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm px-6">
                 <div className="max-w-4xl mx-auto">
-                    <div className="flex items-center justify-between h-16">
+                    <div className="flex items-center justify-between h-14">
                         <div className="flex items-center gap-4">
                             <Link
                                 to="/dashboard"
-                                className="p-2 -ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors"
+                                className="p-2 -ml-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                             >
-                                <ArrowLeft className="w-5 h-5" />
+                                <ArrowLeft className="w-4 h-4" />
                             </Link>
                             <div>
-                                <h1 className="text-sm font-bold text-gray-900">{quiz.title}</h1>
-                                <p className="text-xs text-gray-500">Câu {currentIndex + 1}/{quiz.questions.length}</p>
+                                <h1 className="text-sm font-bold">{quiz.title}</h1>
+                                <p className="text-xs text-muted-foreground">Câu {currentIndex + 1}/{quiz.questions.length}</p>
                             </div>
                         </div>
 
                         {timeLeft !== null && (
                             <Badge
                                 variant="outline"
-                                className={`font-mono text-sm py-1 ${timeLeft < 60 ? 'bg-red-50 text-red-600 border-red-200 animate-pulse' : 'bg-gray-100 text-gray-700 border-gray-200'}`}
+                                className={`font-mono text-sm py-1 ${timeLeft < 60 ? 'text-destructive border-destructive animate-pulse' : 'text-muted-foreground'}`}
                             >
                                 <Clock className="w-4 h-4 mr-2" />
                                 {formatTime(timeLeft)}
@@ -334,9 +334,9 @@ export default function QuizPage() {
                     </div>
                 </div>
                 {/* Progress Bar Container - Absolute bottom */}
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-100">
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-muted">
                     <div
-                        className="h-full bg-arduino-teal transition-all duration-300 ease-out"
+                        className="h-full bg-primary transition-all duration-300 ease-out"
                         style={{ width: `${progress}%` }}
                     />
                 </div>
@@ -344,82 +344,71 @@ export default function QuizPage() {
 
             {/* Question */}
             <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-8 flex flex-col justify-center">
-                <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-lg shadow-gray-200/50 mb-8 relative overflow-hidden">
-                    {/* Background decoration */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-arduino-teal/5 to-transparent rounded-bl-full -mr-16 -mt-16 pointer-events-none" />
-
-                    <div className="relative">
-                        <div className="flex items-start gap-5 mb-8">
-                            <span className="flex-shrink-0 w-12 h-12 rounded-2xl bg-arduino-teal/10 text-arduino-teal flex items-center justify-center font-bold text-lg shadow-sm border border-arduino-teal/20">
-                                {currentIndex + 1}
-                            </span>
-                            <div>
-                                <p className="text-gray-900 text-xl font-medium leading-relaxed">{currentQuestion.content}</p>
-                                <div className="flex items-center gap-3 mt-3">
-                                    <Badge variant="secondary" className="text-gray-600 bg-gray-100">
-                                        {currentQuestion.points} điểm
-                                    </Badge>
-                                    <Badge variant="outline" className="text-gray-500 border-gray-200">
-                                        {currentQuestion.type === 'single' ? 'Chọn 1 đáp án' :
-                                            currentQuestion.type === 'multiple' ? 'Chọn nhiều đáp án' :
-                                                currentQuestion.type === 'truefalse' ? 'Đúng/Sai' : 'Điền từ'}
-                                    </Badge>
-                                </div>
+                <div className="bg-card rounded-md p-6 border border-border mb-8 relative">
+                    <div className="flex items-start gap-4 mb-6">
+                        <span className="flex-shrink-0 w-8 h-8 rounded bg-muted text-primary flex items-center justify-center font-bold text-sm border border-border">
+                            {currentIndex + 1}
+                        </span>
+                        <div>
+                            <p className="text-foreground text-lg font-medium leading-relaxed">{currentQuestion.content}</p>
+                            <div className="flex items-center gap-2 mt-2">
+                                <Badge variant="secondary">
+                                    {currentQuestion.points} điểm
+                                </Badge>
+                                <Badge variant="outline">
+                                    {currentQuestion.type === 'single' ? 'Chọn 1 đáp án' :
+                                        currentQuestion.type === 'multiple' ? 'Chọn nhiều đáp án' :
+                                            currentQuestion.type === 'truefalse' ? 'Đúng/Sai' : 'Điền từ'}
+                                </Badge>
                             </div>
                         </div>
+                    </div>
 
-                        {/* Options */}
-                        {/* Options or Input */}
-                        <div className="space-y-3 pl-0 md:pl-16">
-                            {currentQuestion.type === 'fill_in_blank' ? (
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">Câu trả lời của bạn:</label>
-                                    <input
-                                        type="text"
-                                        value={(answers[currentQuestion.id] as string) || ''}
-                                        onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
+                    {/* Options */}
+                    <div className="space-y-3 pl-0 md:pl-12">
+                        {currentQuestion.type === 'fill_in_blank' ? (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Câu trả lời của bạn:</label>
+                                <input
+                                    type="text"
+                                    value={(answers[currentQuestion.id] as string) || ''}
+                                    onChange={(e) => handleAnswer(currentQuestion.id, e.target.value)}
+                                    disabled={submitted}
+                                    placeholder="Nhập câu trả lời..."
+                                    className="w-full px-4 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+                                />
+                                {submitted && (
+                                    <div className="mt-2 text-sm">
+                                        <span className="font-bold">Đáp án đúng: </span>
+                                        <span className="text-green-600 font-medium">{currentQuestion.correctAnswer}</span>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            currentQuestion.options?.map((option, index) => {
+                                const isSelected = answers[currentQuestion.id] === index;
+
+                                return (
+                                    <button
+                                        key={index}
+                                        onClick={() => handleAnswer(currentQuestion.id, index)}
                                         disabled={submitted}
-                                        placeholder="Nhập câu trả lời..."
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-arduino-teal/20 focus:border-arduino-teal/50 transition-all font-medium text-gray-800"
-                                    />
-                                    {submitted && (
-                                        <div className="mt-2 text-sm">
-                                            <span className="font-bold text-gray-600">Đáp án đúng: </span>
-                                            <span className="text-green-600 font-medium">{currentQuestion.correctAnswer}</span>
-                                        </div>
-                                    )}
-                                </div>
-                            ) : (
-                                currentQuestion.options?.map((option, index) => {
-                                    const isSelected = answers[currentQuestion.id] === index;
-
-                                    // Logic hiển thị đúng sai sau khi nộp (chỉ làm màu, logic thật ở server)
-                                    // Vì answers lưu index, correctAnswer cũng lưu index (string '0', '1') cho MCQ
-
-                                    return (
-                                        <button
-                                            key={index}
-                                            onClick={() => handleAnswer(currentQuestion.id, index)}
-                                            disabled={submitted}
-                                            className={`w-full text-left p-4 rounded-xl border-2 transition-all group relative ${isSelected
-                                                ? 'border-arduino-teal bg-arduino-teal/5 shadow-md shadow-arduino-teal/10'
-                                                : 'border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50'
-                                                }`}
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-colors ${isSelected
-                                                    ? 'bg-arduino-teal text-white'
-                                                    : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200'
-                                                    }`}>
-                                                    {String.fromCharCode(65 + index)}
-                                                </span>
-                                                <span className={`text-base ${isSelected ? 'text-arduino-teal font-medium' : 'text-gray-600'}`}>{option}</span>
-                                            </div>
-                                        </button>
-                                    );
-                                })
-                            )}
-                        </div>
+                                        className={`w-full text-left p-3 rounded-md border transition-all flex items-center gap-3 ${isSelected
+                                            ? 'border-primary bg-primary/5'
+                                            : 'border-input hover:bg-muted'
+                                            }`}
+                                    >
+                                        <span className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold ${isSelected
+                                            ? 'bg-primary text-primary-foreground'
+                                            : 'bg-muted text-muted-foreground'
+                                            }`}>
+                                            {String.fromCharCode(65 + index)}
+                                        </span>
+                                        <span className={`text-sm ${isSelected ? 'font-medium text-primary' : 'text-foreground'}`}>{option}</span>
+                                    </button>
+                                );
+                            })
+                        )}
                     </div>
                 </div>
 
@@ -437,7 +426,6 @@ export default function QuizPage() {
                         <Button
                             onClick={handleSubmit}
                             disabled={submitting}
-                            className="bg-arduino-teal hover:bg-teal-600 shadow-lg shadow-arduino-teal/20 px-8"
                         >
                             {submitting ? (
                                 <>
@@ -454,7 +442,6 @@ export default function QuizPage() {
                     ) : (
                         <Button
                             onClick={() => setCurrentIndex(prev => Math.min(quiz.questions.length - 1, prev + 1))}
-                            className="bg-gray-900 hover:bg-black text-white px-6"
                         >
                             Câu tiếp
                             <ChevronRight className="w-4 h-4 ml-2" />
@@ -465,19 +452,19 @@ export default function QuizPage() {
                 {/* Question Navigator */}
                 <div className="mt-12">
                     <div className="flex items-center gap-2 mb-4">
-                        <HelpCircle className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm font-medium text-gray-500">Danh sách câu hỏi</span>
+                        <HelpCircle className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm font-medium text-muted-foreground">Danh sách câu hỏi</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                         {quiz.questions.map((q, i) => (
                             <button
                                 key={q.id}
                                 onClick={() => setCurrentIndex(i)}
-                                className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${i === currentIndex
-                                    ? 'bg-gray-900 text-white shadow-lg'
+                                className={`w-8 h-8 rounded text-xs font-medium transition-all ${i === currentIndex
+                                    ? 'bg-primary text-primary-foreground'
                                     : answers[q.id] !== undefined
-                                        ? 'bg-arduino-teal/10 text-arduino-teal border border-arduino-teal/30'
-                                        : 'bg-white border border-gray-200 text-gray-400 hover:border-gray-300 hover:text-gray-600'
+                                        ? 'bg-muted text-foreground border border-input'
+                                        : 'bg-background border border-input text-muted-foreground hover:bg-muted'
                                     }`}
                             >
                                 {i + 1}

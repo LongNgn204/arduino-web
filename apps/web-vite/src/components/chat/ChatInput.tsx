@@ -109,34 +109,34 @@ export default function ChatInput({
     };
 
     return (
-        <div className={cn("bg-white border-t border-gray-100 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]", className)}>
+        <div className={cn("bg-background border-t border-border p-4", className)}>
             {/* Attachments Preview */}
             {attachments.length > 0 && (
-                <div className="flex gap-2 overflow-x-auto py-2 mb-2 scrollbar-thin">
+                <div className="flex gap-2 overflow-x-auto py-2 mb-2">
                     {attachments.map((file, idx) => (
-                        <div key={idx} className="relative group flex-shrink-0 animate-fade-in">
-                            <div className="w-14 h-14 rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden">
+                        <div key={idx} className="relative group flex-shrink-0">
+                            <div className="w-12 h-12 rounded border border-border bg-muted flex items-center justify-center overflow-hidden">
                                 {file.type === 'image' ? (
                                     <img src={file.content} alt={file.name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <FileText className="w-6 h-6 text-gray-400" />
+                                    <FileText className="w-5 h-5 text-muted-foreground" />
                                 )}
                             </div>
                             <button
                                 onClick={() => removeAttachment(idx)}
-                                className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5 shadow-md hover:bg-red-600 transition-colors"
+                                className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full p-0.5"
                             >
                                 <X className="w-3 h-3" />
                             </button>
-                            <p className="text-[9px] text-gray-500 truncate w-14 text-center mt-0.5">{file.name}</p>
+                            <p className="text-[9px] text-muted-foreground truncate w-12 text-center mt-0.5">{file.name}</p>
                         </div>
                     ))}
                 </div>
             )}
 
-            <div className="flex items-end gap-2 bg-gray-50/80 backdrop-blur p-2 rounded-2xl border border-gray-200 focus-within:ring-2 focus-within:ring-arduino-teal/20 focus-within:border-arduino-teal transition-all shadow-sm hover:shadow-md hover:bg-white group">
-                <label className="p-2 text-gray-400 hover:text-arduino-teal cursor-pointer transition-colors rounded-xl hover:bg-indigo-50 flex-shrink-0 active:scale-95">
-                    <Paperclip className="w-5 h-5" />
+            <div className="flex items-end gap-2 bg-background border border-input rounded-md p-2 focus-within:ring-1 focus-within:ring-ring transition-shadow">
+                <label className="p-2 text-muted-foreground hover:text-foreground cursor-pointer transition-colors rounded hover:bg-muted flex-shrink-0">
+                    <Paperclip className="w-4 h-4" />
                     <input
                         type="file"
                         multiple
@@ -150,17 +150,14 @@ export default function ChatInput({
                     <button
                         onClick={onToggleDeepThink}
                         className={cn(
-                            "p-2 rounded-xl transition-all flex-shrink-0 relative active:scale-95",
+                            "p-2 rounded transition-colors flex-shrink-0 relative",
                             deepThink
-                                ? "text-indigo-600 bg-indigo-50 hover:bg-indigo-100 shadow-sm"
-                                : "text-gray-400 hover:text-indigo-500 hover:bg-gray-100"
+                                ? "text-primary bg-primary/10"
+                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
                         )}
                         title={deepThink ? "Tắt Suy nghĩ sâu" : "Bật Suy nghĩ sâu (Reasoning)"}
                     >
-                        <BrainCircuit className={cn("w-5 h-5", deepThink && "animate-pulse")} />
-                        {deepThink && (
-                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-indigo-500 rounded-full border-2 border-white animate-bounce-in" />
-                        )}
+                        <BrainCircuit className={cn("w-4 h-4", deepThink && "animate-pulse")} />
                     </button>
                 )}
 
@@ -171,20 +168,20 @@ export default function ChatInput({
                     onKeyDown={handleKeyDown}
                     placeholder={placeholder}
                     rows={1}
-                    className="flex-1 bg-transparent border-none focus:ring-0 text-gray-800 text-sm py-2 px-1 max-h-32 resize-none placeholder:text-gray-400 leading-relaxed"
+                    className="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 px-1 max-h-32 resize-none placeholder:text-muted-foreground leading-relaxed"
                     disabled={isLoading}
                 />
 
                 <button
                     onClick={handleSubmit}
                     disabled={(!input.trim() && attachments.length === 0) || isLoading}
-                    className="p-2 bg-gradient-to-br from-arduino-teal to-teal-600 hover:from-teal-500 hover:to-teal-700 disabled:from-gray-300 disabled:to-gray-400 text-white rounded-xl transition-all shadow-md shadow-arduino-teal/20 disabled:shadow-none flex-shrink-0 active:scale-95"
+                    className="p-2 bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed rounded transition-opacity flex-shrink-0"
                 >
                     <Send className="w-4 h-4" />
                 </button>
             </div>
 
-            <div className="text-[10px] text-gray-400 text-center mt-2">
+            <div className="text-[10px] text-muted-foreground text-center mt-2">
                 AI có thể mắc lỗi. Hãy kiểm tra thông tin quan trọng.
             </div>
         </div>

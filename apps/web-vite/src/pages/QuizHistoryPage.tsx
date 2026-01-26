@@ -89,53 +89,53 @@ export default function QuizHistoryPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-20 font-sans">
             {/* Header */}
-            <div className="bg-white border-b border-gray-100 pt-8 pb-12">
+            <header className="bg-background border-b border-border pt-8 pb-12">
                 <div className="max-w-4xl mx-auto px-4">
                     <Link
                         to="/dashboard"
-                        className="inline-flex items-center gap-2 text-gray-500 hover:text-arduino-teal mb-6 transition-colors"
+                        className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Quay lại Dashboard
                     </Link>
 
                     <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center">
-                            <Clock className="w-8 h-8 text-blue-500" />
+                        <div className="w-16 h-16 bg-muted rounded-md flex items-center justify-center">
+                            <Clock className="w-8 h-8 text-foreground" />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-black text-gray-900">Lịch sử Quiz</h1>
-                            <p className="text-gray-500">Xem lại các bài Quiz đã làm</p>
+                            <h1 className="text-2xl font-bold text-foreground">Lịch sử Quiz</h1>
+                            <p className="text-muted-foreground">Xem lại các bài Quiz đã làm</p>
                         </div>
                     </div>
                 </div>
-            </div>
+            </header>
 
             {/* Stats */}
             <div className="max-w-4xl mx-auto px-4 -mt-6">
                 <div className="grid grid-cols-3 gap-4 mb-8">
-                    <Card className="p-4 text-center bg-white">
-                        <div className="text-3xl font-black text-gray-900">{stats.totalAttempts}</div>
-                        <div className="text-xs font-medium text-gray-500 uppercase">Lần làm</div>
+                    <Card className="p-4 text-center bg-card border-border">
+                        <div className="text-3xl font-bold text-foreground">{stats.totalAttempts}</div>
+                        <div className="text-xs font-medium text-muted-foreground uppercase">Lần làm</div>
                     </Card>
-                    <Card className="p-4 text-center bg-white">
-                        <div className="text-3xl font-black text-green-600">{stats.passedCount}</div>
-                        <div className="text-xs font-medium text-gray-500 uppercase">Đạt</div>
+                    <Card className="p-4 text-center bg-card border-border">
+                        <div className="text-3xl font-bold text-green-600">{stats.passedCount}</div>
+                        <div className="text-xs font-medium text-muted-foreground uppercase">Đạt</div>
                     </Card>
-                    <Card className="p-4 text-center bg-white">
-                        <div className="text-3xl font-black text-blue-600">{stats.avgScore}%</div>
-                        <div className="text-xs font-medium text-gray-500 uppercase">Điểm TB</div>
+                    <Card className="p-4 text-center bg-card border-border">
+                        <div className="text-3xl font-bold text-blue-600">{stats.avgScore}%</div>
+                        <div className="text-xs font-medium text-muted-foreground uppercase">Điểm TB</div>
                     </Card>
                 </div>
 
                 {/* History List */}
                 {attempts.length === 0 ? (
-                    <Card className="p-12 text-center bg-white">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Clock className="w-8 h-8 text-gray-400" />
+                    <Card className="p-12 text-center bg-card border-border">
+                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Clock className="w-8 h-8 text-muted-foreground" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">Chưa có lịch sử</h3>
-                        <p className="text-gray-500 mb-6">Hãy làm quiz đầu tiên để xem lịch sử.</p>
+                        <h3 className="text-lg font-bold text-foreground mb-2">Chưa có lịch sử</h3>
+                        <p className="text-muted-foreground mb-6">Hãy làm quiz đầu tiên để xem lịch sử.</p>
                         <Link to="/quizzes">
                             <Button>Xem danh sách Quiz</Button>
                         </Link>
@@ -147,25 +147,26 @@ export default function QuizHistoryPage() {
                                 ? Math.round((attempt.score / attempt.maxScore) * 100)
                                 : 0;
                             const date = new Date(attempt.submittedAt);
+                            const passed = attempt.passed;
 
                             return (
-                                <Card key={attempt.id} className="p-6 bg-white hover:shadow-lg transition-shadow">
+                                <Card key={attempt.id} className="p-6 bg-card border-border hover:bg-muted/50 transition-colors">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${attempt.passed
-                                                ? 'bg-green-50 text-green-500'
-                                                : 'bg-red-50 text-red-500'
+                                            <div className={`w-12 h-12 rounded flex items-center justify-center border ${passed
+                                                ? 'bg-green-50 border-green-200 text-green-600'
+                                                : 'bg-red-50 border-red-200 text-red-600'
                                                 }`}>
-                                                {attempt.passed
+                                                {passed
                                                     ? <CheckCircle2 className="w-6 h-6" />
                                                     : <XCircle className="w-6 h-6" />
                                                 }
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-gray-900">
+                                                <h3 className="font-bold text-foreground">
                                                     {attempt.quizTitle || `Quiz Tuần ${attempt.weekNumber}`}
                                                 </h3>
-                                                <div className="flex items-center gap-3 text-sm text-gray-500">
+                                                <div className="flex items-center gap-3 text-sm text-muted-foreground">
                                                     <span className="flex items-center gap-1">
                                                         <Calendar className="w-3 h-3" />
                                                         {date.toLocaleDateString('vi-VN')}
@@ -179,17 +180,17 @@ export default function QuizHistoryPage() {
                                         </div>
 
                                         <div className="text-right">
-                                            <div className="flex items-center gap-2">
-                                                <Badge variant={attempt.passed ? 'mint' : 'coral'}>
-                                                    {attempt.passed ? 'ĐẠT' : 'CHƯA ĐẠT'}
+                                            <div className="flex items-center gap-2 justify-end">
+                                                <Badge variant={passed ? 'default' : 'destructive'}>
+                                                    {passed ? 'ĐẠT' : 'CHƯA ĐẠT'}
                                                 </Badge>
                                             </div>
                                             <div className="mt-1 flex items-center gap-2 justify-end">
-                                                <Target className="w-4 h-4 text-gray-400" />
-                                                <span className="text-lg font-black text-gray-900">
+                                                <Target className="w-4 h-4 text-muted-foreground" />
+                                                <span className="text-lg font-bold text-foreground">
                                                     {attempt.score}/{attempt.maxScore}
                                                 </span>
-                                                <span className="text-sm text-gray-500">({percentage}%)</span>
+                                                <span className="text-sm text-muted-foreground">({percentage}%)</span>
                                             </div>
                                         </div>
                                     </div>

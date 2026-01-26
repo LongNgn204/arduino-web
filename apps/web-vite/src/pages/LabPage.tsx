@@ -14,11 +14,9 @@ import {
     Zap,
     AlertCircle,
     Wand2,
-    Loader2,
-    Sparkles
+    Loader2
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
 
 const API_BASE = import.meta.env.PROD
     ? 'https://arduino-workers.stu725114073.workers.dev'
@@ -217,22 +215,15 @@ export default function LabPage() {
     };
 
     if (loading) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-10 h-10 text-arduino-teal animate-spin" />
-                    <p className="text-gray-500 animate-pulse">Đang tải bài thực hành...</p>
-                </div>
-            </div>
-        );
+        return <div className="p-8 text-center text-muted-foreground">Đang tải bài thực hành...</div>;
     }
 
     if (!lab) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="text-center bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                    <p className="text-gray-500 mb-4">Không tìm thấy bài thực hành.</p>
-                    <Link to="/dashboard" className="text-arduino-teal hover:underline font-medium">
+            <div className="p-8 text-center bg-background min-h-screen">
+                <div className="max-w-md mx-auto p-4 border border-border rounded">
+                    <p className="text-muted-foreground mb-4">Không tìm thấy bài thực hành.</p>
+                    <Link to="/dashboard" className="text-foreground underline">
                         ← Quay lại Dashboard
                     </Link>
                 </div>
@@ -241,54 +232,54 @@ export default function LabPage() {
     }
 
     return (
-        <div className="h-screen bg-gray-50 flex flex-col overflow-hidden font-sans">
+        <div className="h-screen bg-background flex flex-col overflow-hidden font-sans text-foreground">
             {/* Header */}
-            <header className="shrink-0 bg-white border-b border-gray-200 shadow-sm z-10">
-                <div className="flex items-center justify-between h-16 px-6">
+            <header className="shrink-0 bg-background border-b border-border z-10">
+                <div className="flex items-center justify-between h-14 px-4">
                     <div className="flex items-center gap-4">
                         <Link
                             to={week ? `/weeks/${week.id}` : '/dashboard'}
-                            className="p-2 -ml-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors"
+                            className="p-2 -ml-2 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                         >
-                            <ArrowLeft className="w-5 h-5" />
+                            <ArrowLeft className="w-4 h-4" />
                         </Link>
                         <div>
-                            <div className="flex items-center gap-2 mb-0.5">
-                                <Badge variant="outline" className="border-amber-200 bg-amber-50 text-amber-700">
+                            <div className="flex items-center gap-2">
+                                <span className="border border-border text-muted-foreground bg-muted px-2 py-0.5 rounded text-xs">
                                     Lab {lab.orderIndex}
-                                </Badge>
-                                {week && <span className="text-xs text-gray-500 font-medium">• Tuần {week.weekNumber}</span>}
+                                </span>
+                                {week && <span className="text-xs text-muted-foreground">• Tuần {week.weekNumber}</span>}
                             </div>
-                            <h1 className="text-sm font-bold text-gray-900 truncate max-w-[200px] md:max-w-[400px]">
+                            <h1 className="text-sm font-bold truncate max-w-[200px] md:max-w-[400px]">
                                 {lab.title}
                             </h1>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                         {/* Save Status Indicator */}
                         {saveStatus === 'saved' && (
-                            <span className="text-xs text-green-600 flex items-center gap-1 animate-fade-in font-medium">
+                            <span className="text-xs text-green-600 flex items-center gap-1">
                                 <CheckCircle2 className="w-3 h-3" /> Đã lưu
                             </span>
                         )}
 
                         <Button
-                            variant="ghost"
+                            variant="secondary"
                             size="sm"
                             onClick={handleSave}
                             disabled={isSaving}
-                            className="gap-2"
+                            className="h-8 gap-2"
                         >
-                            <Save className="w-4 h-4" />
-                            {isSaving ? 'Đang lưu...' : 'Lưu'}
+                            <Save className="w-3.5 h-3.5" />
+                            {isSaving ? '...' : 'Lưu'}
                         </Button>
                         <Button
                             onClick={handleSubmit}
                             size="sm"
-                            className="bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 border-none shadow-md shadow-amber-500/20 gap-2"
+                            className="h-8 gap-2"
                         >
-                            <Send className="w-4 h-4" />
+                            <Send className="w-3.5 h-3.5" />
                             Nộp bài
                         </Button>
                     </div>
@@ -296,30 +287,30 @@ export default function LabPage() {
             </header>
 
             {/* Tab Bar */}
-            <div className="shrink-0 bg-white border-b border-gray-200">
-                <div className="flex gap-1 px-6 py-2">
-                    <TabButton
-                        active={activeTab === 'instructions'}
+            <div className="shrink-0 bg-background border-b border-border">
+                <div className="flex gap-4 px-4">
+                    <button
                         onClick={() => setActiveTab('instructions')}
-                        icon={<FileCode className="w-4 h-4" />}
+                        className={`flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'instructions' ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
                     >
-                        Hướng dẫn
-                    </TabButton>
-                    <TabButton
-                        active={activeTab === 'code'}
+                        <FileCode className="w-4 h-4" /> Hướng dẫn
+                    </button>
+                    <button
                         onClick={() => setActiveTab('code')}
-                        icon={<Play className="w-4 h-4" />}
+                        className={`flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'code' ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
                     >
-                        Code Editor
-                    </TabButton>
+                        <Play className="w-4 h-4" /> Code Editor
+                    </button>
                     {lab.simulatorUrl && (
-                        <TabButton
-                            active={activeTab === 'simulator'}
+                        <button
                             onClick={() => setActiveTab('simulator')}
-                            icon={<MonitorPlay className="w-4 h-4" />}
+                            className={`flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'simulator' ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'
+                                }`}
                         >
-                            Simulator
-                        </TabButton>
+                            <MonitorPlay className="w-4 h-4" /> Simulator
+                        </button>
                     )}
                 </div>
             </div>
@@ -327,29 +318,27 @@ export default function LabPage() {
             {/* Main Content - Full Height */}
             <main className="flex-1 overflow-hidden">
                 {activeTab === 'instructions' && (
-                    <div className="h-full overflow-y-auto p-6 bg-gray-50">
+                    <div className="h-full overflow-y-auto p-6 bg-background">
                         <div className="max-w-4xl mx-auto space-y-6">
                             {/* Objective Card */}
                             {lab.objective && (
-                                <section className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm ring-1 ring-gray-950/5">
-                                    <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                                        <div className="w-8 h-8 bg-arduino-teal/10 rounded-lg flex items-center justify-center">
-                                            <Zap className="w-5 h-5 text-arduino-teal" />
-                                        </div>
+                                <section className="border border-border p-6 rounded bg-card">
+                                    <h3 className="font-bold mb-3 flex items-center gap-2">
+                                        <Zap className="w-4 h-4" />
                                         Mục tiêu bài thực hành
                                     </h3>
-                                    <p className="text-gray-600 leading-relaxed">{lab.objective}</p>
+                                    <p className="text-muted-foreground">{lab.objective}</p>
                                 </section>
                             )}
 
                             {/* Instructions */}
-                            <section className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm ring-1 ring-gray-950/5">
-                                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                    <FileCode className="w-5 h-5 text-blue-500" />
+                            <section className="border border-border p-6 rounded bg-card">
+                                <h3 className="font-bold mb-4 flex items-center gap-2">
+                                    <FileCode className="w-4 h-4" />
                                     Hướng dẫn chi tiết
                                 </h3>
-                                <div className="prose prose-slate prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-600 prose-code:text-pink-600 prose-code:bg-pink-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-[#1e1e1e] prose-pre:text-gray-50">
-                                    <div className="leading-relaxed whitespace-pre-wrap">
+                                <div className="prose prose-sm max-w-none text-muted-foreground">
+                                    <div className="whitespace-pre-wrap">
                                         {lab.instructions}
                                     </div>
                                 </div>
@@ -357,12 +346,12 @@ export default function LabPage() {
 
                             {/* Wiring Diagram */}
                             {lab.wiring && (
-                                <section className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm ring-1 ring-gray-950/5">
-                                    <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                        <AlertCircle className="w-5 h-5 text-amber-500" />
+                                <section className="border border-border p-6 rounded bg-card">
+                                    <h3 className="font-bold mb-4 flex items-center gap-2">
+                                        <AlertCircle className="w-4 h-4" />
                                         Sơ đồ kết nối
                                     </h3>
-                                    <div className="bg-gray-50 rounded-xl p-4 text-gray-700 text-sm font-mono border border-gray-200 overflow-x-auto shadow-inner">
+                                    <div className="bg-muted p-4 text-xs font-mono border border-border overflow-x-auto">
                                         <pre className="whitespace-pre-wrap">{lab.wiring}</pre>
                                     </div>
                                 </section>
@@ -370,25 +359,25 @@ export default function LabPage() {
 
                             {/* Rubric */}
                             {lab.rubric && lab.rubric.criteria && (
-                                <section className="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-6 border border-purple-100 shadow-sm">
-                                    <h3 className="font-bold text-gray-900 mb-5 flex items-center gap-2">
-                                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                                            <MessageSquare className="w-5 h-5 text-purple-600" />
-                                        </div>
-                                        Tiêu chí chấm điểm
-                                        <span className="ml-auto text-sm font-normal text-purple-600 bg-purple-50 px-3 py-1 rounded-full border border-purple-100">
+                                <section className="border border-border p-6 rounded bg-card">
+                                    <div className="flex items-center justify-between mb-5">
+                                        <h3 className="font-bold flex items-center gap-2">
+                                            <MessageSquare className="w-4 h-4" />
+                                            Tiêu chí chấm điểm
+                                        </h3>
+                                        <span className="text-sm border border-border px-2 py-1 rounded bg-muted">
                                             Tổng: {lab.rubric.total || 0} điểm
                                         </span>
-                                    </h3>
+                                    </div>
                                     <div className="space-y-3">
                                         {lab.rubric.criteria.map((c, i) => (
-                                            <div key={i} className="flex items-start gap-4 bg-white rounded-xl p-4 border border-purple-100 shadow-sm hover:shadow-md transition-shadow">
-                                                <span className="w-10 h-10 shrink-0 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg font-bold border border-purple-100">
+                                            <div key={i} className="flex items-start gap-4 p-4 border border-border rounded">
+                                                <span className="w-8 h-8 shrink-0 rounded bg-muted flex items-center justify-center text-sm font-bold border border-border">
                                                     {c.points}
                                                 </span>
                                                 <div>
-                                                    <p className="font-semibold text-gray-900">{c.name}</p>
-                                                    <p className="text-sm text-gray-500 mt-1">{c.description}</p>
+                                                    <p className="font-semibold">{c.name}</p>
+                                                    <p className="text-sm text-muted-foreground mt-1">{c.description}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -398,9 +387,9 @@ export default function LabPage() {
 
                             {/* Duration Info */}
                             {lab.duration && (
-                                <div className="flex items-center gap-2 text-gray-500 text-sm justify-center pb-4">
+                                <div className="flex items-center gap-2 text-muted-foreground text-sm justify-center pb-4">
                                     <Clock className="w-4 h-4" />
-                                    Thời gian ước tính: <span className="text-gray-900 font-medium">{lab.duration} phút</span>
+                                    Thời gian ước tính: <span className="font-medium">{lab.duration} phút</span>
                                 </div>
                             )}
                         </div>
@@ -408,25 +397,21 @@ export default function LabPage() {
                 )}
 
                 {activeTab === 'code' && (
-                    <div className="h-full flex flex-col bg-[#1e1e1e]">
+                    <div className="h-full flex flex-col bg-background">
                         {/* Code Editor Header */}
-                        <div className="shrink-0 flex items-center justify-between px-4 py-2 bg-[#2d2d2d] border-b border-[#1e1e1e]">
+                        <div className="shrink-0 flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30">
                             <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
-                                    <div className="w-3 h-3 rounded-full bg-red-500" />
-                                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                                    <div className="w-3 h-3 rounded-full bg-green-500" />
-                                </div>
-                                <span className="text-sm text-gray-300 font-medium ml-2">main.ino</span>
-                                <span className="text-[10px] text-gray-400 px-2 py-0.5 bg-[#3c3c3c] rounded border border-[#4d4d4d]">Arduino C++</span>
+                                <span className="text-sm font-medium ml-2">main.ino</span>
+                                <span className="text-[10px] text-muted-foreground px-2 py-0.5 rounded border border-border">Arduino C++</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 {/* AI Agent Button */}
                                 <Button
                                     size="sm"
+                                    variant="secondary"
                                     onClick={handleAutoFix}
                                     disabled={isFixing || !code.trim()}
-                                    className="h-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white border-none shadow-lg shadow-purple-900/20"
+                                    className="h-8"
                                 >
                                     {isFixing ? (
                                         <>
@@ -445,20 +430,17 @@ export default function LabPage() {
 
                         {/* AI Agent Result Panel */}
                         {showAgentResult && agentResult && (
-                            <div className={`shrink-0 px-4 py-3 border-b ${agentResult.success ? 'bg-green-900/20 border-green-500/20' : 'bg-amber-900/20 border-amber-500/20'}`}>
+                            <div className={`shrink-0 px-4 py-3 border-b ${agentResult.success ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
                                 <div className="flex items-start gap-3">
-                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${agentResult.success ? 'bg-green-500/10 text-green-400' : 'bg-amber-500/10 text-amber-400'}`}>
-                                        <Sparkles className="w-4 h-4" />
-                                    </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className={`font-medium ${agentResult.success ? 'text-green-400' : 'text-amber-400'}`}>
+                                        <p className={`font-medium ${agentResult.success ? 'text-green-700' : 'text-amber-700'}`}>
                                             {agentResult.success ? '✨ Đã sửa code!' : '⚠️ Kết quả'}
                                         </p>
-                                        <p className="text-sm text-gray-300 mt-1">{agentResult.summary}</p>
+                                        <p className="text-sm text-gray-600 mt-1">{agentResult.summary}</p>
                                         {agentResult.changes.length > 0 && (
                                             <div className="mt-2 space-y-1">
                                                 {agentResult.changes.slice(0, 3).map((change, i) => (
-                                                    <p key={i} className="text-xs text-gray-400 font-mono">
+                                                    <p key={i} className="text-xs text-gray-500 font-mono">
                                                         • Dòng {change.line}: {change.description}
                                                     </p>
                                                 ))}
@@ -472,7 +454,7 @@ export default function LabPage() {
                                     </div>
                                     <button
                                         onClick={() => setShowAgentResult(false)}
-                                        className="text-gray-500 hover:text-white"
+                                        className="text-gray-500 hover:text-black"
                                     >
                                         ×
                                     </button>
@@ -485,7 +467,7 @@ export default function LabPage() {
                             <textarea
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
-                                className="absolute inset-0 w-full h-full bg-[#1e1e1e] text-gray-300 font-mono text-sm p-4 resize-none focus:outline-none leading-relaxed selection:bg-arduino-teal/30 placeholder:text-gray-600"
+                                className="absolute inset-0 w-full h-full bg-background text-foreground font-mono text-sm p-4 resize-none focus:outline-none leading-relaxed border-none"
                                 spellCheck={false}
                                 placeholder="// Viết code Arduino của bạn ở đây..."
                             />
@@ -494,11 +476,11 @@ export default function LabPage() {
                 )}
 
                 {activeTab === 'simulator' && lab.simulatorUrl && (
-                    <div className="h-full p-6 bg-gray-100/50">
-                        <div className="h-full bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-                            <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center gap-2">
-                                <MonitorPlay className="w-4 h-4 text-gray-500" />
-                                <span className="text-xs font-mono text-gray-500 truncate">{lab.simulatorUrl}</span>
+                    <div className="h-full p-4 bg-muted/10">
+                        <div className="h-full bg-background rounded border border-border overflow-hidden flex flex-col">
+                            <div className="bg-muted px-4 py-2 border-b border-border flex items-center gap-2">
+                                <MonitorPlay className="w-3.5 h-3.5 text-muted-foreground" />
+                                <span className="text-xs font-mono text-muted-foreground truncate">{lab.simulatorUrl}</span>
                             </div>
                             <iframe
                                 src={lab.simulatorUrl}
@@ -512,33 +494,5 @@ export default function LabPage() {
                 )}
             </main>
         </div>
-    );
-}
-
-function TabButton({
-    active,
-    onClick,
-    children,
-    icon
-}: {
-    active: boolean;
-    onClick: () => void;
-    children: React.ReactNode;
-    icon: React.ReactNode;
-}) {
-    return (
-        <button
-            onClick={onClick}
-            className={`
-                flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all relative
-                ${active
-                    ? 'text-arduino-teal bg-arduino-teal/10 ring-1 ring-arduino-teal/20'
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-                }
-            `}
-        >
-            {icon}
-            {children}
-        </button>
     );
 }

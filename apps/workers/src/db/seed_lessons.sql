@@ -253,7 +253,62 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Hệ thống nhúng là gì? (Tưởng tượng cái máy giặt)
+
+Hãy nhìn cái **máy giặt** hay cái **nồi cơm điện** nhà bạn.
+- Chúng có "bộ não" không? **Có**, vì chúng biết đếm giờ, biết khi nào nước đầy thì dừng, biết nấu xong thì tít tít.
+- Chúng có lướt Facebook hay chơi game được không? **Không**.
+
+👉 **Hệ thống nhúng** chính là những "bộ não" nhỏ bé đó. Chúng chỉ sinh ra để làm **một việc duy nhất** (như giặt đồ, nấu cơm) nhưng làm cực tốt và bền bỉ.
+
+> **Khác với Laptop**: Laptop là "đa năng" (làm gì cũng được). Hệ thống nhúng là "chuyên biệt" (chỉ làm 1 việc).
+
+### 1.2 Arduino Uno là gì?
+
+Thực ra con chip (vi điều khiển) rất khó dùng. Người ta tạo ra cái bo mạch **Arduino Uno** để giúp những người mới học (như bạn) có thể "giao tiếp" với con chip đó dễ dàng hơn.
+
+- **Con chip ATmega328P**: Là "bộ não".
+- **Các chân cắm (Hàng lỗ đen đen)**: Là "tay chân". Bạn cắm đèn vào đó, bộ não sẽ điều khiển đèn. Bạn cắm nút bấm vào đó, bộ não sẽ cảm nhận được nút bấm.
+
+### 1.3 Cấu trúc Code: "Ông đầu bếp" và "Công việc hàng ngày"
+
+Code Arduino luôn có 2 phần chính. Hãy tưởng tượng bạn mở một quán phở:
+
+1.  **`void setup()` - Khâu chuẩn bị (Chỉ làm 1 lần lúc mở cửa)**
+    - Bạn lau bàn, xếp ghế, bật bếp.
+    - Trong code cũng vậy: Bạn bảo Arduino "Chân này nối đèn nhé", "Chân kia nối nút bấm nhé".
+    - Nó chỉ chạy **đúng 1 lần** khi bạn cấp điện.
+
+2.  **`void loop()` - Phục vụ khách (Lặp đi lặp lại mãi mãi)**
+    - Có khách -> Làm phở -> Bưng ra -> Thu tiền. Rồi lại có khách...
+    - Trong code: Kiểm tra nút bấm -> Bật đèn -> Tắt đèn... Cứ thế lặp lại siêu nhanh (hàng nghìn lần mỗi giây) cho đến khi... mất điện.
+
+### 1.4 GPIO (Tay chân của Arduino)
+
+Tên tiếng Anh nghe kêu (Global Purpose Input/Output) nhưng thực ra nó chỉ là các cái **Cổng (Pin)**:
+- **OUTPUT (Xuất ra)**: Arduino ra lệnh.
+    - *Ví dụ*: Bật đèn, còi kêu, động cơ quay. (Arduino là sếp, thiết bị phải nghe).
+- **INPUT (Nhập vào)**: Arduino lắng nghe.
+    - *Ví dụ*: Đọc nút bấm, đọc cảm biến nhiệt độ. (Thiết bị báo cáo, Arduino nghe).
+
+### 1.5 Tại sao LED cần điện trở? (Nguyên lý Ống nước)
+
+Hãy tưởng tượng dòng điện như **nước chảy trong ống**:
+- **Pin 5V**: Là cái máy bơm cực mạnh.
+- **Đèn LED**: Là cái cánh quạt giấy mỏng manh.
+
+Nếu bạn nối thẳng máy bơm vào cánh quạt -> **RÁCH (Cháy LED)**.
+👉 Bạn cần bóp ống nước lại một chút để nước chảy từ từ thôi. Cái chỗ "bóp ống" đó chính là **Điện trở**.
+
+> **Quy tắc sống còn**: Luôn nối tiếp LED với điện trở 220Ω (đỏ-đỏ-nâu) hoặc 330Ω (cam-cam-nâu).
+
+### 1.6 `delay()` - Đi ngủ đông
+
+Lệnh `delay(1000)` nghĩa là: "Này Arduino, hãy ngủ 1000 mili-giây (1 giây) đi, đừng làm gì cả".
+- **Ưu điểm**: Dễ dùng. Muốn nháy đèn thì cứ Bật -> Ngủ -> Tắt -> Ngủ.
+- **Nhược điểm**: Lúc nó đang ngủ, nếu có trộm vào nhà (bạn nhấn nút), nó sẽ **không biết gì cả**. (Tuần sau ta sẽ học cách "vừa canh nhà vừa nghỉ ngơi" sau).
 
 ### 1.1 Hệ thống nhúng là gì?
 
@@ -336,7 +391,7 @@ void loop() {
 
 ```mermaid
 flowchart TD
-    start(["Cấp nguồn / Reset"]) --> setup["Chạy setup<br>(1 lần duy nhất)"]
+    start(["Cấp nguồn / Reset"]) --> setup["Chạy setup<br/>(1 lần duy nhất)"]
     setup --> loop{"Vòng lặp loop"}
     loop -->|Lần 1| logic["Thực thi Code chính"]
     logic -->|Lặp lại| loop
@@ -402,7 +457,66 @@ delay(ms);  // Tạm dừng chương trình trong ms mili-giây
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+Trước khi làm các bài phức tạp, hãy làm các bài nhỏ này để hiểu cơ bản.
+
+### 2.1 Drill 1: Bật LED sáng mãi mãi (Hello LED)
+**Mục tiêu**: Kiểm tra mạch và lệnh `digitalWrite`.
+
+```cpp
+void setup() {
+    pinMode(13, OUTPUT);     // Cấu hình chân 13 là OUTPUT
+    digitalWrite(13, HIGH);  // Bật LED (cấp điện 5V)
+}
+
+void loop() {
+    // Không làm gì cả, LED vẫn sáng vì đã bật ở setup
+}
+```
+**Thử thách**: Sửa `HIGH` thành `LOW` để tắt LED.
+
+### 2.2 Drill 2: Nháy LED chậm (Manual Blink)
+**Mục tiêu**: Hiểu luồng chạy của `loop()`.
+
+```cpp
+void setup() {
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    digitalWrite(13, HIGH);  // Bật
+    delay(2000);             // Chờ 2 giây
+    digitalWrite(13, LOW);   // Tắt
+    delay(2000);             // Chờ 2 giây
+    // Hết loop, nó sẽ quay lại dòng đầu của loop -> Lặp vô hạn
+}
+```
+**Thử thách**: Sửa code để LED bật 0.1 giây (nháy siêu nhanh) và tắt 1 giây.
+
+### 2.3 Drill 3: Sử dụng biến (Variable)
+**Mục tiêu**: Hiểu tại sao cần biến.
+
+```cpp
+int timeOn = 1000;   // Biến lưu thời gian bật
+int timeOff = 500;   // Biến lưu thời gian tắt
+
+void setup() {
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    digitalWrite(13, HIGH);
+    delay(timeOn);          // Dùng giá trị của biến timeOn
+    digitalWrite(13, LOW);
+    delay(timeOff);         // Dùng giá trị của biến timeOff
+}
+```
+**Thử thách**: Sửa `timeOn` thành 5000 (5 giây) ở dòng khai báo biến.
+
+---
+
+## 💻 Phần 3: Code mẫu nâng cao
 
 ### 2.1 Blink LED cơ bản (Hello World của Arduino)
 
@@ -598,7 +712,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 LED không sáng
 
@@ -633,7 +747,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -679,7 +793,60 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Thiết kế hệ thống: "Xây nhà" vs "Xếp hình Lego"
+
+Khi làm dự án, người ta có 2 cách tư duy:
+
+1.  **Top-Down (Xây nhà)**: 
+    - Có bản vẽ kiến trúc sư trước (Tổng thể).
+    - Móng, Cột, Tường, Mái (Chi tiết).
+    - **Áp dụng**: Khi làm đồ án môn học lớn. "Mình cần làm hệ thống tưới cây -> Cần bơm, cảm biến -> Mua bơm loại nào..."
+
+2.  **Bottom-Up (Xếp hình Lego)**:
+    - Có cục gạch nào xếp cục đó (Từ nhỏ đến lớn).
+    - Lấy module LED ra vọc thử -> Lấy nút bấm ra vọc thử -> Ghép 2 cái lại thành cái đèn pin.
+    - **Áp dụng**: Khi học môn này. Ta cứ làm từng bài nhỏ (LED, Nút, Sensor) rành rọt, rồi sau này ghép lại.
+
+### 1.2 LED 7 đoạn: "8 bóng đèn trong một cái hộp"
+
+Đừng sợ cái tên "7 đoạn". Thực chất nó chỉ là **8 cái đèn LED bình thường** được đóng gói chung vào 1 cái vỏ nhựa.
+- 7 thanh sáng hình số 8 (a, b, c, d, e, f, g).
+- 1 cái dấu chấm (dp).
+
+**Vấn đề**: 8 đèn thì phải có 16 chân (8 dương, 8 âm)? Quá nhiều chân!
+**Giải pháp**: Nối chung lại.
+- **Common Cathode (GND chung)**: Tất cả chân Âm (-) nối chung. Muốn đèn nào sáng thì **cấp Dương (+)** (HIGH) vào chân đó. (Dễ hiểu, phổ biến nhất).
+- **Common Anode (VCC chung)**: Tất cả chân Dương (+) nối chung. Muốn đèn nào sáng thì **nối Âm (-)** (LOW) vào chân đó. (Hơi ngược não).
+
+### 1.3 Multiplexing (Quét LED) - Ảo thuật thị giác
+
+Nếu bạn có 4 con số (4 LED 7 đoạn), bạn cần 4 x 8 = 32 chân Arduino? **Không ai làm thế cả**.
+Chúng ta dùng kỹ thuật **"Quét" (Multiplexing)**.
+
+**Tưởng tượng**: Bạn có 4 bức tranh nhưng chỉ có 1 cái khung ảnh.
+1. Bạn bỏ tranh 1 vào -> Khán giả thấy tranh 1.
+2. Bạn rút ra bỏ tranh 2 vào -> Khán giả thấy tranh 2.
+3. Nếu bạn thay tranh cực nhanh (50 lần/giây) -> Mắt khán giả sẽ thấy **cả 4 tranh hiện lên cùng lúc**.
+
+**Áp dụng vào LED**:
+- Thời điểm 1: Bật số hàng nghìn lên, tắt 3 số kia.
+- Thời điểm 2: Bật số hàng trăm lên, tắt 3 số kia.
+- ...
+Làm siêu nhanh, mắt người sẽ thấy cả 4 số đều sáng. Đây gọi là hiện tượng **lưu ảnh của mắt**.
+
+### 1.4 IC 74HC595: "Người phụ tá chia bài"
+
+Arduino của bạn ít chân quá? Cần một "người phụ tá".
+**74HC595** chính là người đó (gọi là Shift Register).
+- Bạn chỉ cần **3 sợi dây** (3 chân) nói chuyện với nó.
+- Nó sẽ điều khiển **8 cái đèn** giúp bạn.
+
+Cách nó làm việc giống như xếp hàng vào lớp:
+- **DS (Data)**: Bạn đứng cửa hô "Vào!" hoặc "Đứng lại!".
+- **SHCP (Clock)**: Tiếng còi "Tuýt!". Mỗi lần tuýt, một học sinh bước vào hàng.
+- **STCP (Latch)**: Tiếng trống "Tùng!". Cả hàng bước đều ra sân (xuất ra LED).
 
 ### 1.1 Phương pháp thiết kế hệ thống nhúng
 
@@ -846,7 +1013,63 @@ Arduino            74HC595
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+### 2.1 Drill 1: Sáng 1 thanh LED (Segment A)
+**Mục tiêu**: Xác định chân kết nối đúng.
+
+```cpp
+void setup() {
+    // Giả sử Segment A nối vào D2
+    pinMode(2, OUTPUT);
+    
+    // Nếu là Common Cathode (GND chung) -> HIGH là sáng
+    digitalWrite(2, HIGH); 
+}
+
+void loop() {}
+```
+**Thử thách**: Sửa code để sáng thanh B (Pin 3).
+
+### 2.2 Drill 2: Hiển thị số "1"
+**Mục tiêu**: Bật cùng lúc 2 segment B và C.
+
+```cpp
+void setup() {
+    pinMode(3, OUTPUT); // Segment B
+    pinMode(4, OUTPUT); // Segment C
+    
+    digitalWrite(3, HIGH);
+    digitalWrite(4, HIGH);
+}
+void loop() {}
+```
+**Thử thách**: Thêm code để hiển thị số "7" (A, B, C sáng).
+
+### 2.3 Drill 3: Nhấp nháy số "8"
+**Mục tiêu**: Kết hợp Week 1 (blink) và Week 2 (7-seg).
+
+```cpp
+void setup() {
+    // Khai báo từ D2 đến D8 (a-g)
+    for (int i = 2; i <= 8; i++) {
+        pinMode(i, OUTPUT);
+    }
+}
+
+void loop() {
+    // Bật hết (số 8)
+    for (int i = 2; i <= 8; i++) digitalWrite(i, HIGH);
+    delay(1000);
+    
+    // Tắt hết
+    for (int i = 2; i <= 8; i++) digitalWrite(i, LOW);
+    delay(1000);
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu nâng cao
 
 ### 2.1 LED 7 đoạn đơn - Đếm 0→9
 
@@ -1292,7 +1515,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 LED 7 đoạn hiển thị sai số
 
@@ -1329,7 +1552,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -1383,7 +1606,53 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Nút nhấn & INPUT_PULLUP (Tại sao ngược đời?)
+
+Bình thường ta nghĩ: Nhấn = 1 (HIGH), Không nhấn = 0 (LOW).
+Nhưng trong Arduino, dân chuyên nghiệp hay dùng **INPUT_PULLUP** (Điện trở kéo lên). Nó hoạt động ngược lại:
+- **Không nhấn = HIGH (5V)**: Luôn có "lực kéo" lên 5V.
+- **Nhấn = LOW (0V)**: Nối thẳng xuống đất (GND).
+
+> **Tưởng tượng**: Bạn cầm chùm bóng bay (tín hiệu).
+> - **Chưa ai kéo**: Bóng bay lơ lửng trên cao (**HIGH**).
+> - **Có người kéo dây (Nhấn nút)**: Bóng bị kéo tuột xuống đất (**LOW**).
+
+👉 Nhớ câu thần chú: **"Nhấn là THẤP, Nhả là CAO"** (với INPUT_PULLUP).
+
+### 1.2 Dội phím (Bounce): "Quả bóng nảy"
+
+Khi bạn nhấn nút một cái "tách", bạn nghĩ tín hiệu nó đẹp đẽ như này:
+`_________|---------` (0 lên 1 dứt khoát)
+
+Thực tế, cái lò xo kim loại bên trong nó **rung bần bật** như quả bóng tennis rơi xuống đất:
+`____|-|-|_|----------` (Rung rung vài lần rồi mới yên).
+
+**Hậu quả**: Bạn bấm 1 lần, Arduino tưởng bạn bấm 10 lần! Đèn bật tắt loạn xạ.
+**Cách chữa (Debounce)**: "Từ từ đã!". Khi thấy tín hiệu đổi, Arduino chờ khoảng 50ms cho lò xo hết rung rồi mới chốt hạ.
+
+### 1.3 Bắt cạnh (Edge Detection): "Khoảnh khắc" vs "Trạng thái"
+
+- **Trạng thái (State)**: Là việc bạn **đang** ngồi. (Kéo dài lâu).
+- **Cạnh (Edge)**: Là khoảnh khắc bạn **bắt đầu** ngồi xuống. (Chỉ 1 tích tắc).
+
+Tại sao quan trọng?
+- Nếu muốn **đèn sáng khi giữ nút**: Dùng Trạng thái.
+- Nếu muốn **đếm số lần nhấn**: Phải dùng Cạnh (nếu không, 1 lần nhấn dài 1s sẽ bị đếm thành 1000 lần vì vòng lặp chạy quá nhanh).
+
+### 1.4 Keypad 4x4: "Trò chơi tìm tọa độ"
+
+Keypad có 16 nút, nếu nối từng nút thì mất 16 chân Arduino? Hết chỗ!
+Người ta xếp nó thành lưới (Ma trận): 4 Hàng (Row) x 4 Cột (Col).
+-> Chỉ tốn 4 + 4 = 8 chân.
+
+**Cách Arduino đọc**: Giống trò chơi tàu chiến.
+1. Quét Hàng 1: "Có ai ở Hàng 1 bấm không?".
+2. Nếu Cột 2 kêu "Có!": Suy ra phím số 2 (Giao điểm H1-C2) đang được nhấn.
+3. Quét tiếp Hàng 2, 3, 4...
+
+Quy trình này nhanh đến mức bạn nhấn cái nào nó biết ngay cái đó.
 
 ### 1.1 Nút nhấn và cách nối mạch
 
@@ -1555,7 +1824,67 @@ Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+### 2.1 Drill 1: Mắt thấy tay sờ (Serial Monitor)
+**Mục tiêu**: Xem giá trị thực tế của nút nhấn (0 hoặc 1).
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+    pinMode(2, INPUT_PULLUP);
+}
+
+void loop() {
+    int sensorVal = digitalRead(2);
+    Serial.println(sensorVal);  // In ra 1 (không nhấn) hoặc 0 (nhấn)
+    delay(100); // Đọc chậm để dễ nhìn
+}
+```
+**Thử thách**: Nhấn thật nhanh và xem Serial có bắt kịp không.
+
+### 2.2 Drill 2: Đèn PIN (Nhấn giữ = Sáng)
+**Mục tiêu**: Logic điều khiển trực tiếp.
+
+```cpp
+void setup() {
+    pinMode(2, INPUT_PULLUP);
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    if (digitalRead(2) == LOW) { // Đang nhấn
+        digitalWrite(13, HIGH);
+    } else {
+        digitalWrite(13, LOW);
+    }
+}
+```
+
+### 2.3 Drill 3: Công tắc (Toggle) - Phiên bản lỗi
+**Mục tiêu**: Hiểu tại sao cần debounce (Bài này sẽ chạy "lúc được lúc không").
+
+```cpp
+// Thử nạp code này và nhấn nút. Bạn sẽ thấy đèn sáng/tắt không theo ý muốn.
+// Đó là do "Dội phím" (Bounce)
+int ledState = LOW;
+
+void setup() {
+    pinMode(2, INPUT_PULLUP);
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    if (digitalRead(2) == LOW) { // Nếu nhấn
+        ledState = !ledState;    // Đảo trạng thái
+        digitalWrite(13, ledState);
+        // Không có delay -> dội phím làm đảo liên tục
+    }
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu nâng cao
 
 ### 2.1 Nút nhấn điều khiển LED (Nhấn bật, nhả tắt)
 
@@ -1929,7 +2258,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 Nút nhấn "ma" - Đọc nhiều lần khi nhấn 1 lần
 
@@ -1964,7 +2293,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -2022,7 +2351,54 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Analog vs Digital (Cầu thang bộ vs Dốc trượt)
+
+- **Digital (Số)**: Giống cái **Cầu thang bộ**. Bạn chỉ có thể đứng ở bậc 1 hoặc bậc 2 (HIGH hoặc LOW), không đứng lơ lửng ở giữa được.
+- **Analog (Tương tự)**: Giống cái **Dốc trượt**. Bạn có thể đứng ở bất kỳ độ cao nào (0V, 1.2V, 2.75V, 5V...).
+
+### 1.2 ADC (Thước đo của Arduino)
+
+Arduino là đồ kỹ thuật số, nó không hiểu "một chút", "hơi hơi". Nó cần con số.
+**ADC (Analog to Digital Converter)** chính là cái **thước đo** giúp Arduino "số hóa" điện áp.
+
+- **Thước 10-bit**: Nghĩa là nó chia 5V thành **1024 vạch nhỏ** (từ 0 đến 1023).
+- **0V** -> Đo được số **0**.
+- **5V** -> Đo được số **1023**.
+- **2.5V** -> Đo được số **512**.
+
+> **Công thức thần thánh**: `Giá trị = (Điện áp / 5.0) * 1023`
+
+### 1.3 Potentiometer (Vòi nước điều chỉnh)
+
+**Biến trở (Nút vặn)** giống hệt cái **vòi nước**.
+- Bạn vặn trái hết cỡ -> Khóa nước (0V).
+- Bạn vặn phải hết cỡ -> Mở hết nước (5V).
+- Bạn vặn lửng lơ -> Nước chảy vừa vừa (0-5V).
+
+Arduino dùng chân Analog (A0-A5) để "hứng" lượng nước này và đo xem nó nhiều hay ít.
+
+### 1.4 PWM (Giả vờ Analog) - "Bật tắt siêu tốc"
+
+Arduino Uno không thể xuất ra 2.5V thật (nó chỉ có 0V hoặc 5V). Vậy làm sao để đèn sáng mờ (giống như đang chạy 2.5V)?
+Nó dùng chiêu **PWM**: Bật tắt đèn siêu nhanh.
+
+- **Sáng 100%**: Bật luôn, không tắt.
+- **Sáng 50%**: Bật 1 nửa thời gian, Tắt 1 nửa thời gian. (Mắt ta thấy đèn sáng mờ).
+- **Sáng 10%**: Bật 1 tẹo, Tắt lâu. (Mắt ta thấy đèn tối thui).
+
+> **Lưu ý**: Chỉ những chân có dấu ngã `~` (3, 5, 6, 9, 10, 11) mới làm được trò này.
+
+### 1.5 Hàm `map()` - Quy đổi đơn vị
+
+Bạn đo được số **0-1023** (đầu vào), nhưng bạn lại muốn điều khiển đèn **0-255** (đầu ra PWM).
+Bạn cần một cái máy quy đổi. Đó là hàm `map()`.
+
+```cpp
+val = map(value, 0, 1023, 0, 255);
+```
+Dịch: "Hãy đổi `value` từ thang 0-1023 sang thang 0-255 cho tôi". Giống như đổi tiền Đô sang tiền Việt vậy.
 
 ### 1.1 Tín hiệu Analog vs Digital
 
@@ -2175,7 +2551,60 @@ int safe = constrain(value, 0, 255);  // Giới hạn 0-255
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Xem giá trị Biến trở (Pot Value)
+**Mục tiêu**: Thấy tận mắt số từ 0 đến 1023.
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+}
+
+void loop() {
+    int val = analogRead(A0);
+    Serial.println(val); // Vặn núm xoay và nhìn số nhảy
+    delay(100);
+}
+```
+**Thử thách**: Xoay về tận cùng bên trái xem có phải là 0 không? Bên phải có phải 1023 không?
+
+### 2.2 Drill 2: Làm mờ đèn (Fading)
+**Mục tiêu**: Hiểu PWM bằng cách chỉnh tay.
+
+```cpp
+void setup() {
+    pinMode(9, OUTPUT); // Chân 9 có dấu ~
+}
+
+void loop() {
+    analogWrite(9, 10);  // Sáng mờ
+    delay(1000);
+    analogWrite(9, 255); // Sáng rực
+    delay(1000);
+}
+```
+
+### 2.3 Drill 3: Máy tính map()
+**Mục tiêu**: Hiểu hàm map() hoạt động thế nào.
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+    
+    int x = 512; // Giả sử đọc được một nửa
+    int y = map(x, 0, 1023, 0, 100); // Đổi sang thang 100
+    
+    Serial.print("Đầu vào: "); Serial.print(x);
+    Serial.print(" -> Đầu ra: "); Serial.println(y);
+}
+
+void loop() {}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 Đọc điện áp Potentiometer - 3 dạng
 
@@ -2445,7 +2874,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 analogRead() trả về 0 hoặc 1023 liên tục
 
@@ -2487,7 +2916,7 @@ int smoothAnalogRead(int pin) {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -2534,7 +2963,47 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 State Machine (Máy trạng thái) - Ví dụ "Chiếc quạt máy"
+
+Máy quạt nhà bạn có các nút 1, 2, 3.
+- **Trạng thái 1**: Quạt quay chậm.
+- **Trạng thái 2**: Quạt quay vừa.
+- **Trạng thái 3**: Quạt quay nhanh.
+
+Khi bạn bấm nút số 2 -> Máy chuyển sang **Trạng thái 2**.
+Code cũng vậy thôi:
+```cpp
+int state = 1; // 1=Chậm, 2=Vừa, 3=Nhanh
+if (nhấn nút) state = 2; // Chuyển trạng thái
+```
+Gọi là "Máy trạng thái" nghe cho sang, chứ bản chất nó là biến `state` ghi nhớ "mình đang ở đâu".
+
+### 1.2 Nguyên tắc "Đa nhiệm" (Multitasking)
+
+Làm sao để vừa quét LED 7 đoạn (liên tục) vừa đọc nút nhấn (liên tục) vừa nháy đèn (1s/lần)?
+Nếu dùng `delay(1000)` để nháy đèn -> LED 7 đoạn sẽ tắt ngúm 1 giây -> **TOANG!**.
+
+**Giải pháp: Ông đầu bếp giỏi**
+- Ông ta KHÔNG bao giờ đứng nhìn nồi canh sôi 10 phút (`delay`).
+- Ông ta đảo nồi thịt -> Ngó nồi canh -> Thái hành -> Quay lại đảo thịt.
+- Mỗi việc chỉ tốn 1 tích tắc.
+
+Trong Code:
+- Dùng `millis()` (cái đồng hồ treo tường) để canh giờ.
+- "Bây giờ là 10h00, thái hành. 10h01, đảo thịt".
+- Không ai được phép dừng lại (`delay`) cả.
+
+### 1.3 Quy trình chuẩn: IPO (Input - Process - Output)
+
+Để đỡ loạn code, hãy chia việc ra 3 khâu:
+
+1.  **INPUT (Đi chợ)**: Đọc hết các cảm biến, nút bấm, biến trở... cất vào biến.
+2.  **PROCESS (Nấu ăn)**: Tính toán xem đèn nào cần sáng, số nào cần hiện, dựa trên nguyên liệu vừa mua.
+3.  **OUTPUT (Dọn món)**: Ra lệnh cho đèn sáng, màn hình hiện.
+
+Đừng vừa đi chợ vừa nấu ăn, sẽ rất rối!
 
 ### 1.1 State Machine (Máy trạng thái)
 
@@ -2616,7 +3085,52 @@ void loop() {
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Nháy LED không dùng delay (Blink without Delay)
+**Mục tiêu**: Làm quen với `millis()`.
+
+```cpp
+unsigned long thoiGianCu = 0;
+
+void setup() {
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    // Kiểm tra đồng hồ, nếu trôi qua 1000ms thì làm việc
+    if (millis() - thoiGianCu >= 1000) {
+        thoiGianCu = millis(); // Cập nhật lại thời gian cũ
+        
+        // Đảo trạng thái đèn (đang tắt thành bật, đang bật thành tắt)
+        digitalWrite(13, !digitalRead(13));
+    }
+}
+```
+
+### 2.2 Drill 2: Công tắc bật đèn (State Variable)
+**Mục tiêu**: Dùng biến để nhớ trạng thái.
+
+```cpp
+int trangThaiDen = 0; // 0: Tắt, 1: Bật
+
+void setup() {
+    pinMode(2, INPUT_PULLUP); // Nút nhấn
+    pinMode(13, OUTPUT);      // Đèn
+}
+
+void loop() {
+    if (digitalRead(2) == LOW) { // Nếu nhấn nút
+        trangThaiDen = 1 - trangThaiDen; // Đảo 0 thành 1, 1 thành 0
+        digitalWrite(13, trangThaiDen);
+        delay(200); // Chống dội phím đơn giản
+    }
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 LED trang trí theo pot
 
@@ -3091,7 +3605,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 Chương trình "đứng" khi tích hợp
 
@@ -3118,7 +3632,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -3157,7 +3671,39 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Cảm biến siêu âm HC-SR04 (Nguyên lý tiếng vọng)
+
+Bạn đứng trước vách núi và hét "A lô!". Một lúc sau bạn nghe thấy tiếng vọng lại.
+- Nếu vách núi gần -> Tiếng vọng về nhanh.
+- Nếu vách núi xa -> Tiếng vọng về lâu.
+
+**HC-SR04** hoạt động y hệt:
+1. Nó hét ra sóng siêu âm (Tai người không nghe được).
+2. Nó chờ sóng đập vào vật cản và dội lại.
+3. Nó bấm giờ.
+-> Suy ra khoảng cách.
+
+### 1.2 DHT11 (Ông thủ thư già chậm chạp)
+
+DHT11 đo nhiệt độ và độ ẩm, giá rất rẻ nhưng... rất chậm.
+Ông ta cần **ít nhất 2 giây** để đọc xong trang sách (đo xong).
+- Nếu bạn cứ 0.1 giây hỏi ông ấy "Nhiêu độ rồi?", ông ấy sẽ nổi cáu (trả về lỗi hoặc giá trị cũ).
+- **Quy tắc**: Cho ông ấy nghỉ ngơi ít nhất 2s mỗi lần đo.
+
+### 1.3 PIR (Cảm biến chuyển động) - "Mắt mèo dò nhiệt"
+
+Mọi vật sống (người, chó, mèo) đều tỏa nhiệt. PIR không "nhìn" bằng ánh sáng mà "nhìn" bằng nhiệt (hồng ngoại).
+- Khi bạn đi ngang qua, thân nhiệt của bạn làm thay đổi bức tranh hồng ngoại mà nó đang nhìn -> Nó báo động.
+- **Lưu ý**: Khi mới cấp điện, nó cần **30-60 giây để "khởi động mắt"** (làm quen môi trường). Đừng vội kết luận nó hỏng nếu vừa bật lên nó báo lung tung.
+
+### 1.4 Cảm biến chạm TTP223 (Nút bấm tàng hình)
+
+Nó giống nút bấm trên bếp từ.
+- Không cần nhấn mạnh, chỉ cần **chạm nhẹ** ngón tay.
+- Nguyên lý: Cơ thể người là một tụ điện lớn, khi chạm vào nó làm thay đổi điện dung -> Chip nhận biết được.
+- Ưu điểm: Đẹp, không mòn như nút cơ, có thể đặt dưới kính/nhựa mỏng.
 
 ### 1.1 Cảm biến siêu âm HC-SR04
 
@@ -3252,7 +3798,55 @@ PIR            Arduino
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Đo nhịp tim siêu âm (Check Pulse)
+**Mục tiêu**: Xem HC-SR04 trả về con số gì (Raw duration).
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+    pinMode(9, OUTPUT); // TRIG
+    pinMode(10, INPUT); // ECHO
+}
+
+void loop() {
+    // 1. Phát xung
+    digitalWrite(9, LOW); delayMicroseconds(2);
+    digitalWrite(9, HIGH); delayMicroseconds(10);
+    digitalWrite(9, LOW);
+    
+    // 2. Đo thời gian phản hồi
+    long duration = pulseIn(10, HIGH);
+    
+    Serial.println(duration); // In ra số mili-giây
+    delay(500);
+}
+```
+
+### 2.2 Drill 2: Cảm biến chạm thần thánh
+**Mục tiêu**: Test nút cảm ứng TTP223 (Nó hoạt động y hệt nút thường).
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+    pinMode(2, INPUT); // Không cần PULLUP vì module có sẵn chip rồi
+}
+
+void loop() {
+    int cham = digitalRead(2);
+    if (cham == HIGH) {
+        Serial.println("ĐANG CHẠM!");
+    } else {
+        Serial.println(".......");
+    }
+    delay(100);
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 HC-SR04 + 8 LED theo khoảng cách
 
@@ -3705,7 +4299,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 HC-SR04 đọc sai/không ổn định
 
@@ -3732,7 +4326,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -3764,70 +4358,41 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
 
-### 1.1 UART là gì?
+### 1.1 UART: "Mỗi người một đầu dây" (Trò chơi điện thoại ống bơ)
 
-**UART (Universal Asynchronous Receiver/Transmitter)** là giao thức truyền thông nối tiếp **không đồng bộ**.
+Ngày xưa bạn chơi trò nối 2 cái ống bơ bằng 1 sợi dây.
+- Bạn nói vào lon này (TX - Miệng).
+- Bạn kia ghé tai vào lon kia (RX - Tai).
 
-```
-Arduino              PC/Arduino khác
-   TX ─────────────────── RX
-   RX ─────────────────── TX
-   GND ────────────────── GND
-```
+**Giao thức UART** y hệt vậy:
+- **TX (Transmit)**: Chân để "Nói".
+- **RX (Receive)**: Chân để "Nghe".
+- **GND (Dây đất)**: Để 2 bên có cùng mức điện áp (hiểu nhau).
 
-#### Đặc điểm UART:
-| Đặc điểm | Mô tả |
-|----------|-------|
-| Không đồng bộ | Không cần chân clock |
-| Full-duplex | Gửi và nhận đồng thời |
-| Baudrate | Phải giống nhau giữa 2 bên |
-| Point-to-point | Chỉ 2 thiết bị trên 1 bus |
+> **Quy tắc vàng**: **TX ông này nối RX ông kia**. (Miệng tôi nói, tai bạn nghe).
+> Đừng bao giờ nối TX với TX (2 cái miệng cùng nói, không ai nghe).
 
-### 1.2 Cấu trúc Frame UART
+### 1.2 Baudrate: "Tốc độ nói"
 
-```
-   Start    Data bits (8)    Parity   Stop
-    ┌─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┬─┐
-────┤0│D0│D1│D2│D3│D4│D5│D6│D7│P│1│1├────
-    └─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┴─┘
-```
+- Nếu bạn nói quá nhanh ("Blahblahblah..."), người kia nghe không kịp.
+- Nếu bạn nói quá chậm ("A... lô..."), người kia ngủ gật.
+- Vì thế, 2 bên phải thống nhất **Baudrate** (Tốc độ truyền).
 
-- **Start bit**: 1 bit LOW (0)
-- **Data bits**: Thường 8 bit
-- **Parity bit**: Tùy chọn (kiểm tra lỗi)
-- **Stop bits**: 1 hoặc 2 bit HIGH (1)
+Ví dụ: `Serial.begin(9600)` nghĩa là "Này anh bạn, tôi sẽ nói 9600 từ mỗi giây nhé".
+Nếu máy tính cài 115200 mà Arduino cài 9600 -> Hai bên sẽ nghe ra tiếng "lào xào" (ký tự lạ).
 
-### 1.3 Baudrate
+### 1.3 Hardware Serial vs Software Serial
 
-**Baudrate** = số bit truyền mỗi giây.
+- **Hardware Serial (Cổng cứng)**: Là cái miệng "xịn" có sẵn của Arduino (chân 0, 1). Nó nói rất nhanh, không tốn sức (CPU rảnh rang). Nhưng Arduino Uno chỉ có 1 cái thôi (nối ra USB).
+- **Software Serial (Cổng mềm)**: Là cái miệng "giả" do bạn ép Arduino dùng chân khác (ví dụ chân 10, 11) để nói.
+    - **Ưu điểm**: Thích tạo bao nhiêu cũng được.
+    - **Nhược điểm**: Tốn sức (CPU phải thức canh), nói chậm hơn, dễ lỗi.
 
-| Baudrate | Thời gian/bit | Ứng dụng |
-|----------|---------------|----------|
-| 9600 | 104 µs | Phổ biến, debug |
-| 38400 | 26 µs | Trung bình |
-| 115200 | 8.7 µs | Nhanh, GPS, Bluetooth |
+### 1.4 Gửi và Nhận
 
-```cpp
-Serial.begin(9600);  // Khởi tạo UART ở 9600 baud
-```
-
-> ⚠️ **Quan trọng**: Cả 2 bên PHẢI dùng cùng baudrate!
-
-### 1.4 Các hàm Serial Arduino
-
-#### Gửi dữ liệu:
-```cpp
-Serial.print("Hello");       // Gửi text, không xuống dòng
-Serial.println("World");     // Gửi text + xuống dòng
-Serial.print(123);           // Gửi số (dạng text)
-Serial.print(3.14, 2);       // Float với 2 chữ số thập phân
-Serial.write(65);            // Gửi byte raw (ASCII ''A'')
-```
-
-#### Nhận dữ liệu:
-```cpp', 1);
+- **`Serial.print("Hello")`**: Giống gửi tin nhắn SMS đi.', 1);
 INSERT OR REPLACE INTO lessons (id, week_id, order_index, title, content, is_published) VALUES ('l-08-01', 'week-08', 1, 'Lý thuyết & Bài học', '> **Thời lượng**: 3 tiết lý thuyết + 2 tiết thực hành  
 > **Mục tiêu**: Sử dụng I2C để giao tiếp với LCD và các thiết bị khác
 
@@ -3844,7 +4409,46 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 I2C = "Lớp học có 1 giáo viên và nhiều học sinh"
+
+Nếu UART là cuộc điện thoại 1-1, thì **I2C** là một lớp học.
+- **Master (Arduino)**: Giáo viên.
+- **Slave (Cảm biến, Màn hình)**: Học sinh.
+- **Dây SDA (Data)**: Tiếng nói của giáo viên/học sinh.
+- **Dây SCL (Clock)**: Tiếng nhịp thước kẻ gõ xuống bàn (Cạch... cạch... cạch...).
+
+Giáo viên muốn gọi ai thì gọi tên người đó (Địa chỉ).
+- "Trò Màn Hình!" -> Màn hình: "Dạ có em".
+- "Hiển thị chữ Hello!" -> Màn hình làm theo.
+- Các trò khác (Cảm biến nhiệt độ, La bàn...) thấy không phải tên mình thì im lặng.
+
+👉 **Ưu điểm**: Chỉ cần **2 dây** (SDA, SCL) mà nối được cả trăm thiết bị.
+
+### 1.2 Địa chỉ "Nhà riêng"
+
+Mỗi thiết bị I2C khi xuất xưởng đều được dán sẵn một con số gọi là **Địa chỉ (Address)**.
+- Màn hình LCD thường ở nhà số `0x27`.
+- Cảm biến MPU6050 ở nhà số `0x68`.
+
+Trước khi code, phải biết "nhà nó ở đâu". Dùng code **I2C Scanner** để đi gõ cửa từng nhà xem ai trả lời.
+
+### 1.3 Màn hình I2C (LCD 1602) - "Bảng đen điện tử"
+
+Ngày xưa nối màn hình LCD cần tới 16 dây -> Hết sạch chân Arduino.
+Người ta gắn thêm 1 con chip thông minh (bộ chuyển đổi I2C) vào sau lưng màn hình.
+-> Bây giờ chỉ cần **4 dây**:
+1.  **VCC**: Ăn (5V).
+2.  **GND**: Uống (Đất).
+3.  **SDA**: Nghe (Dữ liệu).
+4.  **SCL**: Nhịp (Đồng hồ).
+
+### 1.4 Pull-up Resistor (Cái lò xo kéo lên)
+
+Dây I2C giống như cái chuông dây ngày xưa. Để giật chuông, cần một cái lò xo kéo dây lên cao.
+- Nếu không có **điện trở kéo lên (Pull-up)**, dây tín hiệu sẽ bị chùng (nhiễu), không ai nghe thấy gì.
+- May mắn là: Hầu hết các module bán sẵn (như màn hình LCD) đã gắn sẵn cái "lò xo" này rồi. Bạn chỉ việc cắm là chạy.
 
 ### 1.1 I2C là gì?
 
@@ -3921,7 +4525,53 @@ graph TD
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Điểm danh (I2C Scanner Mini)
+**Mục tiêu**: Tìm xem cái màn hình LCD đang trốn ở địa chỉ nào (thường là 0x27 hoặc 0x3F).
+
+```cpp
+#include <Wire.h>
+
+void setup() {
+    Wire.begin();
+    Serial.begin(9600);
+}
+
+void loop() {
+    Serial.println("Dang quet...");
+    for (byte i = 1; i < 127; i++) {
+        Wire.beginTransmission(i);
+        if (Wire.endTransmission() == 0) {
+            Serial.print("Thay thiet bi tai: 0x");
+            Serial.println(i, HEX);
+        }
+    }
+    delay(3000);
+}
+```
+
+### 2.2 Drill 2: Xin chào (Hello LCD)
+**Mục tiêu**: Hiện chữ lên màn hình. (Nhớ thay 0x27 bằng địa chỉ tìm được ở trên).
+
+```cpp
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+    lcd.init();
+    lcd.backlight();
+    lcd.print("Chao ban!");
+    lcd.setCursor(0, 1); // Xuống dòng
+    lcd.print("Arduino de ot");
+}
+
+void loop() {}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 I2C Scanner - Quét địa chỉ
 
@@ -4154,7 +4804,32 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 SPI = "Dây chuyền sản xuất siêu tốc"
+
+Nếu I2C là lớp học (giơ tay phát biểu), thì **SPI** là một dây chuyền nhà máy.
+- Tốc độ cực nhanh (nhanh hơn I2C rất nhiều).
+- Không cần "gọi tên" ai cả, cứ đến lượt là làm.
+
+### 1.2 Bốn sợi dây thần thánh
+
+1.  **MOSI (Master Out Slave In)**: Băng chuyền chở hàng từ Tổ trưởng (Master) xuống Công nhân (Slave).
+2.  **MISO (Master In Slave Out)**: Băng chuyền chở hàng thành phẩm từ Công nhân (Slave) về Tổ trưởng (Master).
+3.  **SCK (Clock)**: Tiếng còi hiệu "Tuýt... tuýt...". Cứ 1 tiếng tuýt là băng chuyền nhích 1 bước.
+4.  **SS (Slave Select)**: Cái gậy chỉ huy của Tổ trưởng.
+    - Tổ trưởng chỉ gậy vào ai, người đó phải làm việc.
+    - Ai không bị chỉ gậy vào thì đứng im, bịt tai mắt lại (thả nổi chân tín hiệu).
+
+> **Ưu điểm**: Nhanh, không lo trùng địa chỉ (vì dùng dây SS riêng cho mỗi người).
+> **Nhược điểm**: Tốn dây (mỗi slave tốn thêm 1 dây SS riêng).
+
+### 1.3 IC 74HC595: "Người chia bài" (Nhắc lại)
+
+Trong bài này, chúng ta dùng giao thức SPI để nói chuyện với IC 74HC595.
+- Bạn đưa cho nó 1 byte (8 bit) qua đường SPI.
+- Nó sẽ chia 8 bit đó ra 8 chân để bật/tắt 8 đèn LED.
+- Giúp bạn tiết kiệm chân Arduino (chỉ tốn 3 chân điều khiển được vô số LED nếu mắc nối tiếp).
 
 ### 1.1 SPI là gì?
 
@@ -4214,7 +4889,49 @@ Arduino            74HC595           LEDs
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Dịch thủ công (Manual Shift)
+**Mục tiêu**: Hiểu bit nó trôi đi đâu.
+
+```cpp
+// Nối: DS-11, STCP-10, SHCP-13
+void setup() {
+    pinMode(11, OUTPUT); pinMode(10, OUTPUT); pinMode(13, OUTPUT);
+}
+
+void loop() {
+    digitalWrite(10, LOW); // Mở chốt
+    
+    // Gửi số 1 (00000001) -> Chỉ đèn cuối sáng
+    shiftOut(11, 13, MSBFIRST, 1); 
+    
+    digitalWrite(10, HIGH); // Đóng chốt -> Đèn sáng
+    delay(1000);
+}
+```
+
+### 2.2 Drill 2: Đếm nhị phân (Binary Count)
+**Mục tiêu**: Xem đèn nhấp nháy theo số đếm.
+
+```cpp
+void setup() {
+    pinMode(11, OUTPUT); pinMode(10, OUTPUT); pinMode(13, OUTPUT);
+}
+
+void loop() {
+    for (int i=0; i<256; i++) {
+        digitalWrite(10, LOW);
+        shiftOut(11, 13, MSBFIRST, i);
+        digitalWrite(10, HIGH);
+        delay(100);
+    }
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 Binary count 0→255 qua 74HC595
 
@@ -4367,7 +5084,38 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 1-Wire = "Đường dây điện thoại chung cư"
+
+Nếu I2C cần 2 dây, SPI cần 4 dây, thì **1-Wire** bá đạo nhất: chỉ cần **1 dây duy nhất** để truyền dữ liệu (+ dây đất).
+Nó giống hệt đường dây điện thoại nội bộ trong chung cư cũ:
+- Tất cả các căn hộ (cảm biến DS18B20) đều nối chung vào 1 sợi dây đồng.
+- Mỗi căn hộ có một **số nhà duy nhất** (ROM Code 64-bit).
+- Bảo vệ muốn gọi căn nào thì bấm số căn đó. Chỉ căn đó nhấc máy trả lời.
+
+👉 **Ưu điểm**: Tiết kiệm dây tối đa. Kéo 1 sợi dây dài 100 mét, gắn 50 cái cảm biến vào cũng được.
+
+### 1.2 Kẻ ký sinh (Parasite Power)
+
+Bá đạo hơn nữa, cảm biến này có thể "ký sinh", hút năng lượng từ chính dây dữ liệu để sống.
+- Không cần dây nguồn VCC đỏ đỏ.
+- Chỉ cần dây Đen (GND) và dây Vàng (Data).
+
+Nhưng thôi, người mới thì cứ cắm đủ 3 dây cho lành, chế độ ký sinh hơi khó tính.
+
+### 1.3 Tại sao lại là 85°C?
+
+Khi bạn vừa bật cảm biến lên, nếu thấy nó báo **85°C**, đừng hoảng hốt.
+- Đó không phải nhiệt độ thật.
+- Đó là mã thông báo: "Tôi đang khởi động, chưa đo xong!".
+- Giống như màn hình Loading trong game vậy. Hãy đợi nó đo xong (khoảng 0.75 giây) rồi mới lấy kết quả.
+
+### 1.4 Điện trở kéo 4.7kΩ (Lại là cái lò xo)
+
+Giống I2C, dây Data của 1-Wire cũng lỏng lẻo.
+- Bắt buộc phải có 1 điện trở 4.7kΩ nối dây Data lên 5V.
+- Nếu không có? Arduino sẽ chẳng nghe thấy gì, hoặc nghe tiếng "xè xè" (nhiễu).
 
 ### 1.1 1-Wire là gì?
 
@@ -4428,7 +5176,47 @@ Cài đặt: Sketch > Include Library > Manage Libraries > Tìm "OneWire" và "D
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Điều tra dân số (Sensor Count)
+**Mục tiêu**: Xem có bao nhiêu cảm biến đang nối vào.
+
+```cpp
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+OneWire oneWire(2); // Nối chân Data vào pin 2
+DallasTemperature sensors(&oneWire);
+
+void setup() {
+    Serial.begin(9600);
+    sensors.begin();
+    
+    int soLuong = sensors.getDeviceCount();
+    Serial.print("Tim thay: ");
+    Serial.println(soLuong);
+}
+
+void loop() {}
+```
+
+### 2.2 Drill 2: Đọc nhiệt độ thô
+**Mục tiêu**: Đọc nhanh nhất có thể.
+
+```cpp
+// (Khai báo như trên...)
+
+void loop() {
+    sensors.requestTemperatures(); // Ra lệnh "đo đi!"
+    float t = sensors.getTempCByIndex(0); // Lấy kết quả con số 0
+    Serial.println(t);
+    delay(1000);
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 Đọc nhiệt độ cơ bản
 
@@ -4697,7 +5485,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp
+## ⚠️ Phần 4: Lỗi thường gặp
 
 | Lỗi | Nguyên nhân | Cách sửa |
 |-----|-------------|----------|
@@ -4714,7 +5502,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt
+## 🎓 Phần 5: Tóm tắt
 
 1. **1-Wire**: 1 dây data, nhiều thiết bị trên 1 bus
 2. **DS18B20**: Cảm biến nhiệt độ chính xác ±0.5°C
@@ -4739,7 +5527,36 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 ESP8266/ESP32: "Arduino mọc thêm cánh"
+
+Arduino Uno giống như một chiếc xe đạp: rẻ, bền, dễ đi, nhưng không bay được (không có Internet).
+**ESP8266** và **ESP32** giống như xe đạp được lắp thêm **đôi cánh WiFi**.
+- Bạn vẫn code y hệt như Arduino (setup, loop, digitalWrite...).
+- Nhưng nó có thêm khả năng kết nối mạng để gửi tin nhắn, nhận lệnh từ xa.
+
+### 1.2 Hai chế độ WiFi (Ở nhờ vs Tự lập)
+
+- **Station Mode (STA - Ở nhờ)**: ESP đóng vai trò như cái điện thoại của bạn. Nó xin kết nối vào modem WiFi nhà bạn (phải biết tên WiFi và Pass).
+    - *Ưu điểm*: Truy cập được Internet toàn cầu.
+- **Access Point Mode (AP - Tự lập)**: ESP tự phát ra một sóng WiFi riêng (như "ESP_FREE_WIFI"). Bạn lấy điện thoại kết nối vào nó.
+    - *Ưu điểm*: Không cần modem mạng, mang ra giữa đồng hoang vẫn điều khiển được.
+
+### 1.3 Web Server (Người phục vụ bàn)
+
+Khi bạn lập trình ESP làm **Web Server**, nó biến thành một anh bồi bàn.
+1. Bạn (Khách hàng - Client) mở trình duyệt, gõ địa chỉ IP của nó (ví dụ 192.168.1.100).
+2. Bạn gọi món: "Cho tôi xem trang chủ" (`GET /`).
+3. Anh bồi bàn ESP chạy vào bếp, lấy tờ thực đơn (file HTML) mang ra cho bạn xem.
+4. Bạn bấm nút "Bật đèn" trên màn hình -> Trình duyệt gửi lệnh `GET /led/on`.
+5. Anh bồi bàn nhận lệnh -> Chạy đi bật đèn thật -> Quay lại báo "Xong rồi sếp!".
+
+### 1.4 IP Address (Số nhà)
+
+Trong mạng WiFi, mỗi thiết bị phải có một **số nhà riêng** (IP Address) để bưu điện biết đường giao thư.
+- Ví dụ: `192.168.1.5`.
+- Bạn phải biết số nhà này thì mới truy cập vào Website của ESP được. Code xong mở Serial Monitor lên xem nó in ra số mấy nhé.
 
 ### 1.1 Lưu ý phần cứng
 
@@ -4836,7 +5653,53 @@ classDiagram
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Kết nối WiFi
+**Mục tiêu**: Bắt cho bằng được WiFi nhà bạn.
+
+```cpp
+#include <ESP8266WiFi.h> // Hoặc WiFi.h nếu dùng ESP32
+
+void setup() {
+    Serial.begin(115200);
+    WiFi.begin("TenWiFi", "MatKhau"); // Thay đổi ở đây
+    
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("\nDa ket noi!");
+    Serial.println(WiFi.localIP()); // In ra số nhà (IP)
+}
+
+void loop() {}
+```
+
+### 2.2 Drill 2: Web "Hello World"
+**Mục tiêu**: Vào trình duyệt thấy chữ Hello.
+
+```cpp
+#include <ESP8266WebServer.h>
+ESP8266WebServer server(80);
+
+void setup() {
+    // (Kết nối WiFi như bài trên...)
+    
+    server.on("/", []() {
+        server.send(200, "text/plain", "Hello from ESP!");
+    });
+    server.begin();
+}
+
+void loop() {
+    server.handleClient(); // Đừng quên dòng này!
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 WebServer điều khiển 1 LED
 
@@ -5178,7 +6041,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp
+## ⚠️ Phần 4: Lỗi thường gặp
 
 | Lỗi | Nguyên nhân | Cách sửa |
 |-----|-------------|----------|
@@ -5195,7 +6058,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt
+## 🎓 Phần 5: Tóm tắt
 
 1. **ESP8266/ESP32**: Board WiFi thay thế Arduino cho IoT
 2. **WebServer**: Lắng nghe HTTP request, trả HTML
@@ -5219,7 +6082,36 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Sync vs Async WebServer (Xếp hàng vs Lấy số)
+
+- **Sync WebServer (Tuần 11)**: Giống việc **xếp hàng mua trà sữa**.
+    - Khách A đang order thì Khách B phải đứng chờ.
+    - Nếu Khách A order lâu (xử lý chậm) -> Cả hàng kẹt cứng.
+    - Lúc nhân viên đang pha nước (loop bận) -> Không ai order được.
+
+- **Async WebServer (Tuần 12)**: Giống việc **lấy số thứ tự ở ngân hàng**.
+    - Khách A vào lấy số, ra ghế ngồi chờ.
+    - Khách B vào lấy số ngay lập tức, không phải chờ Khách A.
+    - Nhân viên xử lý xong cho ai thì gọi số người đó.
+    - **Ưu điểm**: Phục vụ được cực nhiều khách cùng lúc, không ai bị chặn (non-blocking).
+
+### 1.2 "API" và "JSON" (Ngôn ngữ của máy)
+
+Ở tuần trước, WebServer trả về cả trang HTML (gồm màu sắc, chữ nghĩa...). Việc này rất nặng nề.
+Tuần này, chúng ta dùng cách chuyên nghiệp hơn:
+1. Trình duyệt tải trang web 1 lần duy nhất (HTML/CSS).
+2. Sau đó, nó chỉ hỏi ESP những câu ngắn gọn: "Đèn nhân viên 1 tắt hay bật?"
+3. ESP trả lời ngắn gọn: `{"den1": "bat"}`. (Đây là **JSON**).
+4. Trình duyệt nhận tin -> Tự tô màu cái nút trên màn hình.
+
+### 1.3 `fetch()` - Người đưa thư thầm lặng
+
+Trong JavaScript, lệnh `fetch()` giống như một **người đưa thư thầm lặng**.
+- Nó chạy ngầm bên dưới, không làm tải lại trang web (reload).
+- Bạn bấm nút -> `fetch()` chạy đi gửi lệnh -> nhận kết quả -> cập nhật màu nút.
+- Người dùng cảm thấy web chạy "mượt như app", không bị chớp giật màn hình.
 
 ### 1.1 Sync vs Async WebServer
 
@@ -5283,7 +6175,42 @@ Browser                     ESP8266
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Trả về JSON (API Test)
+**Mục tiêu**: Vào trình duyệt thấy chuỗi JSON.
+
+```cpp
+#include <ESPAsyncWebServer.h>
+AsyncWebServer server(80);
+
+void setup() {
+    // (Kết nối WiFi...)
+    
+    server.on("/api/hello", HTTP_GET, [](AsyncWebServerRequest *request){
+        // Trả về JSON chuẩn
+        request->send(200, "application/json", "{\"message\":\"Xin chao!\"}");
+    });
+    server.begin();
+}
+
+void loop() {}
+```
+**Thử thách**: Mở trình duyệt gõ `IP/api/hello`.
+
+### 2.2 Drill 2: Async LED (Bật tắt không chặn)
+**Mục tiêu**: Bật đèn xong trả lời ngay lập tức.
+
+```cpp
+    server.on("/led/on", HTTP_GET, [](AsyncWebServerRequest *request){
+        digitalWrite(2, LOW); // Bật đèn (hoặc HIGH tùy board)
+        request->send(200, "text/plain", "OK");
+    });
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 Async WebServer điều khiển 1 LED
 
@@ -5677,7 +6604,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp
+## ⚠️ Phần 4: Lỗi thường gặp
 
 | Lỗi | Nguyên nhân | Cách sửa |
 |-----|-------------|----------|
@@ -5692,7 +6619,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt
+## 🎓 Phần 5: Tóm tắt
 
 1. **Async WebServer**: Non-blocking, không cần handleClient()
 2. **JSON API**: Trả data cho JavaScript xử lý

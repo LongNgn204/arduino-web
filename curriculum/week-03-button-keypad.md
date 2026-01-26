@@ -17,7 +17,53 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Nút nhấn & INPUT_PULLUP (Tại sao ngược đời?)
+
+Bình thường ta nghĩ: Nhấn = 1 (HIGH), Không nhấn = 0 (LOW).
+Nhưng trong Arduino, dân chuyên nghiệp hay dùng **INPUT_PULLUP** (Điện trở kéo lên). Nó hoạt động ngược lại:
+- **Không nhấn = HIGH (5V)**: Luôn có "lực kéo" lên 5V.
+- **Nhấn = LOW (0V)**: Nối thẳng xuống đất (GND).
+
+> **Tưởng tượng**: Bạn cầm chùm bóng bay (tín hiệu).
+> - **Chưa ai kéo**: Bóng bay lơ lửng trên cao (**HIGH**).
+> - **Có người kéo dây (Nhấn nút)**: Bóng bị kéo tuột xuống đất (**LOW**).
+
+👉 Nhớ câu thần chú: **"Nhấn là THẤP, Nhả là CAO"** (với INPUT_PULLUP).
+
+### 1.2 Dội phím (Bounce): "Quả bóng nảy"
+
+Khi bạn nhấn nút một cái "tách", bạn nghĩ tín hiệu nó đẹp đẽ như này:
+`_________|---------` (0 lên 1 dứt khoát)
+
+Thực tế, cái lò xo kim loại bên trong nó **rung bần bật** như quả bóng tennis rơi xuống đất:
+`____|-|-|_|----------` (Rung rung vài lần rồi mới yên).
+
+**Hậu quả**: Bạn bấm 1 lần, Arduino tưởng bạn bấm 10 lần! Đèn bật tắt loạn xạ.
+**Cách chữa (Debounce)**: "Từ từ đã!". Khi thấy tín hiệu đổi, Arduino chờ khoảng 50ms cho lò xo hết rung rồi mới chốt hạ.
+
+### 1.3 Bắt cạnh (Edge Detection): "Khoảnh khắc" vs "Trạng thái"
+
+- **Trạng thái (State)**: Là việc bạn **đang** ngồi. (Kéo dài lâu).
+- **Cạnh (Edge)**: Là khoảnh khắc bạn **bắt đầu** ngồi xuống. (Chỉ 1 tích tắc).
+
+Tại sao quan trọng?
+- Nếu muốn **đèn sáng khi giữ nút**: Dùng Trạng thái.
+- Nếu muốn **đếm số lần nhấn**: Phải dùng Cạnh (nếu không, 1 lần nhấn dài 1s sẽ bị đếm thành 1000 lần vì vòng lặp chạy quá nhanh).
+
+### 1.4 Keypad 4x4: "Trò chơi tìm tọa độ"
+
+Keypad có 16 nút, nếu nối từng nút thì mất 16 chân Arduino? Hết chỗ!
+Người ta xếp nó thành lưới (Ma trận): 4 Hàng (Row) x 4 Cột (Col).
+-> Chỉ tốn 4 + 4 = 8 chân.
+
+**Cách Arduino đọc**: Giống trò chơi tàu chiến.
+1. Quét Hàng 1: "Có ai ở Hàng 1 bấm không?".
+2. Nếu Cột 2 kêu "Có!": Suy ra phím số 2 (Giao điểm H1-C2) đang được nhấn.
+3. Quét tiếp Hàng 2, 3, 4...
+
+Quy trình này nhanh đến mức bạn nhấn cái nào nó biết ngay cái đó.
 
 ### 1.1 Nút nhấn và cách nối mạch
 
@@ -189,7 +235,85 @@ Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+**1. Nút nhấn (Dùng INPUT_PULLUP):**
+Rất đơn giản, chỉ cần 2 dây.
+```
+[GND] ────── [Nút Nhấn] ────── [Pin 2]
+```
+*(Trong các bài Drill và Lab, chúng ta luôn dùng chân Pin 2 cho nút nhấn).*
+
+**2. Keypad 4x4:**
+Nếu bạn có module Keypad 8 chân, hãy cắm lần lượt vào Arduino từ chân 9 xuống chân 2.
+```
+Arduino:  [9] [8] [7] [6] | [5] [4] [3] [2]
+Keypad:   [R1][R2][R3][R4]| [C1][C2][C3][C4] (Từ trái qua)
+```
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+### 2.1 Drill 1: Mắt thấy tay sờ (Serial Monitor)
+**Mục tiêu**: Xem giá trị thực tế của nút nhấn (0 hoặc 1).
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+    pinMode(2, INPUT_PULLUP);
+}
+
+void loop() {
+    int sensorVal = digitalRead(2);
+    Serial.println(sensorVal);  // In ra 1 (không nhấn) hoặc 0 (nhấn)
+    delay(100); // Đọc chậm để dễ nhìn
+}
+```
+**Thử thách**: Nhấn thật nhanh và xem Serial có bắt kịp không.
+
+### 2.2 Drill 2: Đèn PIN (Nhấn giữ = Sáng)
+**Mục tiêu**: Logic điều khiển trực tiếp.
+
+```cpp
+void setup() {
+    pinMode(2, INPUT_PULLUP);
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    if (digitalRead(2) == LOW) { // Đang nhấn
+        digitalWrite(13, HIGH);
+    } else {
+        digitalWrite(13, LOW);
+    }
+}
+```
+
+### 2.3 Drill 3: Công tắc (Toggle) - Phiên bản lỗi
+**Mục tiêu**: Hiểu tại sao cần debounce (Bài này sẽ chạy "lúc được lúc không").
+
+```cpp
+// Thử nạp code này và nhấn nút. Bạn sẽ thấy đèn sáng/tắt không theo ý muốn.
+// Đó là do "Dội phím" (Bounce)
+int ledState = LOW;
+
+void setup() {
+    pinMode(2, INPUT_PULLUP);
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    if (digitalRead(2) == LOW) { // Nếu nhấn
+        ledState = !ledState;    // Đảo trạng thái
+        digitalWrite(13, ledState);
+        // Không có delay -> dội phím làm đảo liên tục
+    }
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu nâng cao
 
 ### 2.1 Nút nhấn điều khiển LED (Nhấn bật, nhả tắt)
 
@@ -563,7 +687,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 Nút nhấn "ma" - Đọc nhiều lần khi nhấn 1 lần
 
@@ -598,7 +722,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -640,7 +764,7 @@ lastState = currentState;
 
 ---
 
-## 📋 Phần 5: Quiz tự kiểm tra
+## 📋 Phần 6: Quiz tự kiểm tra
 
 ### Câu 1:
 Với `pinMode(2, INPUT_PULLUP)`, khi nút KHÔNG được nhấn, `digitalRead(2)` trả về?

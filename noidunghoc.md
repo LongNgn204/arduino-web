@@ -55,7 +55,11 @@ Sau 12 tuần, sinh viên có thể:
 - LED1..LED5: D2, D3, D4, D5, D6 (mỗi LED có điện trở).  
 - Chân còn lại LED về GND.
 
-## 1.4 Thực hành (Lab) — đúng đề LMS
+## 1.4 Thực hành (Drills & Lab)
+### Drills: Khởi động
+- Bật/tắt LED thủ công (Hello World).
+- Điều khiển tốc độ nháy qua biến.
+
 ### Bài 1-1: Điều khiển LED theo quy luật thời gian
 **Yêu cầu:**
 1) Bật 1s, tắt 1s, lặp 5 lần.  
@@ -118,7 +122,13 @@ Sau 12 tuần, sinh viên có thể:
 - Multiplexing: quét digit nhanh để hiển thị 4 số ổn định.  
 - 74HC595: shift register, giảm số chân điều khiển.
 
-## 2.3 Thực hành (Lab) — đúng đề LMS
+
+## 2.3 Thực hành (Drills & Lab)
+### Drills: Khởi động
+- Sáng 1 thanh LED bất kỳ.
+- Hiển thị số "1" (B+C).
+- Nhấp nháy số "8".
+
 ### Bài 2-1: LED 7 đoạn (1 số)
 **Yêu cầu:**
 - Hiển thị 0→9, trễ 2s.  
@@ -173,7 +183,13 @@ Sau 12 tuần, sinh viên có thể:
 - Edge detection (phát hiện nhấn mới) để đếm lần nhấn.  
 - Keypad: quét hàng/cột, mapping phím.
 
-## 3.3 Thực hành (Lab) — đúng đề LMS
+
+## 3.3 Thực hành (Drills & Lab)
+### Drills: Khởi động
+- Serial Monitor xem raw signal.
+- Đèn PIN (nhấn sáng, nhả tắt).
+- Toggle lỗi (để thấy debounce).
+
 ### Bài 3-1: Nhấn → LED bật, nhả → LED tắt
 **Serial format bắt buộc:**
 - Trạng thái nút ấn: (1 - nhấn, 0 - không nhấn)  

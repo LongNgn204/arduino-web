@@ -16,7 +16,46 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 I2C = "Lớp học có 1 giáo viên và nhiều học sinh"
+
+Nếu UART là cuộc điện thoại 1-1, thì **I2C** là một lớp học.
+- **Master (Arduino)**: Giáo viên.
+- **Slave (Cảm biến, Màn hình)**: Học sinh.
+- **Dây SDA (Data)**: Tiếng nói của giáo viên/học sinh.
+- **Dây SCL (Clock)**: Tiếng nhịp thước kẻ gõ xuống bàn (Cạch... cạch... cạch...).
+
+Giáo viên muốn gọi ai thì gọi tên người đó (Địa chỉ).
+- "Trò Màn Hình!" -> Màn hình: "Dạ có em".
+- "Hiển thị chữ Hello!" -> Màn hình làm theo.
+- Các trò khác (Cảm biến nhiệt độ, La bàn...) thấy không phải tên mình thì im lặng.
+
+👉 **Ưu điểm**: Chỉ cần **2 dây** (SDA, SCL) mà nối được cả trăm thiết bị.
+
+### 1.2 Địa chỉ "Nhà riêng"
+
+Mỗi thiết bị I2C khi xuất xưởng đều được dán sẵn một con số gọi là **Địa chỉ (Address)**.
+- Màn hình LCD thường ở nhà số `0x27`.
+- Cảm biến MPU6050 ở nhà số `0x68`.
+
+Trước khi code, phải biết "nhà nó ở đâu". Dùng code **I2C Scanner** để đi gõ cửa từng nhà xem ai trả lời.
+
+### 1.3 Màn hình I2C (LCD 1602) - "Bảng đen điện tử"
+
+Ngày xưa nối màn hình LCD cần tới 16 dây -> Hết sạch chân Arduino.
+Người ta gắn thêm 1 con chip thông minh (bộ chuyển đổi I2C) vào sau lưng màn hình.
+-> Bây giờ chỉ cần **4 dây**:
+1.  **VCC**: Ăn (5V).
+2.  **GND**: Uống (Đất).
+3.  **SDA**: Nghe (Dữ liệu).
+4.  **SCL**: Nhịp (Đồng hồ).
+
+### 1.4 Pull-up Resistor (Cái lò xo kéo lên)
+
+Dây I2C giống như cái chuông dây ngày xưa. Để giật chuông, cần một cái lò xo kéo dây lên cao.
+- Nếu không có **điện trở kéo lên (Pull-up)**, dây tín hiệu sẽ bị chùng (nhiễu), không ai nghe thấy gì.
+- May mắn là: Hầu hết các module bán sẵn (như màn hình LCD) đã gắn sẵn cái "lò xo" này rồi. Bạn chỉ việc cắm là chạy.
 
 ### 1.1 I2C là gì?
 
@@ -93,7 +132,67 @@ graph TD
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+**1. Màn hình LCD 1602 (Kèm module I2C sau lưng):**
+Chỉ cần 4 dây nối vào Arduino Uno:
+```
+[GND] ────── [GND]
+[VCC] ────── [5V]
+[SDA] ────── [Pin A4] (hoặc SDA)
+[SCL] ────── [Pin A5] (hoặc SCL)
+```
+*(Nếu màn hình không hiện chữ, hãy lấy tua-vít vặn nhẹ biến trở xanh dương phía sau module I2C để chỉnh độ tương phản LCD).*
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Điểm danh (I2C Scanner Mini)
+**Mục tiêu**: Tìm xem cái màn hình LCD đang trốn ở địa chỉ nào (thường là 0x27 hoặc 0x3F).
+
+```cpp
+#include <Wire.h>
+
+void setup() {
+    Wire.begin();
+    Serial.begin(9600);
+}
+
+void loop() {
+    Serial.println("Dang quet...");
+    for (byte i = 1; i < 127; i++) {
+        Wire.beginTransmission(i);
+        if (Wire.endTransmission() == 0) {
+            Serial.print("Thay thiet bi tai: 0x");
+            Serial.println(i, HEX);
+        }
+    }
+    delay(3000);
+}
+```
+
+### 2.2 Drill 2: Xin chào (Hello LCD)
+**Mục tiêu**: Hiện chữ lên màn hình. (Nhớ thay 0x27 bằng địa chỉ tìm được ở trên).
+
+```cpp
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+    lcd.init();
+    lcd.backlight();
+    lcd.print("Chao ban!");
+    lcd.setCursor(0, 1); // Xuống dòng
+    lcd.print("Arduino de ot");
+}
+
+void loop() {}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 I2C Scanner - Quét địa chỉ
 
@@ -402,7 +501,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 | Lỗi | Nguyên nhân | Cách sửa |
 |-----|-------------|----------|
@@ -420,7 +519,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -442,7 +541,7 @@ void loop() {
 
 ---
 
-## 📋 Phần 5: Quiz tự kiểm tra
+## 📋 Phần 6: Quiz tự kiểm tra
 
 ### Câu 1:
 I2C cần bao nhiêu dây dữ liệu?

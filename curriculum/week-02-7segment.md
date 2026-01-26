@@ -17,7 +17,60 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Thiết kế hệ thống: "Xây nhà" vs "Xếp hình Lego"
+
+Khi làm dự án, người ta có 2 cách tư duy:
+
+1.  **Top-Down (Xây nhà)**: 
+    - Có bản vẽ kiến trúc sư trước (Tổng thể).
+    - Móng, Cột, Tường, Mái (Chi tiết).
+    - **Áp dụng**: Khi làm đồ án môn học lớn. "Mình cần làm hệ thống tưới cây -> Cần bơm, cảm biến -> Mua bơm loại nào..."
+
+2.  **Bottom-Up (Xếp hình Lego)**:
+    - Có cục gạch nào xếp cục đó (Từ nhỏ đến lớn).
+    - Lấy module LED ra vọc thử -> Lấy nút bấm ra vọc thử -> Ghép 2 cái lại thành cái đèn pin.
+    - **Áp dụng**: Khi học môn này. Ta cứ làm từng bài nhỏ (LED, Nút, Sensor) rành rọt, rồi sau này ghép lại.
+
+### 1.2 LED 7 đoạn: "8 bóng đèn trong một cái hộp"
+
+Đừng sợ cái tên "7 đoạn". Thực chất nó chỉ là **8 cái đèn LED bình thường** được đóng gói chung vào 1 cái vỏ nhựa.
+- 7 thanh sáng hình số 8 (a, b, c, d, e, f, g).
+- 1 cái dấu chấm (dp).
+
+**Vấn đề**: 8 đèn thì phải có 16 chân (8 dương, 8 âm)? Quá nhiều chân!
+**Giải pháp**: Nối chung lại.
+- **Common Cathode (GND chung)**: Tất cả chân Âm (-) nối chung. Muốn đèn nào sáng thì **cấp Dương (+)** (HIGH) vào chân đó. (Dễ hiểu, phổ biến nhất).
+- **Common Anode (VCC chung)**: Tất cả chân Dương (+) nối chung. Muốn đèn nào sáng thì **nối Âm (-)** (LOW) vào chân đó. (Hơi ngược não).
+
+### 1.3 Multiplexing (Quét LED) - Ảo thuật thị giác
+
+Nếu bạn có 4 con số (4 LED 7 đoạn), bạn cần 4 x 8 = 32 chân Arduino? **Không ai làm thế cả**.
+Chúng ta dùng kỹ thuật **"Quét" (Multiplexing)**.
+
+**Tưởng tượng**: Bạn có 4 bức tranh nhưng chỉ có 1 cái khung ảnh.
+1. Bạn bỏ tranh 1 vào -> Khán giả thấy tranh 1.
+2. Bạn rút ra bỏ tranh 2 vào -> Khán giả thấy tranh 2.
+3. Nếu bạn thay tranh cực nhanh (50 lần/giây) -> Mắt khán giả sẽ thấy **cả 4 tranh hiện lên cùng lúc**.
+
+**Áp dụng vào LED**:
+- Thời điểm 1: Bật số hàng nghìn lên, tắt 3 số kia.
+- Thời điểm 2: Bật số hàng trăm lên, tắt 3 số kia.
+- ...
+Làm siêu nhanh, mắt người sẽ thấy cả 4 số đều sáng. Đây gọi là hiện tượng **lưu ảnh của mắt**.
+
+### 1.4 IC 74HC595: "Người phụ tá chia bài"
+
+Arduino của bạn ít chân quá? Cần một "người phụ tá".
+**74HC595** chính là người đó (gọi là Shift Register).
+- Bạn chỉ cần **3 sợi dây** (3 chân) nói chuyện với nó.
+- Nó sẽ điều khiển **8 cái đèn** giúp bạn.
+
+Cách nó làm việc giống như xếp hàng vào lớp:
+- **DS (Data)**: Bạn đứng cửa hô "Vào!" hoặc "Đứng lại!".
+- **SHCP (Clock)**: Tiếng còi "Tuýt!". Mỗi lần tuýt, một học sinh bước vào hàng.
+- **STCP (Latch)**: Tiếng trống "Tùng!". Cả hàng bước đều ra sân (xuất ra LED).
 
 ### 1.1 Phương pháp thiết kế hệ thống nhúng
 
@@ -184,7 +237,89 @@ Arduino            74HC595
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+Để làm các bài tập bên dưới, bạn cần đấu nối LED 7 đoạn (loại 1 số) theo sơ đồ chuẩn "thứ tự ngược kim đồng hồ".
+
+**Sơ đồ chân LED 7 Đoạn (Mặt xoay về phía bạn):**
+```
+   [10] [9] [8] [7] [6]  <-- Hàng trên
+    |    |   |   |   |
+   ( g   f  COM  a   b )
+
+   ( e   d  COM  c  dp )
+    |    |   |   |   |
+   [1]  [2] [3] [4] [5]  <-- Hàng dưới
+```
+
+**Cách nối dây với Arduino:**
+- Chân **COM (3 hoặc 8)** ──> GND (qua trở 220Ω cho an toàn)
+- Chân **a (7)** ──> Digital 2
+- Chân **b (6)** ──> Digital 3
+- Chân **c (4)** ──> Digital 4
+- ... tiếp tục theo vòng tròn ...
+
+*Ghi chú: Nếu ngại nối nhiều dây, bạn có thể chỉ nối mỗi thanh **a** (Pin 7) và **COM** để test trước.*
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+### 2.1 Drill 1: Sáng 1 thanh LED (Segment A)
+**Mục tiêu**: Xác định chân kết nối đúng.
+
+```cpp
+void setup() {
+    // Giả sử Segment A nối vào D2
+    pinMode(2, OUTPUT);
+    
+    // Nếu là Common Cathode (GND chung) -> HIGH là sáng
+    digitalWrite(2, HIGH); 
+}
+
+void loop() {}
+```
+**Thử thách**: Sửa code để sáng thanh B (Pin 3).
+
+### 2.2 Drill 2: Hiển thị số "1"
+**Mục tiêu**: Bật cùng lúc 2 segment B và C.
+
+```cpp
+void setup() {
+    pinMode(3, OUTPUT); // Segment B
+    pinMode(4, OUTPUT); // Segment C
+    
+    digitalWrite(3, HIGH);
+    digitalWrite(4, HIGH);
+}
+void loop() {}
+```
+**Thử thách**: Thêm code để hiển thị số "7" (A, B, C sáng).
+
+### 2.3 Drill 3: Nhấp nháy số "8"
+**Mục tiêu**: Kết hợp Week 1 (blink) và Week 2 (7-seg).
+
+```cpp
+void setup() {
+    // Khai báo từ D2 đến D8 (a-g)
+    for (int i = 2; i <= 8; i++) {
+        pinMode(i, OUTPUT);
+    }
+}
+
+void loop() {
+    // Bật hết (số 8)
+    for (int i = 2; i <= 8; i++) digitalWrite(i, HIGH);
+    delay(1000);
+    
+    // Tắt hết
+    for (int i = 2; i <= 8; i++) digitalWrite(i, LOW);
+    delay(1000);
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu nâng cao
 
 ### 2.1 LED 7 đoạn đơn - Đếm 0→9
 
@@ -630,7 +765,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 LED 7 đoạn hiển thị sai số
 
@@ -667,7 +802,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -705,7 +840,7 @@ Số 4 chữ số từ int:
 
 ---
 
-## 📋 Phần 5: Quiz tự kiểm tra
+## 📋 Phần 6: Quiz tự kiểm tra
 
 ### Câu 1:
 LED 7 đoạn loại Common Cathode cần mức logic nào để bật 1 segment?

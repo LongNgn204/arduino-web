@@ -96,113 +96,116 @@ export default function ProjectListingPage() {
         const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
             p.description.toLowerCase().includes(search.toLowerCase());
         return matchFilter && matchSearch;
+        return matchFilter && matchSearch;
     });
 
     const getDifficultyColor = (diff: string) => {
         switch (diff) {
-            case 'easy': return 'mint';
-            case 'medium': return 'yellow';
-            case 'hard': return 'coral';
-            default: return 'gray';
+            case 'easy': return 'default';
+            case 'medium': return 'secondary';
+            case 'hard': return 'destructive';
+            default: return 'outline';
         }
     };
 
     return (
-        <div className="min-h-screen font-sans">
-            <header className="mb-8">
-                <h1 className="text-3xl font-black text-gray-900 mb-2 flex items-center gap-3">
-                    <Cpu className="w-8 h-8 text-arduino-teal" />
+        <div className="min-h-screen font-sans bg-background">
+            <header className="p-8 border-b border-border">
+                <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+                    <Cpu className="w-8 h-8" />
                     Thư viện Dự án
                 </h1>
-                <p className="text-gray-500 text-lg">Khám phá và xây dựng các dự án thực tế với Arduino & IoT.</p>
+                <p className="text-muted-foreground text-lg">Khám phá và xây dựng các dự án thực tế với Arduino & IoT.</p>
             </header>
 
             {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 mb-8">
-                <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm dự án..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-arduino-teal/20 focus:border-arduino-teal/50"
-                    />
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                <div className="flex flex-col md:flex-row gap-4 mb-8">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm dự án..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full pl-9 pr-4 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+                        />
+                    </div>
+                    <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+                        <Filter className="w-4 h-4 text-muted-foreground mr-2 shrink-0" />
+                        {(['all', 'easy', 'medium', 'hard'] as const).map((lvl) => (
+                            <button
+                                key={lvl}
+                                onClick={() => setFilter(lvl)}
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium capitalize transition-all whitespace-nowrap border ${filter === lvl
+                                    ? 'bg-primary text-primary-foreground border-primary'
+                                    : 'bg-background text-foreground border-input hover:bg-muted'
+                                    }`}
+                            >
+                                {lvl === 'all' ? 'Tất cả' : lvl}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
-                    <Filter className="w-5 h-5 text-gray-400 mr-2 shrink-0" />
-                    {(['all', 'easy', 'medium', 'hard'] as const).map((lvl) => (
-                        <button
-                            key={lvl}
-                            onClick={() => setFilter(lvl)}
-                            className={`px-4 py-2 rounded-xl text-sm font-semibold capitalize transition-all whitespace-nowrap ${filter === lvl
-                                ? 'bg-arduino-teal text-white shadow-lg shadow-arduino-teal/20'
-                                : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'
-                                }`}
-                        >
-                            {lvl === 'all' ? 'Tất cả' : lvl}
-                        </button>
-                    ))}
-                </div>
-            </div>
 
-            {/* Project Grid */}
-            {loading ? (
-                <div className="flex justify-center py-20">
-                    <div className="w-10 h-10 border-4 border-arduino-teal border-t-transparent rounded-full animate-spin" />
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredProjects.map((project) => (
-                        <Link to={`/projects/${project.id}`} key={project.id} className="group block h-full">
-                            <Card className="h-full flex flex-col overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-gray-100">
-                                <div className="h-48 bg-gray-100 relative overflow-hidden">
-                                    {project.imageUrl ? (
-                                        <img
-                                            src={project.imageUrl}
-                                            alt={project.title}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-arduino-mint/30 text-arduino-teal">
-                                            <Cpu className="w-12 h-12 opacity-50" />
-                                        </div>
-                                    )}
-                                    <div className="absolute top-3 right-3">
-                                        <Badge variant={getDifficultyColor(project.difficulty) as any} className="shadow-sm border border-white/50 backdrop-blur-sm">
-                                            {project.difficulty}
-                                        </Badge>
-                                    </div>
-                                </div>
-                                <div className="p-5 flex-1 flex flex-col">
-                                    <div className="flex flex-wrap gap-2 mb-3">
-                                        {project.tags.map(tag => (
-                                            <span key={tag} className="text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-gray-50 px-2 py-1 rounded-md">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-arduino-teal transition-colors">
-                                        {project.title}
-                                    </h3>
-                                    <p className="text-gray-500 text-sm line-clamp-3 mb-4 flex-1">
-                                        {project.description}
-                                    </p>
-                                    <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                                        <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-                                            {project.difficulty === 'hard' ? <Zap className="w-4 h-4 text-orange-400" /> : <Signal className="w-4 h-4 text-arduino-teal" />}
-                                            {project.difficulty === 'easy' ? 'Dễ thực hiện' : project.difficulty === 'medium' ? 'Trung bình' : 'Thử thách'}
-                                        </div>
-                                        <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-arduino-teal group-hover:text-white transition-all">
-                                            <ArrowRight className="w-4 h-4" />
+                {/* Project Grid */}
+                {loading ? (
+                    <div className="flex justify-center py-20 text-muted-foreground">
+                        Đang tải dự án...
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredProjects.map((project) => (
+                            <Link to={`/projects/${project.id}`} key={project.id} className="block h-full">
+                                <Card className="h-full flex flex-col overflow-hidden hover:bg-muted/50 transition-colors border-border">
+                                    <div className="h-48 bg-muted relative overflow-hidden border-b border-border">
+                                        {project.imageUrl ? (
+                                            <img
+                                                src={project.imageUrl}
+                                                alt={project.title}
+                                                className="w-full h-full object-cover transition-opacity hover:opacity-90"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                                <Cpu className="w-12 h-12 opacity-20" />
+                                            </div>
+                                        )}
+                                        <div className="absolute top-3 right-3">
+                                            <Badge variant={getDifficultyColor(project.difficulty) as any} className="shadow-sm">
+                                                {project.difficulty}
+                                            </Badge>
                                         </div>
                                     </div>
-                                </div>
-                            </Card>
-                        </Link>
-                    ))}
-                </div>
-            )}
+                                    <div className="p-5 flex-1 flex flex-col">
+                                        <div className="flex flex-wrap gap-2 mb-3">
+                                            {project.tags.map(tag => (
+                                                <span key={tag} className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2 py-1 rounded border border-border">
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <h3 className="text-xl font-bold text-foreground mb-2">
+                                            {project.title}
+                                        </h3>
+                                        <p className="text-muted-foreground text-sm line-clamp-3 mb-4 flex-1">
+                                            {project.description}
+                                        </p>
+                                        <div className="flex items-center justify-between pt-4 border-t border-border">
+                                            <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
+                                                {project.difficulty === 'hard' ? <Zap className="w-4 h-4" /> : <Signal className="w-4 h-4" />}
+                                                {project.difficulty === 'easy' ? 'Dễ thực hiện' : project.difficulty === 'medium' ? 'Trung bình' : 'Thử thách'}
+                                            </div>
+                                            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
+                                                <ArrowRight className="w-4 h-4" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Card>
+                            </Link>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

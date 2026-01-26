@@ -48,39 +48,39 @@ export default function ChatHistoryPanel({ onClose }: ChatHistoryPanelProps) {
     };
 
     return (
-        <div className="flex flex-col h-full bg-white border-r border-gray-200 w-full md:w-80">
+        <div className="flex flex-col h-full bg-background border-r border-border w-full md:w-80">
             {/* Header */}
-            <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-                <h2 className="font-bold text-gray-800 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-gray-500" />
+            <div className="p-4 border-b border-border flex items-center justify-between bg-background">
+                <h2 className="font-semibold text-foreground flex items-center gap-2 text-sm">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
                     Lịch sử Chat
                 </h2>
                 <button
                     onClick={handleCreateNew}
-                    className="p-2 bg-arduino-teal hover:bg-teal-600 text-white rounded-lg shadow-sm transition-colors"
+                    className="p-2 bg-primary text-primary-foreground hover:opacity-90 rounded-md transition-opacity"
                     title="Cuộc hội thoại mới"
                 >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-3.5 h-3.5" />
                 </button>
             </div>
 
             {/* Search (Placeholder for v2) */}
-            <div className="p-3 border-b border-gray-100">
+            <div className="p-3 border-b border-border">
                 <div className="relative">
-                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <input
                         type="text"
                         placeholder="Tìm kiếm..."
-                        className="w-full pl-9 pr-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-arduino-teal focus:ring-1 focus:ring-arduino-teal/20"
+                        className="w-full pl-9 pr-3 py-1.5 text-sm bg-muted border border-border rounded focus:outline-none focus:ring-1 focus:ring-ring"
                     />
                 </div>
             </div>
 
             {/* List */}
-            <div className="flex-1 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-200">
+            <div className="flex-1 overflow-y-auto p-2 scrollbar-thin">
                 {conversations.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-48 text-gray-400 text-sm">
-                        <MessageSquare className="w-8 h-8 mb-2 opacity-50" />
+                    <div className="flex flex-col items-center justify-center h-48 text-muted-foreground text-sm">
+                        <MessageSquare className="w-8 h-8 mb-2 opacity-20" />
                         <p>Chưa có cuộc hội thoại nào</p>
                     </div>
                 ) : (
@@ -90,30 +90,34 @@ export default function ChatHistoryPanel({ onClose }: ChatHistoryPanelProps) {
                                 key={conv.id}
                                 onClick={() => handleSelect(conv.id)}
                                 className={cn(
-                                    "group flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-gray-50 border border-transparent",
-                                    activeConversationId === conv.id ? "bg-arduino-mint border-teal-100 shadow-sm" : ""
+                                    "group flex items-start gap-3 p-3 rounded-md cursor-pointer transition-colors border border-transparent",
+                                    activeConversationId === conv.id
+                                        ? "bg-muted border-border"
+                                        : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
                                 )}
                             >
                                 <div className={cn(
-                                    "w-8 h-8 shrink-0 rounded-lg flex items-center justify-center text-xs font-bold mt-0.5",
-                                    activeConversationId === conv.id ? "bg-white text-arduino-teal shadow-sm" : "bg-gray-100 text-gray-500 group-hover:bg-white group-hover:shadow-sm"
+                                    "w-6 h-6 shrink-0 rounded flex items-center justify-center text-[10px] font-bold mt-0.5",
+                                    activeConversationId === conv.id
+                                        ? "bg-primary text-primary-foreground"
+                                        : "bg-muted text-muted-foreground border border-border"
                                 )}>
                                     AI
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <h3 className={cn(
                                         "font-medium truncate text-sm mb-0.5",
-                                        activeConversationId === conv.id ? "text-teal-900" : "text-gray-700"
+                                        activeConversationId === conv.id ? "text-foreground" : "text-inherit"
                                     )}>
                                         {conv.title}
                                     </h3>
-                                    <p className="text-[10px] text-gray-400">
+                                    <p className="text-[10px] text-muted-foreground/70">
                                         {formatRelativeTime(new Date(conv.updatedAt))}
                                     </p>
                                 </div>
                                 <button
                                     onClick={(e) => handleDelete(e, conv.id)}
-                                    className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                    className="opacity-0 group-hover:opacity-100 p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded transition-all"
                                 >
                                     <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -124,7 +128,7 @@ export default function ChatHistoryPanel({ onClose }: ChatHistoryPanelProps) {
             </div>
 
             {/* Footer info */}
-            <div className="p-3 text-[10px] text-center text-gray-400 bg-gray-50 border-t border-gray-100">
+            <div className="p-3 text-[10px] text-center text-muted-foreground bg-muted/30 border-t border-border">
                 Dữ liệu được lưu trên trình duyệt
             </div>
         </div>

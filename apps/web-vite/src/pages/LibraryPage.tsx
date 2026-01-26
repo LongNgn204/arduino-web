@@ -535,18 +535,18 @@ Nhiều trường cho email @edu.vn. Dùng email này để:
 // Component hiển thị nội dung chi tiết
 function ContentViewer({ item, onClose }: { item: typeof LIBRARY_ITEMS[0]; onClose: () => void }) {
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+            <div className="bg-card rounded-lg max-w-3xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-border">
                 {/* Header */}
-                <div className={`p-6 bg-gradient-to-r from-${item.color}-500 to-${item.color}-600 text-white`}>
+                <div className="p-6 border-b border-border bg-muted/50">
                     <div className="flex items-start justify-between">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-white/20 rounded-xl backdrop-blur">
-                                <item.icon className="w-6 h-6" />
+                            <div className="p-2 bg-background rounded-md border border-border">
+                                <item.icon className="w-6 h-6 text-foreground" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold">{item.title}</h2>
-                                <p className="text-white/80 text-sm mt-1 flex items-center gap-2">
+                                <h2 className="text-xl font-bold text-foreground">{item.title}</h2>
+                                <p className="text-muted-foreground text-sm mt-1 flex items-center gap-2">
                                     <Clock className="w-4 h-4" />
                                     {item.readTime}
                                 </p>
@@ -554,7 +554,7 @@ function ContentViewer({ item, onClose }: { item: typeof LIBRARY_ITEMS[0]; onClo
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 hover:bg-white/20 rounded-xl transition-colors"
+                            className="p-2 hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground"
                         >
                             ✕
                         </button>
@@ -562,19 +562,19 @@ function ContentViewer({ item, onClose }: { item: typeof LIBRARY_ITEMS[0]; onClo
                 </div>
 
                 {/* Content */}
-                <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-                    <div className="prose prose-teal max-w-none prose-headings:text-gray-900 prose-p:text-gray-600 prose-strong:text-gray-800 prose-code:text-teal-600 prose-code:bg-teal-50 prose-code:px-1 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-table:text-sm prose-th:bg-gray-100 prose-th:px-4 prose-th:py-2 prose-td:px-4 prose-td:py-2 prose-td:border-t">
+                <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+                    <div className="prose prose-slate dark:prose-invert max-w-none">
                         <ReactMarkdown>{item.content}</ReactMarkdown>
                     </div>
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-gray-100 flex justify-between items-center bg-gray-50">
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
+                <div className="p-4 border-t border-border flex justify-between items-center bg-muted/20">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <CheckCircle className="w-4 h-4" />
                         Đã đọc xong? Áp dụng ngay hôm nay!
                     </div>
-                    <Button onClick={onClose} className="bg-teal-500 hover:bg-teal-600">
+                    <Button onClick={onClose}>
                         Đóng
                     </Button>
                 </div>
@@ -587,29 +587,29 @@ function ContentViewer({ item, onClose }: { item: typeof LIBRARY_ITEMS[0]; onClo
 function LibraryCard({ item, onClick }: { item: typeof LIBRARY_ITEMS[0]; onClick: () => void }) {
     return (
         <Card
-            className="group p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 bg-white relative overflow-hidden cursor-pointer"
+            className="group p-6 hover:bg-muted/50 transition-colors border-border relative overflow-hidden cursor-pointer"
             onClick={onClick}
         >
             {item.featured && (
-                <div className="absolute top-0 right-0">
-                    <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl flex items-center gap-1">
-                        <Star className="w-3 h-3" />
+                <div className="absolute top-3 right-3">
+                    <Badge variant="secondary" className="gap-1">
+                        <Star className="w-3 h-3 fill-current" />
                         Nổi bật
-                    </div>
+                    </Badge>
                 </div>
             )}
 
             <div className="flex items-start gap-4">
-                <div className={`p-3 rounded-xl bg-${item.color}-50 text-${item.color}-600 border border-${item.color}-100 shrink-0`}>
+                <div className="p-3 rounded-md bg-muted text-foreground border border-border shrink-0">
                     <item.icon className="w-5 h-5" />
                 </div>
 
                 <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors line-clamp-2">
+                    <h3 className="font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2 pr-16">
                         {item.title}
                     </h3>
 
-                    <div className="flex items-center gap-3 text-xs text-gray-400">
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {item.readTime}
@@ -621,8 +621,8 @@ function LibraryCard({ item, onClick }: { item: typeof LIBRARY_ITEMS[0]; onClick
                 </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end">
-                <span className="text-teal-600 text-sm font-medium flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+            <div className="mt-4 pt-4 border-t border-border flex justify-end">
+                <span className="text-primary text-sm font-medium flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                     Đọc ngay
                     <ChevronRight className="w-4 h-4" />
                 </span>
@@ -646,63 +646,63 @@ export default function LibraryPage() {
     const featuredItems = LIBRARY_ITEMS.filter(item => item.featured);
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-background">
             {/* Header Section */}
-            <div className="bg-gradient-to-br from-teal-500 via-teal-600 to-emerald-600 text-white py-16 px-4">
-                <div className="max-w-6xl mx-auto">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="p-3 bg-white/20 rounded-xl backdrop-blur">
-                            <BookMarked className="w-8 h-8" />
-                        </div>
+            <header className="py-12 px-4 border-b border-border bg-background">
+                <div className="max-w-6xl mx-auto text-center md:text-left">
+                    <div className="flex flex-col md:flex-row items-center gap-6 justify-between">
                         <div>
-                            <h1 className="text-3xl md:text-4xl font-bold">Thư Viện Kiến Thức</h1>
-                            <p className="text-teal-100 mt-1">Phương pháp học tập & Hỗ trợ tâm lý cho sinh viên</p>
+                            <h1 className="text-3xl font-bold flex items-center gap-3 justify-center md:justify-start">
+                                <BookMarked className="w-8 h-8" />
+                                Thư Viện Kiến Thức
+                            </h1>
+                            <p className="text-muted-foreground mt-2 text-lg">Phương pháp học tập & Hỗ trợ tâm lý cho sinh viên</p>
                         </div>
-                    </div>
 
-                    {/* Search Bar */}
-                    <div className="mt-8 max-w-2xl">
-                        <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Tìm kiếm bài viết..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white text-gray-900 placeholder-gray-400 shadow-xl focus:ring-4 focus:ring-white/30 outline-none"
-                            />
+                        {/* Search Bar */}
+                        <div className="w-full max-w-md">
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                <input
+                                    type="text"
+                                    placeholder="Tìm kiếm bài viết..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2 rounded-md border border-input bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+                                />
+                            </div>
                         </div>
                     </div>
 
                     {/* Quick Stats */}
-                    <div className="mt-8 flex flex-wrap gap-6 text-sm">
+                    <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-8 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
-                            <FileText className="w-5 h-5 text-teal-200" />
+                            <FileText className="w-4 h-4" />
                             <span><strong>{LIBRARY_ITEMS.length}</strong> bài viết chất lượng</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <GraduationCap className="w-5 h-5 text-teal-200" />
+                            <GraduationCap className="w-4 h-4" />
                             <span>Dành riêng cho sinh viên</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Heart className="w-5 h-5 text-teal-200" />
+                            <Heart className="w-4 h-4" />
                             <span>Hỗ trợ toàn diện</span>
                         </div>
                     </div>
                 </div>
-            </div>
+            </header>
 
             {/* Main Content */}
             <div className="max-w-6xl mx-auto px-4 py-12">
                 {/* Category Filters */}
-                <div className="flex flex-wrap gap-3 mb-8">
+                <div className="flex flex-wrap gap-2 mb-8 justify-center md:justify-start">
                     {LIBRARY_CATEGORIES.map(cat => (
                         <button
                             key={cat.id}
                             onClick={() => setSelectedCategory(cat.id)}
-                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all ${selectedCategory === cat.id
-                                ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30'
-                                : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors border ${selectedCategory === cat.id
+                                ? 'bg-primary text-primary-foreground border-primary'
+                                : 'bg-background text-muted-foreground border-input hover:bg-muted hover:text-foreground'
                                 }`}
                         >
                             <cat.icon className="w-4 h-4" />
@@ -714,8 +714,8 @@ export default function LibraryPage() {
                 {/* Featured Section */}
                 {selectedCategory === 'all' && !searchQuery && (
                     <div className="mb-12">
-                        <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                            <Target className="w-5 h-5 text-teal-500" />
+                        <h2 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
+                            <Target className="w-5 h-5" />
                             Bài viết nổi bật
                         </h2>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -732,10 +732,10 @@ export default function LibraryPage() {
 
                 {/* All Items */}
                 <div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <BookOpen className="w-5 h-5 text-teal-500" />
+                    <h2 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
+                        <BookOpen className="w-5 h-5" />
                         {selectedCategory === 'all' ? 'Tất cả bài viết' : LIBRARY_CATEGORIES.find(c => c.id === selectedCategory)?.label}
-                        <span className="text-sm font-normal text-gray-400 ml-2">({filteredItems.length} bài)</span>
+                        <span className="text-sm font-normal text-muted-foreground ml-2">({filteredItems.length} bài)</span>
                     </h2>
 
                     {filteredItems.length > 0 ? (
@@ -749,23 +749,23 @@ export default function LibraryPage() {
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-                            <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                            <h3 className="text-lg font-bold text-gray-700 mb-2">Không tìm thấy kết quả</h3>
-                            <p className="text-gray-500">Thử tìm kiếm với từ khóa khác</p>
+                        <div className="text-center py-16 bg-card rounded-lg border border-border">
+                            <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                            <h3 className="text-lg font-bold text-foreground mb-2">Không tìm thấy kết quả</h3>
+                            <p className="text-muted-foreground">Thử tìm kiếm với từ khóa khác</p>
                         </div>
                     )}
                 </div>
 
                 {/* Motivation Section */}
-                <div className="mt-16 bg-gradient-to-r from-violet-500 to-purple-600 rounded-3xl p-8 md:p-12 text-white text-center">
-                    <Sparkles className="w-12 h-12 mx-auto mb-4 opacity-80" />
-                    <h2 className="text-2xl md:text-3xl font-bold mb-4">Bạn không đơn độc trên hành trình này</h2>
-                    <p className="text-purple-100 mb-6 max-w-xl mx-auto">
+                <div className="mt-16 bg-muted/50 rounded-lg p-8 md:p-12 text-center border border-border">
+                    <Sparkles className="w-12 h-12 mx-auto mb-4 text-foreground opacity-50" />
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">Bạn không đơn độc trên hành trình này</h2>
+                    <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
                         Mỗi sinh viên đều có những khó khăn riêng. Hãy nhớ rằng việc tìm kiếm sự giúp đỡ là dấu hiệu của sức mạnh, không phải yếu đuối.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
-                        <Button className="bg-white text-purple-600 hover:bg-purple-50 font-bold px-6">
+                        <Button variant="outline" className="font-bold px-6">
                             <Heart className="w-4 h-4 mr-2" />
                             Đường dây hỗ trợ: 1800-599-920
                         </Button>

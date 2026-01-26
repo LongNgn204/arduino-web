@@ -18,7 +18,62 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Hệ thống nhúng là gì? (Tưởng tượng cái máy giặt)
+
+Hãy nhìn cái **máy giặt** hay cái **nồi cơm điện** nhà bạn.
+- Chúng có "bộ não" không? **Có**, vì chúng biết đếm giờ, biết khi nào nước đầy thì dừng, biết nấu xong thì tít tít.
+- Chúng có lướt Facebook hay chơi game được không? **Không**.
+
+👉 **Hệ thống nhúng** chính là những "bộ não" nhỏ bé đó. Chúng chỉ sinh ra để làm **một việc duy nhất** (như giặt đồ, nấu cơm) nhưng làm cực tốt và bền bỉ.
+
+> **Khác với Laptop**: Laptop là "đa năng" (làm gì cũng được). Hệ thống nhúng là "chuyên biệt" (chỉ làm 1 việc).
+
+### 1.2 Arduino Uno là gì?
+
+Thực ra con chip (vi điều khiển) rất khó dùng. Người ta tạo ra cái bo mạch **Arduino Uno** để giúp những người mới học (như bạn) có thể "giao tiếp" với con chip đó dễ dàng hơn.
+
+- **Con chip ATmega328P**: Là "bộ não".
+- **Các chân cắm (Hàng lỗ đen đen)**: Là "tay chân". Bạn cắm đèn vào đó, bộ não sẽ điều khiển đèn. Bạn cắm nút bấm vào đó, bộ não sẽ cảm nhận được nút bấm.
+
+### 1.3 Cấu trúc Code: "Ông đầu bếp" và "Công việc hàng ngày"
+
+Code Arduino luôn có 2 phần chính. Hãy tưởng tượng bạn mở một quán phở:
+
+1.  **`void setup()` - Khâu chuẩn bị (Chỉ làm 1 lần lúc mở cửa)**
+    - Bạn lau bàn, xếp ghế, bật bếp.
+    - Trong code cũng vậy: Bạn bảo Arduino "Chân này nối đèn nhé", "Chân kia nối nút bấm nhé".
+    - Nó chỉ chạy **đúng 1 lần** khi bạn cấp điện.
+
+2.  **`void loop()` - Phục vụ khách (Lặp đi lặp lại mãi mãi)**
+    - Có khách -> Làm phở -> Bưng ra -> Thu tiền. Rồi lại có khách...
+    - Trong code: Kiểm tra nút bấm -> Bật đèn -> Tắt đèn... Cứ thế lặp lại siêu nhanh (hàng nghìn lần mỗi giây) cho đến khi... mất điện.
+
+### 1.4 GPIO (Tay chân của Arduino)
+
+Tên tiếng Anh nghe kêu (Global Purpose Input/Output) nhưng thực ra nó chỉ là các cái **Cổng (Pin)**:
+- **OUTPUT (Xuất ra)**: Arduino ra lệnh.
+    - *Ví dụ*: Bật đèn, còi kêu, động cơ quay. (Arduino là sếp, thiết bị phải nghe).
+- **INPUT (Nhập vào)**: Arduino lắng nghe.
+    - *Ví dụ*: Đọc nút bấm, đọc cảm biến nhiệt độ. (Thiết bị báo cáo, Arduino nghe).
+
+### 1.5 Tại sao LED cần điện trở? (Nguyên lý Ống nước)
+
+Hãy tưởng tượng dòng điện như **nước chảy trong ống**:
+- **Pin 5V**: Là cái máy bơm cực mạnh.
+- **Đèn LED**: Là cái cánh quạt giấy mỏng manh.
+
+Nếu bạn nối thẳng máy bơm vào cánh quạt -> **RÁCH (Cháy LED)**.
+👉 Bạn cần bóp ống nước lại một chút để nước chảy từ từ thôi. Cái chỗ "bóp ống" đó chính là **Điện trở**.
+
+> **Quy tắc sống còn**: Luôn nối tiếp LED với điện trở 220Ω (đỏ-đỏ-nâu) hoặc 330Ω (cam-cam-nâu).
+
+### 1.6 `delay()` - Đi ngủ đông
+
+Lệnh `delay(1000)` nghĩa là: "Này Arduino, hãy ngủ 1000 mili-giây (1 giây) đi, đừng làm gì cả".
+- **Ưu điểm**: Dễ dùng. Muốn nháy đèn thì cứ Bật -> Ngủ -> Tắt -> Ngủ.
+- **Nhược điểm**: Lúc nó đang ngủ, nếu có trộm vào nhà (bạn nhấn nút), nó sẽ **không biết gì cả**. (Tuần sau ta sẽ học cách "vừa canh nhà vừa nghỉ ngơi" sau).
 
 ### 1.1 Hệ thống nhúng là gì?
 
@@ -167,7 +222,80 @@ delay(ms);  // Tạm dừng chương trình trong ms mili-giây
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+Để làm các bài tập bên dưới, bạn cần đấu nối như sau:
+
+> **Quy tắc vàng**: **Chân Dài (+) đi vào Pin, Chân Ngắn (-) đi xuống Đất (GND)**.
+> Đừng quên điện trở, nếu không LED sẽ cháy "bụp" một cái đấy!
+
+```
+[Pin 13] ──── [Điện trở 220Ω (Đỏ-Đỏ-Nâu)] ──── (+) LED (-) ──── [GND]
+```
+*(Hoặc đơn giản là nhìn vào cái đèn L có sẵn trên mạch Arduino)*
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+Trước khi làm các bài phức tạp, hãy làm các bài nhỏ này để hiểu cơ bản.
+
+### 2.1 Drill 1: Bật LED sáng mãi mãi (Hello LED)
+**Mục tiêu**: Kiểm tra mạch và lệnh `digitalWrite`.
+
+```cpp
+void setup() {
+    pinMode(13, OUTPUT);     // Cấu hình chân 13 là OUTPUT
+    digitalWrite(13, HIGH);  // Bật LED (cấp điện 5V)
+}
+
+void loop() {
+    // Không làm gì cả, LED vẫn sáng vì đã bật ở setup
+}
+```
+**Thử thách**: Sửa `HIGH` thành `LOW` để tắt LED.
+
+### 2.2 Drill 2: Nháy LED chậm (Manual Blink)
+**Mục tiêu**: Hiểu luồng chạy của `loop()`.
+
+```cpp
+void setup() {
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    digitalWrite(13, HIGH);  // Bật
+    delay(2000);             // Chờ 2 giây
+    digitalWrite(13, LOW);   // Tắt
+    delay(2000);             // Chờ 2 giây
+    // Hết loop, nó sẽ quay lại dòng đầu của loop -> Lặp vô hạn
+}
+```
+**Thử thách**: Sửa code để LED bật 0.1 giây (nháy siêu nhanh) và tắt 1 giây.
+
+### 2.3 Drill 3: Sử dụng biến (Variable)
+**Mục tiêu**: Hiểu tại sao cần biến.
+
+```cpp
+int timeOn = 1000;   // Biến lưu thời gian bật
+int timeOff = 500;   // Biến lưu thời gian tắt
+
+void setup() {
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    digitalWrite(13, HIGH);
+    delay(timeOn);          // Dùng giá trị của biến timeOn
+    digitalWrite(13, LOW);
+    delay(timeOff);         // Dùng giá trị của biến timeOff
+}
+```
+**Thử thách**: Sửa `timeOn` thành 5000 (5 giây) ở dòng khai báo biến.
+
+---
+
+## 💻 Phần 3: Code mẫu nâng cao
 
 ### 2.1 Blink LED cơ bản (Hello World của Arduino)
 
@@ -363,7 +491,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 LED không sáng
 
@@ -398,7 +526,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -428,7 +556,7 @@ R = (Vnguồn - Vled) / Iled
 
 ---
 
-## 📋 Phần 5: Quiz tự kiểm tra
+## 📋 Phần 6: Quiz tự kiểm tra
 
 ### Câu 1:
 Hàm `setup()` chạy bao nhiêu lần trong suốt vòng đời chương trình Arduino?
@@ -512,7 +640,7 @@ Với nguồn 5V, LED đỏ (2V drop), dòng 20mA: R = (5-2)/0.02 = 150Ω. Dùng
 
 ---
 
-## 🔬 Phần 6: Bài thực hành (Labs)
+## 🔬 Phần 7: Bài thực hành (Labs)
 
 ### Lab 1-1: Điều khiển LED theo quy luật thời gian
 

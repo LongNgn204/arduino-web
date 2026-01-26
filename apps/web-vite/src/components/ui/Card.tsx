@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -16,8 +15,8 @@ export function Card({ className, hoverable = false, noPadding = false, children
     return (
         <div
             className={cn(
-                "bg-white rounded-2xl shadow-card border border-gray-100 transition-all duration-300",
-                hoverable && "hover:shadow-hover hover:-translate-y-1 cursor-pointer",
+                "rounded-lg border border-border bg-card text-card-foreground shadow-sm",
+                hoverable && "hover:bg-muted/50 cursor-pointer transition-colors",
                 !noPadding && "p-6",
                 className
             )}

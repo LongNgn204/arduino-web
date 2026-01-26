@@ -16,7 +16,36 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Sync vs Async WebServer (Xếp hàng vs Lấy số)
+
+- **Sync WebServer (Tuần 11)**: Giống việc **xếp hàng mua trà sữa**.
+    - Khách A đang order thì Khách B phải đứng chờ.
+    - Nếu Khách A order lâu (xử lý chậm) -> Cả hàng kẹt cứng.
+    - Lúc nhân viên đang pha nước (loop bận) -> Không ai order được.
+
+- **Async WebServer (Tuần 12)**: Giống việc **lấy số thứ tự ở ngân hàng**.
+    - Khách A vào lấy số, ra ghế ngồi chờ.
+    - Khách B vào lấy số ngay lập tức, không phải chờ Khách A.
+    - Nhân viên xử lý xong cho ai thì gọi số người đó.
+    - **Ưu điểm**: Phục vụ được cực nhiều khách cùng lúc, không ai bị chặn (non-blocking).
+
+### 1.2 "API" và "JSON" (Ngôn ngữ của máy)
+
+Ở tuần trước, WebServer trả về cả trang HTML (gồm màu sắc, chữ nghĩa...). Việc này rất nặng nề.
+Tuần này, chúng ta dùng cách chuyên nghiệp hơn:
+1. Trình duyệt tải trang web 1 lần duy nhất (HTML/CSS).
+2. Sau đó, nó chỉ hỏi ESP những câu ngắn gọn: "Đèn nhân viên 1 tắt hay bật?"
+3. ESP trả lời ngắn gọn: `{"den1": "bat"}`. (Đây là **JSON**).
+4. Trình duyệt nhận tin -> Tự tô màu cái nút trên màn hình.
+
+### 1.3 `fetch()` - Người đưa thư thầm lặng
+
+Trong JavaScript, lệnh `fetch()` giống như một **người đưa thư thầm lặng**.
+- Nó chạy ngầm bên dưới, không làm tải lại trang web (reload).
+- Bạn bấm nút -> `fetch()` chạy đi gửi lệnh -> nhận kết quả -> cập nhật màu nút.
+- Người dùng cảm thấy web chạy "mượt như app", không bị chớp giật màn hình.
 
 ### 1.1 Sync vs Async WebServer
 
@@ -80,7 +109,54 @@ Browser                     ESP8266
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+**Board ESP8266 (NodeMCU) hoặc ESP32:**
+Cắm dây micro-USB vào máy tính.
+
+**Đèn LED (Nếu không muốn dùng LED có sẵn trên mạch):**
+- **Chân Dương (+)** ── [Pin D1 (ESP8266) hoặc Pin 5 (ESP32)]
+- **Chân Âm (-)** ── [GND]
+*(Lưu ý: ESP chạy điện áp 3.3V, nhưng vẫn có thể làm sáng LED thường mà không cần trở, hoặc dùng trở 100Ω cho an toàn).*
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Trả về JSON (API Test)
+**Mục tiêu**: Vào trình duyệt thấy chuỗi JSON.
+
+```cpp
+#include <ESPAsyncWebServer.h>
+AsyncWebServer server(80);
+
+void setup() {
+    // (Kết nối WiFi...)
+    
+    server.on("/api/hello", HTTP_GET, [](AsyncWebServerRequest *request){
+        // Trả về JSON chuẩn
+        request->send(200, "application/json", "{\"message\":\"Xin chao!\"}");
+    });
+    server.begin();
+}
+
+void loop() {}
+```
+**Thử thách**: Mở trình duyệt gõ `IP/api/hello`.
+
+### 2.2 Drill 2: Async LED (Bật tắt không chặn)
+**Mục tiêu**: Bật đèn xong trả lời ngay lập tức.
+
+```cpp
+    server.on("/led/on", HTTP_GET, [](AsyncWebServerRequest *request){
+        digitalWrite(2, LOW); // Bật đèn (hoặc HIGH tùy board)
+        request->send(200, "text/plain", "OK");
+    });
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 Async WebServer điều khiển 1 LED
 
@@ -474,7 +550,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp
+## ⚠️ Phần 4: Lỗi thường gặp
 
 | Lỗi | Nguyên nhân | Cách sửa |
 |-----|-------------|----------|
@@ -489,7 +565,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt
+## 🎓 Phần 5: Tóm tắt
 
 1. **Async WebServer**: Non-blocking, không cần handleClient()
 2. **JSON API**: Trả data cho JavaScript xử lý
@@ -499,7 +575,7 @@ void loop() {
 
 ---
 
-## 📋 Phần 5: Quiz (5 câu)
+## 📋 Phần 6: Quiz (5 câu)
 
 ### Câu 1:
 Async WebServer có cần gọi handleClient() trong loop() không?

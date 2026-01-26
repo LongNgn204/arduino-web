@@ -92,33 +92,33 @@ export default function ProjectDetailPage() {
         } catch (e) { console.error(e); }
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-10 h-10 border-4 border-arduino-teal border-t-transparent rounded-full animate-spin" /></div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center p-8 text-muted-foreground">Đang tải dự án...</div>;
 
-    if (!project) return <div>Project not found</div>;
+    if (!project) return <div className="p-8 text-center">Project not found</div>;
 
     return (
-        <div className="min-h-screen font-sans pb-20">
+        <div className="min-h-screen font-sans pb-20 bg-background">
             {/* Header */}
-            <div className="bg-white border-b border-gray-100 sticky top-0 z-40">
+            <div className="bg-background border-b border-border sticky top-0 z-40">
                 <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <Link to="/projects">
-                            <Button variant="ghost" className="p-2 h-auto text-gray-500 hover:text-arduino-teal">
+                            <Button variant="ghost" className="p-2 h-auto text-muted-foreground hover:text-foreground">
                                 <ArrowLeft className="w-5 h-5" />
                             </Button>
                         </Link>
                         <div>
                             <div className="flex items-center gap-2 mb-0.5">
-                                <Badge variant="outline" className="text-xs py-0 h-5 border-gray-200 text-gray-500">Project</Badge>
-                                {project.tags.map(t => <span key={t} className="text-[10px] font-bold uppercase text-gray-400">{t}</span>)}
+                                <Badge variant="outline" className="text-xs py-0 h-5">Project</Badge>
+                                {project.tags.map(t => <span key={t} className="text-[10px] font-bold uppercase text-muted-foreground">{t}</span>)}
                             </div>
-                            <h1 className="text-lg font-bold text-gray-900 leading-none">{project.title}</h1>
+                            <h1 className="text-lg font-bold text-foreground leading-none">{project.title}</h1>
                         </div>
                     </div>
                     <Button
                         variant="ghost"
                         onClick={handleSave}
-                        className={`p-2 h-auto ${isSaved ? 'text-arduino-teal bg-arduino-teal/10' : 'text-gray-400 hover:text-arduino-teal'}`}
+                        className={`p-2 h-auto ${isSaved ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                         <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
                     </Button>
@@ -130,13 +130,13 @@ export default function ProjectDetailPage() {
                 <div className="lg:col-span-2 space-y-8">
                     {/* Wokwi Simulator Embed */}
                     {project.simulatorUrl && (
-                        <Card className="overflow-hidden border-arduino-teal/20 shadow-lg shadow-arduino-teal/5 ring-1 ring-arduino-teal/10">
-                            <div className="bg-gray-50 border-b border-gray-100 p-3 flex items-center justify-between">
-                                <span className="font-semibold text-gray-700 flex items-center gap-2">
-                                    <Cpu className="w-5 h-5 text-arduino-teal" />
+                        <Card className="overflow-hidden border-border bg-card">
+                            <div className="bg-muted border-b border-border p-3 flex items-center justify-between">
+                                <span className="font-semibold text-foreground flex items-center gap-2">
+                                    <Cpu className="w-5 h-5" />
                                     Mô phỏng Trực tuyến
                                 </span>
-                                <Badge variant="mint" className="animate-pulse">Live Preview</Badge>
+                                <Badge variant="secondary">Live Preview</Badge>
                             </div>
                             <div className="aspect-video w-full bg-[#1e1e1e]">
                                 <iframe
@@ -145,23 +145,23 @@ export default function ProjectDetailPage() {
                                     title="Wokwi Simulator"
                                 />
                             </div>
-                            <div className="p-3 bg-gray-50 border-t border-gray-100 text-center">
-                                <a href={project.simulatorUrl} target="_blank" rel="noreferrer" className="text-sm text-arduino-teal hover:underline font-medium flex items-center justify-center gap-1">
+                            <div className="p-3 bg-muted border-t border-border text-center">
+                                <a href={project.simulatorUrl} target="_blank" rel="noreferrer" className="text-sm text-primary hover:underline font-medium flex items-center justify-center gap-1">
                                     Mở toàn màn hình <ArrowRight className="w-3 h-3" />
                                 </a>
                             </div>
                         </Card>
                     )}
 
-                    <div className="prose prose-slate prose-lg max-w-none">
+                    <div className="prose prose-slate prose-lg max-w-none dark:prose-invert">
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             components={{
                                 code: ({ className, children }) => {
                                     const match = /language-(\w+)/.exec(className || '');
                                     return (
-                                        <div className="rounded-xl overflow-hidden my-6 border border-gray-200 shadow-sm">
-                                            <div className="bg-gray-800 text-gray-300 px-4 py-1.5 text-xs font-mono border-b border-gray-700">{match?.[1] || 'code'}</div>
+                                        <div className="rounded-md overflow-hidden my-6 border border-border">
+                                            <div className="bg-muted px-4 py-1.5 text-xs font-mono border-b border-border text-muted-foreground">{match?.[1] || 'code'}</div>
                                             <pre className="bg-[#1e1e1e] p-4 m-0 overflow-x-auto text-sm text-gray-300">
                                                 <code>{children}</code>
                                             </pre>
@@ -177,31 +177,31 @@ export default function ProjectDetailPage() {
 
                 {/* Sidebar Info */}
                 <div className="space-y-6">
-                    <Card className="p-6 sticky top-24">
-                        <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <Box className="w-5 h-5 text-arduino-teal" />
+                    <Card className="p-6 sticky top-24 bg-card border-border">
+                        <h3 className="font-bold text-foreground mb-4 flex items-center gap-2">
+                            <Box className="w-5 h-5" />
                             Thông tin dự án
                         </h3>
 
                         <div className="space-y-4">
                             <div>
-                                <span className="text-sm text-gray-500 block mb-1">Độ khó</span>
-                                <Badge variant={project.difficulty === 'easy' ? 'mint' : project.difficulty === 'medium' ? 'yellow' : 'coral'} className="text-sm py-1 px-3">
+                                <span className="text-sm text-muted-foreground block mb-1">Độ khó</span>
+                                <Badge variant={project.difficulty === 'easy' ? 'default' : project.difficulty === 'medium' ? 'secondary' : 'destructive'} className="text-sm py-1 px-3">
                                     {project.difficulty.toUpperCase()}
                                 </Badge>
                             </div>
 
                             <div>
-                                <span className="text-sm text-gray-500 block mb-1">Tags</span>
+                                <span className="text-sm text-muted-foreground block mb-1">Tags</span>
                                 <div className="flex flex-wrap gap-2">
                                     {project.tags.map(tag => (
-                                        <span key={tag} className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-semibold">{tag}</span>
+                                        <span key={tag} className="bg-muted text-muted-foreground px-2 py-1 rounded text-xs font-semibold border border-border">{tag}</span>
                                     ))}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-8 pt-6 border-t border-gray-100">
+                        <div className="mt-8 pt-6 border-t border-border">
                             <Button className="w-full justify-center">
                                 <Play className="w-4 h-4 mr-2" />
                                 Bắt đầu thực hiện

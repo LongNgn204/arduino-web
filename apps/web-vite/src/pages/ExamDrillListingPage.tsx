@@ -70,10 +70,10 @@ export default function ExamDrillListingPage() {
 
     const getDifficultyColor = (diff: string) => {
         switch (diff) {
-            case 'easy': return 'bg-green-50 text-green-600 border-green-200';
-            case 'medium': return 'bg-yellow-50 text-yellow-600 border-yellow-200';
-            case 'hard': return 'bg-red-50 text-red-600 border-red-200';
-            default: return 'bg-gray-50 text-gray-600 border-gray-200';
+            case 'easy': return 'default';
+            case 'medium': return 'secondary';
+            case 'hard': return 'destructive';
+            default: return 'outline';
         }
     };
 
@@ -88,36 +88,34 @@ export default function ExamDrillListingPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-10 h-10 text-cyan-500 animate-spin" />
-                    <p className="text-gray-500 font-medium animate-pulse">Đang tải Exam Drills...</p>
+                    <Loader2 className="w-10 h-10 text-muted-foreground animate-spin" />
+                    <p className="text-muted-foreground font-medium animate-pulse">Đang tải Exam Drills...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20 font-sans">
-            {/* Simple Premium Header */}
-            <div className="bg-white border-b border-gray-100 pt-10 pb-16 relative overflow-hidden">
-                <div className="max-w-4xl mx-auto px-4 relative z-10">
+        <div className="min-h-screen bg-background pb-20 font-sans">
+            {/* Header */}
+            <div className="bg-background border-b border-border pt-10 pb-16">
+                <div className="max-w-4xl mx-auto px-4">
                     <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6">
-                        <div className="w-20 h-20 bg-cyan-50 rounded-2xl flex items-center justify-center shadow-inner ring-4 ring-cyan-50/50">
-                            <Zap className="w-10 h-10 text-cyan-500" />
+                        <div className="w-20 h-20 bg-muted rounded-md flex items-center justify-center border border-border">
+                            <Zap className="w-10 h-10 text-foreground" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">
+                            <h1 className="text-3xl font-bold text-foreground mb-2 tracking-tight">
                                 Exam Drills
                             </h1>
-                            <p className="text-lg text-gray-500 max-w-xl">
+                            <p className="text-lg text-muted-foreground max-w-xl">
                                 Kho luyện thi với các bài thi thử theo chủ đề và tổng hợp. Sẵn sàng chinh phục mọi kỳ thi!
                             </p>
                         </div>
                     </div>
                 </div>
-                {/* Decor */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-100 rounded-full blur-3xl opacity-30 -translate-y-1/2 translate-x-1/3" />
             </div>
 
             {/* Content */}
@@ -126,50 +124,46 @@ export default function ExamDrillListingPage() {
                 {drills.length > 0 && (
                     <div className="mb-10">
                         <Link to={`/drills/${drills[0].id}`} className="block group">
-                            <Card className="bg-gradient-to-br from-cyan-600 to-blue-700 text-white p-0 overflow-hidden border-0 shadow-xl shadow-cyan-200/50 hover:shadow-2xl hover:scale-[1.01] transition-all duration-300">
-                                <div className="p-8 relative z-10">
+                            <Card className="bg-card text-card-foreground p-0 overflow-hidden border border-border hover:shadow-lg hover:border-primary transition-all duration-300">
+                                <div className="p-8">
                                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                                         <div className="flex-1">
                                             <div className="flex items-center gap-2 mb-4">
-                                                <Badge className="bg-white/20 text-white border-white/20 backdrop-blur-sm">
+                                                <Badge variant="secondary">
                                                     <Trophy className="w-3 h-3 mr-1" />
                                                     Bài thi nổi bật
                                                 </Badge>
-                                                <Badge className="bg-pink-500/20 text-pink-100 border-pink-500/30">
+                                                <Badge variant="destructive">
                                                     HOT
                                                 </Badge>
                                             </div>
                                             <h3 className="text-3xl font-bold mb-3 tracking-tight">{drills[0].title}</h3>
-                                            <p className="text-cyan-100 text-lg mb-6 max-w-2xl">{drills[0].description}</p>
+                                            <p className="text-muted-foreground text-lg mb-6 max-w-2xl">{drills[0].description}</p>
                                             <div className="flex flex-wrap gap-3">
-                                                <Badge className="bg-black/20 border-0 text-white hover:bg-black/30">
+                                                <Badge variant="outline">
                                                     <Clock className="w-4 h-4 mr-1.5" />
                                                     {drills[0].timeLimit} phút
                                                 </Badge>
-                                                <Badge className="bg-black/20 border-0 text-white hover:bg-black/30">
+                                                <Badge variant="outline">
                                                     <Target className="w-4 h-4 mr-1.5" />
                                                     {drills[0].questionCount} câu
                                                 </Badge>
-                                                <Badge className="bg-red-500/80 border-0 text-white">
+                                                <Badge variant="destructive">
                                                     Khó
                                                 </Badge>
                                             </div>
                                         </div>
-                                        <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-md group-hover:bg-white/20 transition-all">
-                                            <ChevronRight className="w-8 h-8 text-white" />
+                                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                                            <ChevronRight className="w-8 h-8" />
                                         </div>
                                     </div>
-                                    <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
-                                        <span className="text-cyan-200 text-sm font-medium">Hơn 500 sinh viên đã tham gia</span>
-                                        <Button className="bg-white text-cyan-700 hover:bg-cyan-50 border-0 font-bold shadow-lg">
+                                    <div className="mt-8 pt-6 border-t border-border flex justify-between items-center">
+                                        <span className="text-muted-foreground text-sm font-medium">Hơn 500 sinh viên đã tham gia</span>
+                                        <Button>
                                             Làm bài ngay
                                         </Button>
                                     </div>
                                 </div>
-
-                                {/* Background Decor */}
-                                <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-                                <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
                             </Card>
                         </Link>
                     </div>
@@ -178,34 +172,34 @@ export default function ExamDrillListingPage() {
                 {/* Grid */}
                 <div>
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center text-cyan-600">
+                        <div className="w-10 h-10 bg-muted rounded-md border border-border flex items-center justify-center text-foreground">
                             <BookOpen className="w-5 h-5" />
                         </div>
-                        <h2 className="text-xl font-bold text-gray-900">Luyện tập theo chủ đề</h2>
+                        <h2 className="text-xl font-bold text-foreground">Luyện tập theo chủ đề</h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {drills.slice(1).map((drill) => (
                             <Link key={drill.id} to={`/drills/${drill.id}`}>
-                                <Card className="group hover:shadow-xl hover:-translate-y-1 hover:border-cyan-200 transition-all duration-300 h-full bg-white border-gray-100 p-6">
+                                <Card className="group hover:bg-muted/50 hover:border-primary transition-all duration-300 h-full bg-card border-border p-6">
                                     <div className="flex items-start justify-between mb-4">
-                                        <div className="w-10 h-10 rounded-full bg-cyan-50 flex items-center justify-center text-cyan-600 group-hover:bg-cyan-500 group-hover:text-white transition-all">
+                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-all">
                                             <Target className="w-5 h-5" />
                                         </div>
-                                        <Badge variant="outline" className={getDifficultyColor(drill.difficulty)}>
+                                        <Badge variant={getDifficultyColor(drill.difficulty) as any}>
                                             {getDifficultyLabel(drill.difficulty)}
                                         </Badge>
                                     </div>
 
-                                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-cyan-600 transition-colors mb-2 line-clamp-2">
+                                    <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2">
                                         {drill.title}
                                     </h3>
-                                    <p className="text-sm text-gray-500 line-clamp-2 mb-6 h-10">
+                                    <p className="text-sm text-muted-foreground line-clamp-2 mb-6 h-10">
                                         {drill.description}
                                     </p>
 
-                                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
-                                        <div className="flex gap-3 text-xs text-gray-500 font-medium">
+                                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-border">
+                                        <div className="flex gap-3 text-xs text-muted-foreground font-medium">
                                             <span className="flex items-center">
                                                 <Clock className="w-3.5 h-3.5 mr-1" /> {drill.timeLimit}p
                                             </span>
@@ -213,7 +207,7 @@ export default function ExamDrillListingPage() {
                                                 <Target className="w-3.5 h-3.5 mr-1" /> {drill.questionCount} câu
                                             </span>
                                         </div>
-                                        <Button size="sm" variant="secondary" className="scale-0 group-hover:scale-100 transition-all opacity-0 group-hover:opacity-100">
+                                        <Button size="sm" variant="ghost" className="scale-0 group-hover:scale-100 transition-all opacity-0 group-hover:opacity-100">
                                             <Play className="w-3 h-3 fill-current" />
                                         </Button>
                                     </div>

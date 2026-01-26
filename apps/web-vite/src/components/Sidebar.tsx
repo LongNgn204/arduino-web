@@ -1,25 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import {
-    Home,
-    BookOpen,
-    Trophy,
-    Award,
-    Zap,
-    LogOut,
-    ChevronLeft,
-    ChevronRight,
-    Cpu,
-    Menu,
-    X,
-    Terminal,
-    ClipboardCheck,
-    Bookmark,
-    MessageSquare,
-    Library,
-    Sparkles
-} from 'lucide-react';
 import { cn } from './ui/Card'; // Use utility
 import { useChatStore } from '../stores/chatStore';
 
@@ -40,20 +21,20 @@ export default function Sidebar({ children }: SidebarProps) {
         navigate('/login');
     };
 
-    // Navigation Items - Consolidated
+    // Navigation Items - Text Only
     const navItems = [
-        { icon: Home, label: 'Dashboard', href: '/dashboard' },
-        { icon: BookOpen, label: 'TECH476 Lập trình nhúng', href: '/weeks/week-01', color: 'teal' },
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'TECH476 Lập trình nhúng', href: '/weeks/week-01' },
         { type: 'divider' },
-        { icon: ClipboardCheck, label: 'Quiz', href: '/quizzes', color: 'orange' },
-        { icon: Zap, label: 'Exam Drills', href: '/drills', color: 'cyan' },
+        { label: 'Quiz', href: '/quizzes' },
+        { label: 'Exam Drills', href: '/drills' },
         { type: 'divider' },
-        { icon: Bookmark, label: 'Đã lưu', href: '/saved', color: 'purple' },
-        { icon: Library, label: 'Thư viện', href: '/library', color: 'indigo' },
-        { icon: Sparkles, label: 'AI Studio', href: '/ai-assistant', color: 'rose' },
-        { icon: Terminal, label: 'Web IDE', href: '/ide', color: 'green' },
-        { icon: Trophy, label: 'Bảng xếp hạng', href: '/leaderboard', color: 'yellow' },
-        { icon: Award, label: 'Chứng nhận', href: '/certificate', color: 'purple' },
+        { label: 'Đã lưu', href: '/saved' },
+        { label: 'Thư viện', href: '/library' },
+        { label: 'AI Studio', href: '/ai-assistant' },
+        { label: 'Web IDE', href: '/ide' },
+        { label: 'Bảng xếp hạng', href: '/leaderboard' },
+        { label: 'Chứng nhận', href: '/certificate' },
     ];
 
     const isActive = (href: string) => location.pathname === href || location.pathname.startsWith(href + '/');
@@ -63,62 +44,53 @@ export default function Sidebar({ children }: SidebarProps) {
     }
 
     return (
-        <div className="flex h-screen bg-arduino-base text-arduino-text-primary font-sans">
-            {/* Mobile Menu Button */}
+        <div className="flex h-screen bg-background text-foreground font-sans">
+            {/* Mobile Menu Button - Text Only */}
             <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden fixed top-4 left-4 z-[60] p-3 bg-white rounded-xl text-arduino-teal shadow-lg border border-gray-100 active:scale-95 transition-transform"
-                aria-label="Toggle Menu"
+                className="lg:hidden fixed top-4 left-4 z-[60] px-4 py-2 bg-white border border-border rounded-md text-sm font-medium shadow-sm"
             >
-                {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileOpen ? 'Close' : 'Menu'}
             </button>
 
             {/* Mobile Overlay */}
             {mobileOpen && (
                 <div
-                    className="lg:hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity"
+                    className="lg:hidden fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
                     onClick={() => setMobileOpen(false)}
                 />
             )}
 
             {/* Sidebar */}
             <aside className={cn(
-                "fixed lg:relative inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200 shadow-xl lg:shadow-none transition-all duration-300 ease-in-out",
-                collapsed ? 'w-20' : 'w-72',
+                "fixed lg:relative inset-y-0 left-0 z-50 flex flex-col bg-card border-r border-border transition-all duration-300 ease-in-out",
+                collapsed ? 'w-20' : 'w-64',
                 mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
             )}>
                 {/* Logo Header */}
-                <div className="flex items-center justify-between h-20 px-6 border-b border-gray-100/50 relative">
-                    <Link to="/dashboard" className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 bg-arduino-teal rounded-xl flex items-center justify-center shadow-lg shadow-arduino-teal/20 group-hover:scale-105 transition-transform">
-                            <Cpu className="w-6 h-6 text-white" />
-                        </div>
-                        {!collapsed && (
-                            <div className="animate-fade-in flex flex-col">
-                                <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500">
-                                    KNTT STEM
-                                </h1>
-                                <span className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">Kết Nối Tri Thức</span>
-                            </div>
+                <div className="flex items-center justify-between h-16 px-4 border-b border-border">
+                    <Link to="/dashboard" className="flex items-center gap-2 font-bold text-lg tracking-tight">
+                        {!collapsed ? (
+                            <span>KNTT STEM</span>
+                        ) : (
+                            <span>KS</span>
                         )}
                     </Link>
                     <button
                         onClick={() => setCollapsed(!collapsed)}
-                        className="hidden lg:flex absolute -right-3 top-8 bg-white border border-gray-100 p-1 rounded-full shadow-md hover:bg-gray-50 text-gray-400 hover:text-arduino-teal transition-colors"
+                        className="hidden lg:block text-xs text-muted-foreground hover:text-foreground"
                     >
-                        {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
+                        {collapsed ? '>' : '<'}
                     </button>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200">
+                <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
                     {navItems.map((item, index) => {
                         if (item.type === 'divider') {
-                            return <div key={index} className="h-px bg-gray-100 my-4 mx-2" />;
+                            return <div key={index} className="h-px bg-border my-2 mx-2" />;
                         }
 
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        const Icon = (item as any).icon;
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const href = (item as any).href;
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -132,89 +104,70 @@ export default function Sidebar({ children }: SidebarProps) {
                                 to={href}
                                 onClick={() => setMobileOpen(false)}
                                 className={cn(
-                                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative overflow-hidden",
+                                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                                     active
-                                        ? "bg-arduino-mint text-arduino-teal font-semibold shadow-sm"
-                                        : "text-gray-500 hover:bg-gray-50 hover:text-arduino-teal",
-                                    collapsed ? "justify-center px-2" : ""
+                                        ? "bg-primary text-primary-foreground"
+                                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                                    collapsed ? "justify-center" : ""
                                 )}
                                 title={collapsed ? label : undefined}
-                                id={href === '/library' ? 'sidebar-library' : undefined}
                             >
-                                <Icon className={cn(
-                                    "w-5 h-5 shrink-0 transition-colors",
-                                    active ? "text-arduino-teal" : "text-gray-400 group-hover:text-arduino-teal"
-                                )} />
-                                {!collapsed && (
-                                    <span className="text-sm truncate">{label}</span>
-                                )}
-                                {active && !collapsed && (
-                                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-arduino-teal rounded-l-full" />
+                                {collapsed ? (
+                                    <span className="font-bold">{label.substring(0, 2).toUpperCase()}</span>
+                                ) : (
+                                    <span>{label}</span>
                                 )}
                             </Link>
                         );
                     })}
                 </nav>
 
-                {/* AI Chat Toggle - Fixed at bottom of nav */}
-                <div className="px-4 py-2">
+                {/* AI Chat Toggle */}
+                <div className="p-2 border-t border-border">
                     <button
                         onClick={toggleChatSidebar}
                         className={cn(
-                            "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative border border-transparent",
+                            "w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                             isChatSidebarOpen
-                                ? "bg-arduino-teal text-white shadow-md shadow-teal-500/20"
-                                : "text-gray-500 hover:bg-gray-50 hover:text-arduino-teal border-gray-100 bg-white shadow-sm",
-                            collapsed ? "justify-center px-0 aspect-square" : ""
+                                ? "bg-secondary text-secondary-foreground"
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                            collapsed ? "justify-center" : ""
                         )}
-                        title={collapsed ? "AI Assistant" : undefined}
-                        id="ai-chat-toggle"
                     >
-                        <MessageSquare className={cn(
-                            "w-5 h-5 shrink-0 transition-transform duration-300",
-                            isChatSidebarOpen ? "scale-110" : "group-hover:scale-110"
-                        )} />
-                        {!collapsed && (
-                            <div className="flex-1 text-left">
-                                <span className={cn("text-sm font-semibold", isChatSidebarOpen ? "text-white" : "text-gray-700")}>Helper AI</span>
-                                <p className={cn("text-[10px]", isChatSidebarOpen ? "text-teal-100" : "text-gray-400")}>Trợ lý học tập</p>
-                            </div>
+                        {collapsed ? (
+                            <span className="font-bold">AI</span>
+                        ) : (
+                            <span>Trợ lý AI</span>
                         )}
                     </button>
                 </div>
 
                 {/* User Section */}
-                <div className="p-4 border-t border-gray-100 bg-gray-50/50">
+                <div className="p-4 border-t border-border">
                     <div className={cn("flex items-center gap-3", collapsed ? "justify-center" : "")}>
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-arduino-coral to-pink-300 flex items-center justify-center text-white font-bold shadow-md shrink-0 border-2 border-white">
+                        <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
                             {user?.displayName?.[0] || user?.username?.[0] || 'U'}
                         </div>
                         {!collapsed && (
-                            <div className="flex-1 min-w-0 animate-fade-in">
-                                <p className="text-sm font-bold text-gray-700 truncate">
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">
                                     {user?.displayName || user?.username}
                                 </p>
-                                <p className="text-xs text-gray-500 capitalize bg-gray-200/50 inline-block px-2 py-0.5 rounded-full mt-0.5">
-                                    {user?.role}
-                                </p>
+                                <button
+                                    onClick={handleLogout}
+                                    className="text-xs text-muted-foreground hover:text-destructive mt-1"
+                                >
+                                    Đăng xuất
+                                </button>
                             </div>
-                        )}
-                        {!collapsed && (
-                            <button
-                                onClick={handleLogout}
-                                className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
-                                title="Đăng xuất"
-                            >
-                                <LogOut className="w-4 h-4" />
-                            </button>
                         )}
                     </div>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto bg-arduino-base p-4 lg:p-8">
-                <div className="max-w-7xl mx-auto animate-fade-in">
+            <main className="flex-1 overflow-auto bg-background p-4 lg:p-8">
+                <div className="max-w-5xl mx-auto">
                     {children}
                 </div>
             </main>

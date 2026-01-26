@@ -126,9 +126,9 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
 
     // Modes UI Config
     const modeConfig = {
-        tutor: { icon: Sparkles, color: 'text-teal-600', label: 'Tutor' },
-        socratic: { icon: GraduationCap, color: 'text-purple-600', label: 'Socratic' },
-        grader: { icon: ClipboardCheck, color: 'text-amber-600', label: 'Grader' },
+        tutor: { icon: Sparkles, color: 'text-foreground', label: 'Tutor' },
+        socratic: { icon: GraduationCap, color: 'text-foreground', label: 'Socratic' },
+        grader: { icon: ClipboardCheck, color: 'text-foreground', label: 'Grader' },
     };
 
     const ModeIcon = activeConversation ? modeConfig[activeConversation.mode].icon : Sparkles;
@@ -142,36 +142,36 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
             {/* Backdrop for mobile (only if not embedded) */}
             {!embedded && isChatSidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+                    className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
                     onClick={closeChatSidebar}
                 />
             )}
 
             {/* Main Panel */}
             <div className={cn(
-                "bg-white border-l border-gray-200 shadow-2xl flex flex-col transition-all duration-300 ease-in-out",
+                "bg-background border-l border-border flex flex-col transition-transform duration-300 ease-in-out",
                 embedded
-                    ? "relative w-full h-full shadow-none border-none rounded-none z-0 translate-x-0"
-                    : "fixed inset-y-0 right-0 z-50 w-full sm:w-[500px] transform",
+                    ? "relative w-full h-full border-none z-0 translate-x-0"
+                    : "fixed inset-y-0 right-0 z-50 w-full sm:w-[500px] transform shadow-lg",
                 !embedded && (isChatSidebarOpen ? "translate-x-0" : "translate-x-full"),
                 className
             )}>
                 {/* Header */}
-                <div className="h-16 border-b border-gray-100 flex items-center justify-between px-4 bg-white/95 backdrop-blur-xl z-10 shrink-0 shadow-sm sticky top-0">
+                <div className="h-14 border-b border-border flex items-center justify-between px-4 bg-background z-10 shrink-0 sticky top-0">
                     <div className="flex items-center gap-3 overflow-hidden">
                         <button
                             onClick={() => setShowHistory(!showHistory)}
-                            className="p-3 hover:bg-gray-50 rounded-xl text-gray-500 hover:text-arduino-teal transition-all active:scale-95 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                            className="p-2 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center"
                         >
                             {showHistory ? <ChevronLeft className="w-5 h-5" /> : <MessageSquare className="w-5 h-5" />}
                         </button>
 
                         <div className="flex-1 min-w-0">
-                            <h2 className="font-bold text-gray-800 truncate">
-                                {showHistory ? 'Lịch sử Chat' : (activeConversation?.title || 'Cuộc hội thoại mới')}
+                            <h2 className="font-semibold text-foreground truncate text-sm">
+                                {showHistory ? 'Lịch sử' : (activeConversation?.title || 'Hội thoại mới')}
                             </h2>
                             {!showHistory && (
-                                <div className="flex items-center gap-1 text-xs text-arduino-teal">
+                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                     <ModeIcon className="w-3 h-3" />
                                     <span>{activeConversation ? modeConfig[activeConversation.mode].label : 'Tutor'}</span>
                                 </div>
@@ -182,7 +182,7 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                     {!embedded && (
                         <button
                             onClick={closeChatSidebar}
-                            className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
+                            className="p-2 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded transition-colors"
                         >
                             <X className="w-5 h-5" />
                         </button>
@@ -193,7 +193,7 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                 <div className="flex-1 overflow-hidden relative flex">
                     {/* History Layer */}
                     <div className={cn(
-                        "absolute inset-0 bg-white transition-opacity duration-300 z-20",
+                        "absolute inset-0 bg-background transition-opacity duration-300 z-20",
                         showHistory ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
                     )}>
                         <ChatHistoryPanel onClose={() => setShowHistory(false)} />
@@ -204,38 +204,33 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                         <div
                             ref={scrollContainerRef}
                             onScroll={handleScroll}
-                            className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 scroll-smooth scrollbar-thin scrollbar-thumb-gray-200"
-                            style={{
-                                touchAction: 'pan-y',
-                                WebkitOverflowScrolling: 'touch',
-                                overscrollBehavior: 'contain'
-                            }}
+                            className="flex-1 overflow-y-auto p-4 space-y-6 bg-background scroll-smooth"
                         >
                             {messages.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center h-full text-center p-8 text-gray-500 space-y-4">
-                                    <div className="w-16 h-16 rounded-2xl bg-teal-50 text-arduino-teal flex items-center justify-center mb-2">
-                                        <Sparkles className="w-8 h-8" />
+                                <div className="flex flex-col items-center justify-center h-full text-center p-8 text-muted-foreground space-y-2">
+                                    <div className="w-12 h-12 rounded border border-border flex items-center justify-center mb-2">
+                                        <Sparkles className="w-6 h-6" />
                                     </div>
-                                    <h3 className="font-bold text-gray-800">Bắt đầu trò chuyện</h3>
-                                    <p className="text-sm">Hỏi tôi về bài học, kiểm tra code hoặc giải thích khái niệm.</p>
+                                    <h3 className="font-medium text-foreground">Bắt đầu trò chuyện</h3>
+                                    <p className="text-sm">Hỏi tôi về bài học code.</p>
                                 </div>
                             ) : (
                                 messages.map((msg: Message) => (
                                     <div
                                         key={msg.id}
                                         className={cn(
-                                            "flex w-full animate-fade-in-up",
+                                            "flex w-full",
                                             msg.role === 'user' ? "justify-end" : "justify-start"
                                         )}
                                     >
                                         <div className={cn(
-                                            "max-w-[85%] rounded-2xl p-4 text-sm shadow-sm relative group transition-all",
+                                            "max-w-[85%] rounded px-3 py-2 text-sm border",
                                             msg.role === 'user'
-                                                ? "bg-gradient-to-br from-arduino-teal to-teal-600 text-white rounded-tr-sm shadow-arduino-teal/20"
-                                                : "bg-white border border-gray-100 text-gray-800 rounded-tl-sm shadow-gray-200/50"
+                                                ? "bg-foreground text-background border-foreground"
+                                                : "bg-muted text-foreground border-border"
                                         )}>
                                             {msg.role === 'assistant' ? (
-                                                <div className="prose prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-gray-900 prose-pre:text-gray-50">
+                                                <div className="prose prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-stone-900 prose-pre:text-stone-50">
                                                     <ReactMarkdown
                                                         remarkPlugins={[remarkMath, remarkGfm]}
                                                         rehypePlugins={[rehypeKatex]}
@@ -255,7 +250,7 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                                                                         {children}
                                                                     </code>
                                                                 ) : (
-                                                                    <code className={cn("bg-gray-100 text-teal-700 px-1 py-0.5 rounded font-mono text-xs", className)} {...rest}>
+                                                                    <code className={cn("bg-stone-200 text-stone-800 px-1 py-0.5 rounded font-mono text-xs", className)} {...rest}>
                                                                         {children}
                                                                     </code>
                                                                 );
@@ -273,14 +268,9 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                                 ))
                             )}
                             {isLoading && (
-                                <div className="flex justify-start animate-fade-in pl-2">
-                                    <div className="bg-white border border-gray-100 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2 shadow-sm">
-                                        <div className="flex gap-1">
-                                            <span className="w-2 h-2 bg-arduino-teal/60 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                                            <span className="w-2 h-2 bg-arduino-teal/60 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                            <span className="w-2 h-2 bg-arduino-teal/60 rounded-full animate-bounce"></span>
-                                        </div>
-                                        <span className="text-xs text-gray-400 font-medium ml-1">AI đang suy nghĩ...</span>
+                                <div className="flex justify-start pl-2">
+                                    <div className="bg-muted border border-border rounded px-4 py-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                        <span className="animate-pulse">AI đang suy nghĩ...</span>
                                     </div>
                                 </div>
                             )}
@@ -291,19 +281,21 @@ export default function AiChatSidebar({ className, embedded = false }: AiChatSid
                         {showScrollButton && (
                             <button
                                 onClick={scrollToBottom}
-                                className="absolute bottom-20 right-1/2 translate-x-1/2 bg-white/80 backdrop-blur shadow-lg border border-gray-200 text-gray-500 hover:text-arduino-teal hover:scale-110 p-2 rounded-full transition-all animate-bounce z-10"
+                                className="absolute bottom-20 right-1/2 translate-x-1/2 bg-background border border-border text-muted-foreground hover:text-foreground p-2 rounded-full transition-colors z-10 shadow-sm"
                             >
-                                <ArrowDown className="w-5 h-5" />
+                                <ArrowDown className="w-4 h-4" />
                             </button>
                         )}
 
                         {/* Input Area */}
-                        <ChatInput
-                            onSend={handleSendMessage}
-                            isLoading={isLoading}
-                            deepThink={deepThink}
-                            onToggleDeepThink={() => setDeepThink(!deepThink)}
-                        />
+                        <div className="border-t border-border p-4 bg-background">
+                            <ChatInput
+                                onSend={handleSendMessage}
+                                isLoading={isLoading}
+                                deepThink={deepThink}
+                                onToggleDeepThink={() => setDeepThink(!deepThink)}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

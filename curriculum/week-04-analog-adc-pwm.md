@@ -17,7 +17,54 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Analog vs Digital (Cầu thang bộ vs Dốc trượt)
+
+- **Digital (Số)**: Giống cái **Cầu thang bộ**. Bạn chỉ có thể đứng ở bậc 1 hoặc bậc 2 (HIGH hoặc LOW), không đứng lơ lửng ở giữa được.
+- **Analog (Tương tự)**: Giống cái **Dốc trượt**. Bạn có thể đứng ở bất kỳ độ cao nào (0V, 1.2V, 2.75V, 5V...).
+
+### 1.2 ADC (Thước đo của Arduino)
+
+Arduino là đồ kỹ thuật số, nó không hiểu "một chút", "hơi hơi". Nó cần con số.
+**ADC (Analog to Digital Converter)** chính là cái **thước đo** giúp Arduino "số hóa" điện áp.
+
+- **Thước 10-bit**: Nghĩa là nó chia 5V thành **1024 vạch nhỏ** (từ 0 đến 1023).
+- **0V** -> Đo được số **0**.
+- **5V** -> Đo được số **1023**.
+- **2.5V** -> Đo được số **512**.
+
+> **Công thức thần thánh**: `Giá trị = (Điện áp / 5.0) * 1023`
+
+### 1.3 Potentiometer (Vòi nước điều chỉnh)
+
+**Biến trở (Nút vặn)** giống hệt cái **vòi nước**.
+- Bạn vặn trái hết cỡ -> Khóa nước (0V).
+- Bạn vặn phải hết cỡ -> Mở hết nước (5V).
+- Bạn vặn lửng lơ -> Nước chảy vừa vừa (0-5V).
+
+Arduino dùng chân Analog (A0-A5) để "hứng" lượng nước này và đo xem nó nhiều hay ít.
+
+### 1.4 PWM (Giả vờ Analog) - "Bật tắt siêu tốc"
+
+Arduino Uno không thể xuất ra 2.5V thật (nó chỉ có 0V hoặc 5V). Vậy làm sao để đèn sáng mờ (giống như đang chạy 2.5V)?
+Nó dùng chiêu **PWM**: Bật tắt đèn siêu nhanh.
+
+- **Sáng 100%**: Bật luôn, không tắt.
+- **Sáng 50%**: Bật 1 nửa thời gian, Tắt 1 nửa thời gian. (Mắt ta thấy đèn sáng mờ).
+- **Sáng 10%**: Bật 1 tẹo, Tắt lâu. (Mắt ta thấy đèn tối thui).
+
+> **Lưu ý**: Chỉ những chân có dấu ngã `~` (3, 5, 6, 9, 10, 11) mới làm được trò này.
+
+### 1.5 Hàm `map()` - Quy đổi đơn vị
+
+Bạn đo được số **0-1023** (đầu vào), nhưng bạn lại muốn điều khiển đèn **0-255** (đầu ra PWM).
+Bạn cần một cái máy quy đổi. Đó là hàm `map()`.
+
+```cpp
+val = map(value, 0, 1023, 0, 255);
+```
+Dịch: "Hãy đổi `value` từ thang 0-1023 sang thang 0-255 cho tôi". Giống như đổi tiền Đô sang tiền Việt vậy.
 
 ### 1.1 Tín hiệu Analog vs Digital
 
@@ -170,7 +217,76 @@ int safe = constrain(value, 0, 255);  // Giới hạn 0-255
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+**1. Biến trở (Potentiometer):**
+```
+[Chân Trái-GND] ───── [Chân Giữa-A0] ───── [Chân Phải-5V]
+```
+*(Nếu vặn ngược chiều kim đồng hồ mà giá trị lại tăng, hãy đảo ngược dây 5V và GND).*
+
+**2. LED (PWM):**
+```
+[Pin 9 (~) ] ───── [Điện trở 220Ω] ───── (+) LED (-) ───── [GND]
+```
+*(Nhớ cắm vào chân có dấu ngã ~ thì mới làm mờ được).*
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Xem giá trị Biến trở (Pot Value)
+**Mục tiêu**: Thấy tận mắt số từ 0 đến 1023.
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+}
+
+void loop() {
+    int val = analogRead(A0);
+    Serial.println(val); // Vặn núm xoay và nhìn số nhảy
+    delay(100);
+}
+```
+**Thử thách**: Xoay về tận cùng bên trái xem có phải là 0 không? Bên phải có phải 1023 không?
+
+### 2.2 Drill 2: Làm mờ đèn (Fading)
+**Mục tiêu**: Hiểu PWM bằng cách chỉnh tay.
+
+```cpp
+void setup() {
+    pinMode(9, OUTPUT); // Chân 9 có dấu ~
+}
+
+void loop() {
+    analogWrite(9, 10);  // Sáng mờ
+    delay(1000);
+    analogWrite(9, 255); // Sáng rực
+    delay(1000);
+}
+```
+
+### 2.3 Drill 3: Máy tính map()
+**Mục tiêu**: Hiểu hàm map() hoạt động thế nào.
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+    
+    int x = 512; // Giả sử đọc được một nửa
+    int y = map(x, 0, 1023, 0, 100); // Đổi sang thang 100
+    
+    Serial.print("Đầu vào: "); Serial.print(x);
+    Serial.print(" -> Đầu ra: "); Serial.println(y);
+}
+
+void loop() {}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 Đọc điện áp Potentiometer - 3 dạng
 
@@ -440,7 +556,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 analogRead() trả về 0 hoặc 1023 liên tục
 
@@ -482,7 +598,7 @@ int smoothAnalogRead(int pin) {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -513,7 +629,7 @@ PWM từ raw = map(raw, 0, 1023, 0, 255)
 
 ---
 
-## 📋 Phần 5: Quiz tự kiểm tra
+## 📋 Phần 6: Quiz tự kiểm tra
 
 ### Câu 1:
 ADC 10-bit của Arduino cho dải giá trị nào?

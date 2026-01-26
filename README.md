@@ -1,143 +1,110 @@
-# 🚀 Arduino AI Learning System (Next-Gen LMS)
+# 🌏 HoiNhap Translate Live 2026 - Community Edition
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Status](https://img.shields.io/badge/status-Active-success.svg)
-![AI](https://img.shields.io/badge/AI-DeepSeek%20%26%20Gemini-purple)
+![Stack](https://img.shields.io/badge/stack-Cloudflare-orange)
 
-> **"Siêu Trí Tuệ Bách Khoa & Chuyên Gia Top 1"** - Hệ thống học tập thông minh tích hợp AI Trợ giảng hàng đầu, hỗ trợ Arduino, lập trình, và khoa học đa lĩnh vực.
+> **"Hội nhập Quốc tế - Học tập suốt đời"**
+> Dự án cộng đồng mã nguồn mở, hỗ trợ học tập Arduino, lập trình và dịch thuật trực tiếp.
+> **Phiên bản Cộng đồng (Community Edition)**: Tập trung vào tính năng, sự ổn định và khả năng vận hành chi phí thấp.
 
-## 📖 Giới thiệu
+## 📋 Giới thiệu
 
-Đây là nền tảng **Learning Management System (LMS)** thế hệ mới, được thiết kế tối ưu cho việc học lập trình nhúng (Arduino/ESP32) và các môn khoa học tự nhiên. Hệ thống tích hợp **AI Agent mạnh mẽ** đóng vai trò là một gia sư riêng (Personal Tutor), có khả năng giải đáp thắc mắc, chấm bài code, và hướng dẫn theo phương pháp Socratic.
+**HoiNhap Translate Live** là một nền tảng học tập và dịch thuật phi lợi nhuận. Dự án được xây dựng với triết lý:
+*   **Minimalist UI**: Giao diện tối giản, tập trung vào nội dung (Text-first). Không hiệu ứng rườm rà, không gradient lòe loẹt.
+*   **Community-First**: Không tính năng doanh nghiệp (SSO, Team Admin, Invoice). Mọi tính năng đều phục vụ người dùng cuối miễn phí.
+*   **High Performance**: Chạy hoàn toàn trên Edge Network của Cloudflare để đảm bảo tốc độ cao nhất cho người dùng Việt Nam.
 
-Hệ thống không chỉ dừng lại ở Arduino mà còn mở rộng ra "Bách khoa toàn thư", hỗ trợ render công thức Toán/Lý chuẩn LaTeX và nhận diện ngữ cảnh thông minh.
+## 🛠 Tech Stack (Bắt buộc)
 
-## ✨ Tính năng Nổi bật
+Dự án tuân thủ nghiêm ngặt stack công nghệ sau để đảm bảo tính đồng bộ và dễ bảo trì cho cộng đồng:
 
-### 🤖 1. AI Trợ giảng "Top 1 Expert"
--   **Context Awareness**: Tự động nhận diện chủ đề (Code, Toán, Lý, Đời sống) để trả lời phù hợp.
--   **Encyclopedia Identity**: Kiến thức sâu rộng, giải thích cặn kẽ bản chất vấn đề.
--   **Deep Reasoning**: Chế độ "Suy nghĩ sâu" (Brain Mode) cho các vấn đề phức tạp.
--   **LaTeX Rendering**: Hiển thị công thức Toán/Lý đẹp mắt ($E=mc^2$).
--   **Streaming Response**: Phản hồi mượt mà thời gian thực.
+### Frontend
+*   **Host**: Cloudflare Pages
+*   **Core**: React + TypeScript + Vite
+*   **UI Library**: Tailwind CSS (với cấu hình White/Gray/Black strict)
+*   **Component**: Headless UI / Radix Primitives (Tự custom, không dùng thư viện nặng)
 
-### 📚 2. Hệ thống LMS Toàn diện
--   **Lộ trình học tập**: Bài học (Video/Text), Bài thực hành (Lab), Quiz trắc nghiệm.
--   **Luyện thi (Drill)**: Ngân hàng câu hỏi trắc nghiệm với giải thích chi tiết.
--   **Thư viện (Library)**: Tra cứu nhanh linh kiện, hàm Arduino, và tài liệu tham khảo.
--   **Tiến độ học tập**: Theo dõi % hoàn thành, bảng xếp hạng (Leaderboard).
+### Backend
+*   **Host**: Cloudflare Workers (Serverless)
+*   **Language**: TypeScript
+*   **Database**: Cloudflare D1 (SQLite at Edge)
+*   **Cache/Limit**: Cloudflare KV
+*   **AI Engine**: OpenRouter (Kết nối model mở như Llama 3, Mistral, DeepSeek)
 
-### 💻 3. Công cụ Mạnh mẽ
--   **Web IDE**: Code và biên dịch giả lập ngay trên trình duyệt (tương lai).
--   **Mermaid Diagrams**: Tự động vẽ sơ đồ nguyên lý hoặc lưu đồ thuật toán từ lời giải thích của AI.
--   **Onboarding Tour**: Hướng dẫn người dùng mới làm quen hệ thống.
--   **AI Dashboard**: Giao diện làm việc chuyên sâu với AI (Fullscreen mode).
+## ✨ Tính năng Chính
 
-## 🛠️ Tech Stack
+1.  **Hệ thống Bài học (LMS)**:
+    *   Cấu trúc tuần học, bài giảng Text-only dễ đọc.
+    *   Hỗ trợ Markdown, LaTeX (Toán/Lý) và Mermaid (Sơ đồ).
+    *   Tích hợp trình mô phỏng Wokwi cho bài Lab Arduino.
 
-Dự án sử dụng công nghệ hiện đại nhất để đảm bảo hiệu năng và trải nghiệm người dùng:
+2.  **AI Tutor (Trợ giảng ảo)**:
+    *   Giao diện chat tối giản bên cạnh bài học.
+    *   Hỗ trợ 3 chế độ: Tutor (Giảng bài), Socratic (Gợi mở), và Grader (Chấm code).
+    *   **Lưu ý**: Chỉ text, không voice, không avatar động.
 
-### **Frontend (Apps/Web-Vite)**
--   **Framework**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/)
--   **Language**: TypeScript
--   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
--   **Icons**: [Lucide React](https://lucide.dev/)
--   **Animation**: CSS Animations & Transitions
--   **Markdown/Math**: `react-markdown`, `remark-math`, `rehype-katex`, `mermaid`
+3.  **Công cụ Cộng đồng**:
+    *   Dịch thuật trực tiếp (Live Translate) hỗ trợ người học.
+    *   Thư viện tra cứu nhanh API/Document.
 
-### **Backend (Apps/Workers)**
--   **Runtime**: [Cloudflare Workers](https://workers.cloudflare.com/) (Serverless & Edge)
--   **Framework**: [Hono](https://hono.dev/) (Siêu nhẹ, siêu nhanh)
--   **Database**: [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite at Edge)
--   **Cache/Session**: Cloudflare KV
--   **AI Integration**: OpenRouter (DeepSeek, Gemini, Llama), Google AI Studio.
-
-## 📂 Cấu trúc Dự án
+## 📂 Cấu trúc Source Code
 
 ```bash
 arduino-web/
 ├── apps/
-│   ├── web-vite/          # Frontend Application
+│   ├── web-vite/          # Frontend (React + Vite)
 │   │   ├── src/
-│   │   │   ├── components/# React Components (UI, Chat, Sidebar...)
-│   │   │   ├── pages/     # Page Components (Dashboard, Quiz, AI...)
-│   │   │   ├── stores/    # Zustand State Management
-│   │   │   └── ...
+│   │   │   ├── components/# Các thành phần UI tối giản (Button, Card...)
+│   │   │   ├── pages/     # Các trang màn hình chính
+│   │   │   └── stores/    # Quản lý state (Zustand)
 │   │   └── ...
-│   └── workers/           # Backend API Service
+│   └── workers/           # Backend (Cloudflare Workers)
 │       ├── src/
-│       │   ├── db/        # Database Schemas (Drizzle ORM)
-│       │   ├── routes/    # API Endpoints (Auth, AI, Courses...)
-│       │   ├── services/  # Business Logic (AI, Crypto, Intent...)
-│       │   └── ...
-│       ├── wrangler.toml  # Cloudflare Config
+│       │   ├── db/        # Drizzle ORM Schema & Migrations
+│       │   └── routes/    # API Controllers
 │       └── ...
-├── scripts/               # Utility scripts (Hash gen, deploy helper)
 └── ...
 ```
 
-## 🚀 Hướng dẫn Cài đặt & Chạy Local
+## 🚀 Hướng dẫn Chạy Local
 
 ### Yêu cầu
--   Node.js (v18+)
--   npm hoặc pnpm
--   Tài khoản Cloudflare (để deploy backend)
+*   Node.js v18 trở lên.
+*   Tài khoản Cloudflare (để dev backend).
+*   Wrangler CLI (`npm i -g wrangler`).
 
-### 1. Backend (Workers)
-
+### 1. Khởi chạy Backend
 ```bash
 cd apps/workers
 npm install
-
-# Setup local database (D1)
+# Tạo database local
 npx wrangler d1 execute arduino-db --local --file=./src/db/schema.sql
-
-# Chạy backend local
+# Chạy server development
 npm run dev
 ```
 
-### 2. Frontend (Web-Vite)
-
+### 2. Khởi chạy Frontend
 ```bash
 cd apps/web-vite
 npm install
-
-# Tạo file .env nếu cần
-# VITE_API_URL=http://localhost:8787/api
-
-# Chạy frontend local
+# Tạo file .env nếu cần thiết
+cp .env.example .env
+# Chạy vite server
 npm run dev
 ```
+Truy cập: `http://localhost:5173`
 
-Truy cập `http://localhost:5173` để trải nghiệm.
+## 🤝 Quy tắc Đóng góp (Contribution)
 
-## ☁️ Deployment
-
-Hệ thống được thiết kế để deploy hoàn toàn trên hệ sinh thái Cloudflare.
-
-### Deploy Backend
-```bash
-cd apps/workers
-npx wrangler deploy
-# Chạy migration DB trên production (lần đầu)
-npx wrangler d1 execute arduino-db --remote --file=./src/db/schema.sql
-```
-
-### Deploy Frontend
-```bash
-cd apps/web-vite
-npm run build
-npx wrangler pages deploy dist --project-name=arduino-web
-```
-
-## 🤝 Contributing
-
-Mọi đóng góp đều được hoan nghênh! Vui lòng tạo Pull Request hoặc tra cứu Issues để biết thêm chi tiết.
+1.  **Tuân thủ UI**: Không thêm màu sắc lạ, animation không cần thiết. Giữ UI "Trắng/Đen/Xám".
+2.  **Bảo mật**: Không bao giờ commit API Key. Dùng `.dev.vars` cho local development.
+3.  **Code Style**: Giữ code sạch, TypeScript strictly typed.
 
 ## 📝 License
 
-Dự án này thuộc bản quyền **MIT License**.
-Copyright © 2026 Nguyen Hoang Long (HNUE).
+Dự án phát hành dưới giấy phép **MIT**.
+Code vì cộng đồng, bởi cộng đồng.
 
 ---
-*Built with ❤️ & ☕ by LongNgn204*
+*Dự án nằm trong hệ sinh thái HoiNhap 2026*

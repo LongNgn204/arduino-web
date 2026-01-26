@@ -16,7 +16,32 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 SPI = "Dây chuyền sản xuất siêu tốc"
+
+Nếu I2C là lớp học (giơ tay phát biểu), thì **SPI** là một dây chuyền nhà máy.
+- Tốc độ cực nhanh (nhanh hơn I2C rất nhiều).
+- Không cần "gọi tên" ai cả, cứ đến lượt là làm.
+
+### 1.2 Bốn sợi dây thần thánh
+
+1.  **MOSI (Master Out Slave In)**: Băng chuyền chở hàng từ Tổ trưởng (Master) xuống Công nhân (Slave).
+2.  **MISO (Master In Slave Out)**: Băng chuyền chở hàng thành phẩm từ Công nhân (Slave) về Tổ trưởng (Master).
+3.  **SCK (Clock)**: Tiếng còi hiệu "Tuýt... tuýt...". Cứ 1 tiếng tuýt là băng chuyền nhích 1 bước.
+4.  **SS (Slave Select)**: Cái gậy chỉ huy của Tổ trưởng.
+    - Tổ trưởng chỉ gậy vào ai, người đó phải làm việc.
+    - Ai không bị chỉ gậy vào thì đứng im, bịt tai mắt lại (thả nổi chân tín hiệu).
+
+> **Ưu điểm**: Nhanh, không lo trùng địa chỉ (vì dùng dây SS riêng cho mỗi người).
+> **Nhược điểm**: Tốn dây (mỗi slave tốn thêm 1 dây SS riêng).
+
+### 1.3 IC 74HC595: "Người chia bài" (Nhắc lại)
+
+Trong bài này, chúng ta dùng giao thức SPI để nói chuyện với IC 74HC595.
+- Bạn đưa cho nó 1 byte (8 bit) qua đường SPI.
+- Nó sẽ chia 8 bit đó ra 8 chân để bật/tắt 8 đèn LED.
+- Giúp bạn tiết kiệm chân Arduino (chỉ tốn 3 chân điều khiển được vô số LED nếu mắc nối tiếp).
 
 ### 1.1 SPI là gì?
 
@@ -76,7 +101,73 @@ Arduino            74HC595           LEDs
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+**IC 74HC595 (Shift Register)** có 16 chân, khá rắc rối. Hãy cắm cẩn thận:
+
+**Nối nguồn & Điều khiển:**
+```
+[Pin 16 (VCC)] ── [5V]
+[Pin 10 (MR)]  ── [5V]  (Reset, nối 5V để không reset)
+[Pin 8 (GND)]  ── [GND]
+[Pin 13 (OE)]  ── [GND] (Output Enable, nối đất để bật)
+```
+
+**Nối với Arduino:**
+```
+[Pin 14 (DS - Data)]   ── [Pin 11 Arduino]
+[Pin 11 (SHCP - Clock)] ── [Pin 13 Arduino]
+[Pin 12 (STCP - Latch)] ── [Pin 10 Arduino]
+```
+
+**Nối với LED (Output):**
+- Từ chân **Q0 đến Q7** (Pin 15, 1, 2, 3, 4, 5, 6, 7) nối ra 8 LED (qua trở).
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Dịch thủ công (Manual Shift)
+**Mục tiêu**: Hiểu bit nó trôi đi đâu.
+
+```cpp
+// Nối: DS-11, STCP-10, SHCP-13
+void setup() {
+    pinMode(11, OUTPUT); pinMode(10, OUTPUT); pinMode(13, OUTPUT);
+}
+
+void loop() {
+    digitalWrite(10, LOW); // Mở chốt
+    
+    // Gửi số 1 (00000001) -> Chỉ đèn cuối sáng
+    shiftOut(11, 13, MSBFIRST, 1); 
+    
+    digitalWrite(10, HIGH); // Đóng chốt -> Đèn sáng
+    delay(1000);
+}
+```
+
+### 2.2 Drill 2: Đếm nhị phân (Binary Count)
+**Mục tiêu**: Xem đèn nhấp nháy theo số đếm.
+
+```cpp
+void setup() {
+    pinMode(11, OUTPUT); pinMode(10, OUTPUT); pinMode(13, OUTPUT);
+}
+
+void loop() {
+    for (int i=0; i<256; i++) {
+        digitalWrite(10, LOW);
+        shiftOut(11, 13, MSBFIRST, i);
+        digitalWrite(10, HIGH);
+        delay(100);
+    }
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 Binary count 0→255 qua 74HC595
 
@@ -307,7 +398,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp
+## ⚠️ Phần 4: Lỗi thường gặp
 
 | Lỗi | Nguyên nhân | Cách sửa |
 |-----|-------------|----------|
@@ -318,7 +409,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt
+## 🎓 Phần 5: Tóm tắt
 
 1. **SPI**: 4 dây, tốc độ cao, đồng bộ
 2. **74HC595**: Mở rộng 3 chân → 8 output
@@ -328,7 +419,7 @@ void loop() {
 
 ---
 
-## 📋 Phần 5: Quiz (5 câu về SPI, 74HC595, bit shift)
+## 📋 Phần 6: Quiz (5 câu về SPI, 74HC595, bit shift)
 
 ### Câu 1:
 SPI cần bao nhiêu dây tối thiểu?

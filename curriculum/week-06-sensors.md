@@ -17,7 +17,39 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 Cảm biến siêu âm HC-SR04 (Nguyên lý tiếng vọng)
+
+Bạn đứng trước vách núi và hét "A lô!". Một lúc sau bạn nghe thấy tiếng vọng lại.
+- Nếu vách núi gần -> Tiếng vọng về nhanh.
+- Nếu vách núi xa -> Tiếng vọng về lâu.
+
+**HC-SR04** hoạt động y hệt:
+1. Nó hét ra sóng siêu âm (Tai người không nghe được).
+2. Nó chờ sóng đập vào vật cản và dội lại.
+3. Nó bấm giờ.
+-> Suy ra khoảng cách.
+
+### 1.2 DHT11 (Ông thủ thư già chậm chạp)
+
+DHT11 đo nhiệt độ và độ ẩm, giá rất rẻ nhưng... rất chậm.
+Ông ta cần **ít nhất 2 giây** để đọc xong trang sách (đo xong).
+- Nếu bạn cứ 0.1 giây hỏi ông ấy "Nhiêu độ rồi?", ông ấy sẽ nổi cáu (trả về lỗi hoặc giá trị cũ).
+- **Quy tắc**: Cho ông ấy nghỉ ngơi ít nhất 2s mỗi lần đo.
+
+### 1.3 PIR (Cảm biến chuyển động) - "Mắt mèo dò nhiệt"
+
+Mọi vật sống (người, chó, mèo) đều tỏa nhiệt. PIR không "nhìn" bằng ánh sáng mà "nhìn" bằng nhiệt (hồng ngoại).
+- Khi bạn đi ngang qua, thân nhiệt của bạn làm thay đổi bức tranh hồng ngoại mà nó đang nhìn -> Nó báo động.
+- **Lưu ý**: Khi mới cấp điện, nó cần **30-60 giây để "khởi động mắt"** (làm quen môi trường). Đừng vội kết luận nó hỏng nếu vừa bật lên nó báo lung tung.
+
+### 1.4 Cảm biến chạm TTP223 (Nút bấm tàng hình)
+
+Nó giống nút bấm trên bếp từ.
+- Không cần nhấn mạnh, chỉ cần **chạm nhẹ** ngón tay.
+- Nguyên lý: Cơ thể người là một tụ điện lớn, khi chạm vào nó làm thay đổi điện dung -> Chip nhận biết được.
+- Ưu điểm: Đẹp, không mòn như nút cơ, có thể đặt dưới kính/nhựa mỏng.
 
 ### 1.1 Cảm biến siêu âm HC-SR04
 
@@ -112,7 +144,82 @@ PIR            Arduino
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+**1. Cảm biến Siêu Âm HC-SR04:**
+```
+[VCC] ────── [5V]
+[TRIG] ───── [Pin 9]
+[ECHO] ───── [Pin 10]
+[GND] ────── [GND]
+```
+
+**2. Cảm biến Chạm TTP223:**
+```
+[GND] ────── [GND]
+[I/O] ────── [Pin 2]
+[VCC] ────── [5V]
+```
+
+**3. Nhiệt độ/Độ ẩm (DHT11/DHT22) (Nếu có bài dùng):**
+```
+[Pin 1] (+ hoặc VCC)  ── [5V]
+[Pin 2] (DATA/OUT)    ── [Pin 2] (Nhớ trở 10k kéo lên 5V nếu sensor trần)
+[Pin 3] (NC - Bỏ qua)
+[Pin 4] (- hoặc GND)  ── [GND]
+```
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Đo nhịp tim siêu âm (Check Pulse)
+**Mục tiêu**: Xem HC-SR04 trả về con số gì (Raw duration).
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+    pinMode(9, OUTPUT); // TRIG
+    pinMode(10, INPUT); // ECHO
+}
+
+void loop() {
+    // 1. Phát xung
+    digitalWrite(9, LOW); delayMicroseconds(2);
+    digitalWrite(9, HIGH); delayMicroseconds(10);
+    digitalWrite(9, LOW);
+    
+    // 2. Đo thời gian phản hồi
+    long duration = pulseIn(10, HIGH);
+    
+    Serial.println(duration); // In ra số mili-giây
+    delay(500);
+}
+```
+
+### 2.2 Drill 2: Cảm biến chạm thần thánh
+**Mục tiêu**: Test nút cảm ứng TTP223 (Nó hoạt động y hệt nút thường).
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+    pinMode(2, INPUT); // Không cần PULLUP vì module có sẵn chip rồi
+}
+
+void loop() {
+    int cham = digitalRead(2);
+    if (cham == HIGH) {
+        Serial.println("ĐANG CHẠM!");
+    } else {
+        Serial.println(".......");
+    }
+    delay(100);
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 HC-SR04 + 8 LED theo khoảng cách
 
@@ -565,7 +672,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 HC-SR04 đọc sai/không ổn định
 
@@ -592,7 +699,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -608,7 +715,7 @@ Khoảng cách (cm) = duration × 0.034 / 2
 
 ---
 
-## 📋 Phần 5: Quiz tự kiểm tra
+## 📋 Phần 6: Quiz tự kiểm tra
 
 ### Câu 1:
 HC-SR04 hoạt động ở tần số nào?

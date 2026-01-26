@@ -41,30 +41,28 @@ export function LeaderboardPage() {
     }, []);
 
     const getRankIcon = (rank: number) => {
-        if (rank === 1) return <Crown className="w-8 h-8 text-yellow-500 drop-shadow-md animate-bounce" />;
-        if (rank === 2) return <Medal className="w-6 h-6 text-gray-400" />;
-        if (rank === 3) return <Medal className="w-6 h-6 text-amber-600" />;
-        return <span className="text-lg font-bold text-gray-400">#{rank}</span>;
+        if (rank === 1) return <Crown className="w-8 h-8 text-yellow-500 animate-bounce" />;
+        if (rank === 2) return <Medal className="w-6 h-6 text-muted-foreground" />;
+        if (rank === 3) return <Medal className="w-6 h-6 text-amber-700" />;
+        return <span className="text-lg font-bold text-muted-foreground">#{rank}</span>;
     };
 
     const getRowStyle = (rank: number) => {
-        if (rank === 1) return "bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-200 shadow-lg shadow-yellow-500/10 scale-105 z-10";
-        if (rank === 2) return "bg-white border-gray-100 shadow-sm";
-        if (rank === 3) return "bg-white border-gray-100 shadow-sm";
-        return "bg-white border-transparent hover:border-gray-100 hover:shadow-sm";
+        if (rank === 1) return "bg-accent/50 border-accent/20 border shadow-sm z-10";
+        return "bg-card border-border border hover:bg-muted/50";
     };
 
     return (
-        <div className="min-h-screen bg-arduino-base text-arduino-text-primary p-4 md:p-6 pb-20 font-sans">
+        <div className="min-h-screen bg-background p-4 md:p-6 pb-20 font-sans">
             {/* Header */}
             <div className="max-w-4xl mx-auto text-center mb-8 md:mb-12 animate-fade-in">
-                <div className="inline-flex items-center justify-center p-4 bg-yellow-100 rounded-full mb-4 border border-yellow-200 shadow-sm">
-                    <Trophy className="w-8 h-8 md:w-10 md:h-10 text-yellow-600" />
+                <div className="inline-flex items-center justify-center p-4 bg-muted rounded-full mb-4 border border-border">
+                    <Trophy className="w-8 h-8 md:w-10 md:h-10 text-foreground" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent mb-2">
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
                     Bảng Xếp Hạng
                 </h1>
-                <p className="text-arduino-text-secondary text-sm md:text-base">Vinh danh những sinh viên xuất sắc nhất tuần này</p>
+                <p className="text-muted-foreground text-sm md:text-base">Vinh danh những sinh viên xuất sắc nhất tuần này</p>
             </div>
 
             {/* List */}
@@ -72,19 +70,19 @@ export function LeaderboardPage() {
                 {loading ? (
                     <div className="flex flex-col gap-4">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="h-20 bg-white rounded-2xl animate-pulse" />
+                            <div key={i} className="h-20 bg-muted rounded-md animate-pulse" />
                         ))}
                     </div>
                 ) : data.length === 0 ? (
-                    <Card className="p-8 text-center text-arduino-text-secondary">
-                        <Trophy className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                        <p>Chưa có dữ liệu xếp hạng.</p>
+                    <Card className="p-8 text-center bg-card border-border">
+                        <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                        <p className="text-muted-foreground">Chưa có dữ liệu xếp hạng.</p>
                     </Card>
                 ) : (
                     data.map((item) => (
                         <div
                             key={item.id}
-                            className={`relative flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-2xl border transition-all duration-300 ${getRowStyle(item.rank)}`}
+                            className={`relative flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-md transition-all duration-300 ${getRowStyle(item.rank)}`}
                         >
                             {/* Rank */}
                             <div className="w-8 md:w-12 flex justify-center shrink-0">
@@ -95,20 +93,20 @@ export function LeaderboardPage() {
                             <img
                                 src={item.avatar}
                                 alt={item.displayName}
-                                className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-white shadow-md bg-gray-100 object-cover"
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-border bg-muted object-cover"
                             />
 
                             {/* Name & Stats */}
                             <div className="flex-1 min-w-0">
-                                <h3 className={`font-bold text-base md:text-lg truncate ${item.rank === 1 ? 'text-arduino-text-primary' : 'text-arduino-text-secondary'}`}>
+                                <h3 className="font-bold text-base md:text-lg text-foreground truncate">
                                     {item.displayName}
                                 </h3>
-                                <div className="flex flex-wrap gap-2 text-xs text-arduino-text-muted mt-1">
-                                    <Badge variant="secondary" className="gap-1 bg-gray-50 hover:bg-gray-100 text-arduino-text-muted border-gray-100">
+                                <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mt-1">
+                                    <Badge variant="outline" className="gap-1 font-normal">
                                         <TrendingUp className="w-3 h-3" />
                                         {item.stats.quizzes} Quiz pts
                                     </Badge>
-                                    <Badge variant="secondary" className="gap-1 bg-gray-50 hover:bg-gray-100 text-arduino-text-muted border-gray-100">
+                                    <Badge variant="outline" className="gap-1 font-normal">
                                         <Search className="w-3 h-3" />
                                         {item.stats.labs} Labs
                                     </Badge>
@@ -117,8 +115,8 @@ export function LeaderboardPage() {
 
                             {/* Total XP */}
                             <div className="text-right shrink-0">
-                                <div className="text-2xl font-bold text-arduino-teal leading-none">
-                                    {item.xp.toLocaleString()} <span className="text-sm font-medium text-arduino-text-muted">XP</span>
+                                <div className="text-2xl font-bold text-foreground leading-none">
+                                    {item.xp.toLocaleString()} <span className="text-sm font-medium text-muted-foreground">XP</span>
                                 </div>
                             </div>
                         </div>
@@ -130,7 +128,7 @@ export function LeaderboardPage() {
                 <Button
                     variant="ghost"
                     onClick={() => navigate('/dashboard')}
-                    className="text-arduino-text-secondary hover:text-arduino-teal"
+                    className="text-muted-foreground hover:text-foreground"
                 >
                     &larr; Quay lại Dashboard
                 </Button>

@@ -84,96 +84,72 @@ export default function QuizListingPage() {
     const weekNumbers = Object.keys(groupedByWeek).sort((a, b) => parseInt(a) - parseInt(b));
 
     if (loading) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-10 h-10 text-arduino-teal animate-spin" />
-                    <p className="text-gray-500 font-medium animate-pulse">Đang tải danh sách Quiz...</p>
-                </div>
-            </div>
-        );
+        return <div className="p-8 text-center text-muted-foreground">Đang tải danh sách Quiz...</div>;
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-20 font-sans">
-            {/* Simple Premium Header */}
-            <div className="bg-white border-b border-gray-100 pt-10 pb-16 relative overflow-hidden">
-                <div className="max-w-4xl mx-auto px-4 relative z-10">
-                    <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6">
-                        <div className="w-20 h-20 bg-orange-50 rounded-2xl flex items-center justify-center shadow-inner ring-4 ring-orange-50/50">
-                            <ClipboardCheck className="w-10 h-10 text-orange-500" />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">
-                                Thư viện Quiz
-                            </h1>
-                            <p className="text-lg text-gray-500 max-w-xl">
-                                Ôn tập kiến thức mỗi tuần với bộ câu hỏi trắc nghiệm. Hoàn thành để mở khóa huy hiệu và leo bảng xếp hạng.
-                            </p>
-                        </div>
-                    </div>
+        <div className="min-h-screen bg-background pb-20 font-sans">
+            <header className="p-8 border-b border-border">
+                <div className="max-w-4xl mx-auto">
+                    <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+                        <ClipboardCheck className="w-8 h-8" />
+                        Thư viện Quiz
+                    </h1>
+                    <p className="text-muted-foreground text-lg">
+                        Ôn tập kiến thức mỗi tuần với bộ câu hỏi trắc nghiệm.
+                    </p>
                 </div>
-
-                {/* Decor */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-orange-100 rounded-full blur-3xl opacity-30 -translate-y-1/2 translate-x-1/3" />
-            </div>
+            </header>
 
             {/* Content Container */}
-            <div className="max-w-4xl mx-auto px-4 -mt-8 relative z-20">
-                <div className="space-y-10">
+            <div className="max-w-4xl mx-auto px-4 py-8">
+                <div className="space-y-8">
                     {weekNumbers.map((weekNum) => {
-                        // Mock emptiness: Skip week 4 if explicitly requested by user in "visual audit" but here we just render all
                         const weekQuizzes = groupedByWeek[weekNum];
                         if (weekQuizzes.length === 0) return null;
 
                         return (
                             <div key={weekNum} className="relative">
-                                {/* Sticky Week Header */}
-                                <div className="sticky top-[72px] z-30 flex items-center gap-4 py-4 bg-gray-50/95 backdrop-blur-sm">
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-0.5 w-8 bg-orange-200 rounded-full" />
-                                        <h2 className="text-sm font-bold text-orange-600 uppercase tracking-wider flex items-center gap-2">
-                                            <Calendar className="w-4 h-4" />
-                                            Tuần {parseInt(weekNum)}
-                                        </h2>
-                                        <div className="h-0.5 flex-1 w-full min-w-[32px] bg-orange-200 rounded-full opacity-50" />
-                                    </div>
+                                {/* Week Header */}
+                                <div className="flex items-center gap-3 py-4 border-b border-border mb-4">
+                                    <h2 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+                                        <Calendar className="w-4 h-4" />
+                                        Tuần {parseInt(weekNum)}
+                                    </h2>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {weekQuizzes.map((quiz) => (
-                                        <Link key={quiz.id} to={`/quizzes/${quiz.id}`} className="group block h-full">
-                                            <Card className="h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 p-0 overflow-hidden bg-white hover:border-orange-200">
-                                                <div className="p-6 flex flex-col h-full">
-                                                    <div className="flex justify-between items-start mb-4">
-                                                        <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300">
-                                                            <Trophy className="w-5 h-5" />
-                                                        </div>
-                                                        {quiz.timeLimit && (
-                                                            <Badge variant="gray" className="text-xs font-medium">
-                                                                <Clock className="w-3 h-3 mr-1" />
-                                                                {quiz.timeLimit}p
-                                                            </Badge>
-                                                        )}
+                                        <Link key={quiz.id} to={`/quizzes/${quiz.id}`} className="block h-full">
+                                            <Card className="h-full hover:bg-muted/50 transition-colors border-border p-6 flex flex-col">
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-foreground">
+                                                        <Trophy className="w-4 h-4" />
                                                     </div>
+                                                    {quiz.timeLimit && (
+                                                        <Badge variant="outline" className="text-xs font-medium">
+                                                            <Clock className="w-3 h-3 mr-1" />
+                                                            {quiz.timeLimit}p
+                                                        </Badge>
+                                                    )}
+                                                </div>
 
-                                                    <h3 className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors text-lg mb-2 line-clamp-2">
-                                                        {quiz.title}
-                                                    </h3>
+                                                <h3 className="font-bold text-foreground text-lg mb-2 line-clamp-2">
+                                                    {quiz.title}
+                                                </h3>
 
-                                                    <p className="text-sm text-gray-500 mb-6 line-clamp-2 flex-1">
-                                                        {quiz.description || 'Không có mô tả'}
-                                                    </p>
+                                                <p className="text-sm text-muted-foreground mb-6 line-clamp-2 flex-1">
+                                                    {quiz.description || 'Không có mô tả'}
+                                                </p>
 
-                                                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
-                                                        <div className="flex flex-col">
-                                                            <span className="text-xs text-gray-400 font-medium uppercase">Điểm qua môn</span>
-                                                            <span className="text-sm font-bold text-gray-700">{quiz.passingScore}/100</span>
-                                                        </div>
-                                                        <Button size="sm" variant="secondary" className="group-hover:bg-orange-500 group-hover:text-white border-orange-200 text-orange-600 transition-all">
-                                                            Bắt đầu <Play className="w-3 h-3 ml-1 fill-current" />
-                                                        </Button>
+                                                <div className="flex items-center justify-between mt-auto pt-4 border-t border-border">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-xs text-muted-foreground font-medium uppercase">Điểm qua môn</span>
+                                                        <span className="text-sm font-bold">{quiz.passingScore}/100</span>
                                                     </div>
+                                                    <Button size="sm" variant="secondary">
+                                                        Bắt đầu <Play className="w-3 h-3 ml-1 fill-current" />
+                                                    </Button>
                                                 </div>
                                             </Card>
                                         </Link>

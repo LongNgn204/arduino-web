@@ -17,7 +17,43 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 UART: "Mỗi người một đầu dây" (Trò chơi điện thoại ống bơ)
+
+Ngày xưa bạn chơi trò nối 2 cái ống bơ bằng 1 sợi dây.
+- Bạn nói vào lon này (TX - Miệng).
+- Bạn kia ghé tai vào lon kia (RX - Tai).
+
+**Giao thức UART** y hệt vậy:
+- **TX (Transmit)**: Chân để "Nói".
+- **RX (Receive)**: Chân để "Nghe".
+- **GND (Dây đất)**: Để 2 bên có cùng mức điện áp (hiểu nhau).
+
+> **Quy tắc vàng**: **TX ông này nối RX ông kia**. (Miệng tôi nói, tai bạn nghe).
+> Đừng bao giờ nối TX với TX (2 cái miệng cùng nói, không ai nghe).
+
+### 1.2 Baudrate: "Tốc độ nói"
+
+- Nếu bạn nói quá nhanh ("Blahblahblah..."), người kia nghe không kịp.
+- Nếu bạn nói quá chậm ("A... lô..."), người kia ngủ gật.
+- Vì thế, 2 bên phải thống nhất **Baudrate** (Tốc độ truyền).
+
+Ví dụ: `Serial.begin(9600)` nghĩa là "Này anh bạn, tôi sẽ nói 9600 từ mỗi giây nhé".
+Nếu máy tính cài 115200 mà Arduino cài 9600 -> Hai bên sẽ nghe ra tiếng "lào xào" (ký tự lạ).
+
+### 1.3 Hardware Serial vs Software Serial
+
+- **Hardware Serial (Cổng cứng)**: Là cái miệng "xịn" có sẵn của Arduino (chân 0, 1). Nó nói rất nhanh, không tốn sức (CPU rảnh rang). Nhưng Arduino Uno chỉ có 1 cái thôi (nối ra USB).
+- **Software Serial (Cổng mềm)**: Là cái miệng "giả" do bạn ép Arduino dùng chân khác (ví dụ chân 10, 11) để nói.
+    - **Ưu điểm**: Thích tạo bao nhiêu cũng được.
+    - **Nhược điểm**: Tốn sức (CPU phải thức canh), nói chậm hơn, dễ lỗi.
+
+### 1.4 Gửi và Nhận
+
+- **`Serial.print("Hello")`**: Giống gửi tin nhắn SMS đi.
+- **`Serial.available()`**: Giống như kiểm tra "Hộp thư đến có thư không?".
+- **`Serial.read()`**: Mở thư ra đọc từng chữ cái một.
 
 ### 1.1 UART là gì?
 
@@ -115,7 +151,62 @@ void setup() {
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+**1. Giao tiếp với Máy Tính (Serial Monitor):**
+Chỉ cần cắm cáp USB là xong. Chân RX (0) và TX (1) đã được nối sẵn vào chip USB trên mạch.
+
+**2. Giao tiếp giữa 2 Arduino (Master-Slave):**
+Cần 3 sợi dây kết nối chéo nhau:
+```
+[Arduino A - TX] ────── [Arduino B - RX]
+[Arduino A - RX] ────── [Arduino B - TX]
+[Arduino A - GND] ───── [Arduino B - GND] (Quan trọng!)
+```
+*(Nếu dùng SoftwareSerial trên chân 10, 11, nhớ đổi dây tương ứng).*
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Con vẹt (Echo)
+**Mục tiêu**: Máy tính gửi gì, Arduino gửi lại cái đó.
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+}
+
+void loop() {
+    if (Serial.available()) {        // Nếu có thư đến
+        char c = Serial.read();      // Đọc 1 ký tự
+        Serial.print("Da nhan: ");
+        Serial.println(c);           // Gửi trả lại
+    }
+}
+```
+
+### 2.2 Drill 2: Bật tắt đèn bằng phím 'a' và 'b'
+**Mục tiêu**: Điều khiển đơn giản nhất.
+
+```cpp
+void setup() {
+    Serial.begin(9600);
+    pinMode(13, OUTPUT);
+}
+
+void loop() {
+    if (Serial.available()) {
+        char c = Serial.read();
+        if (c == 'a') digitalWrite(13, HIGH); // Nhấn a bật đèn
+        if (c == 'b') digitalWrite(13, LOW);  // Nhấn b tắt đèn
+    }
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 Đọc pot và gửi telemetry
 
@@ -352,7 +443,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp & Cách khắc phục
+## ⚠️ Phần 4: Lỗi thường gặp & Cách khắc phục
 
 ### 3.1 Bảng lỗi nhanh
 
@@ -374,7 +465,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt kiến thức
+## 🎓 Phần 5: Tóm tắt kiến thức
 
 ### Key Points:
 
@@ -398,7 +489,7 @@ void loop() {
 
 ---
 
-## 📋 Phần 5: Quiz tự kiểm tra
+## 📋 Phần 6: Quiz tự kiểm tra
 
 ### Câu 1:
 UART là viết tắt của gì?

@@ -117,32 +117,32 @@ export function ExamDrillPage() {
     };
 
     if (loading) return (
-        <div className="h-screen bg-gray-50 flex items-center justify-center font-sans">
+        <div className="h-screen bg-background flex items-center justify-center font-sans">
             <div className="flex flex-col items-center gap-4">
-                <Loader2 className="w-10 h-10 text-arduino-teal animate-spin" />
-                <p className="text-gray-500 animate-pulse">Đang tải đề thi...</p>
+                <Loader2 className="w-10 h-10 text-muted-foreground animate-spin" />
+                <p className="text-muted-foreground animate-pulse">Đang tải đề thi...</p>
             </div>
         </div>
     );
 
     if (!drill) return (
-        <div className="h-screen bg-gray-50 flex items-center justify-center font-sans">
-            <div className="text-center text-gray-500">Không tìm thấy bài thi.</div>
+        <div className="h-screen bg-background flex items-center justify-center font-sans">
+            <div className="text-center text-muted-foreground">Không tìm thấy bài thi.</div>
         </div>
     );
 
     return (
-        <div className={`min-h-screen bg-gray-50 text-gray-900 flex flex-col font-sans ${zenMode ? 'fixed inset-0 z-50 bg-white' : ''}`}>
+        <div className={`min-h-screen bg-background text-foreground flex flex-col font-sans ${zenMode ? 'fixed inset-0 z-50 bg-background' : ''}`}>
             {/* Header Bar */}
-            <header className="bg-white border-b border-gray-200 p-4 flex justify-between items-center shadow-sm z-10">
+            <header className="bg-background border-b border-border p-4 flex justify-between items-center shadow-sm z-10">
                 <div className="flex items-center gap-6">
-                    <Badge variant="outline" className={`font-mono text-lg py-1 px-3 border-red-200 ${timeLeft < 300 ? 'bg-red-50 text-red-600 animate-pulse' : 'bg-gray-50 text-gray-700'}`}>
+                    <Badge variant="outline" className={`font-mono text-lg py-1 px-3 ${timeLeft < 300 ? 'border-destructive text-destructive animate-pulse' : 'text-foreground'}`}>
                         <Clock className="w-4 h-4 mr-2" />
                         {formatTime(timeLeft)}
                     </Badge>
                     <div>
-                        <h1 className="text-xl font-bold text-gray-900">{drill.title}</h1>
-                        <p className="text-xs text-gray-500 hidden sm:block">Exam Mode • No Tab Switching</p>
+                        <h1 className="text-xl font-bold text-foreground">{drill.title}</h1>
+                        <p className="text-xs text-muted-foreground hidden sm:block">Exam Mode • No Tab Switching</p>
                     </div>
                 </div>
 
@@ -152,14 +152,14 @@ export function ExamDrillPage() {
                         size="icon"
                         onClick={toggleZenMode}
                         title="Zen Mode"
-                        className="text-gray-400 hover:text-gray-900"
+                        className="text-muted-foreground hover:text-foreground"
                     >
                         {zenMode ? <Minimize className="w-5 h-5" /> : <Expand className="w-5 h-5" />}
                     </Button>
                     <Button
                         onClick={() => handleSubmit(false)}
                         disabled={submitting}
-                        className="bg-green-600 hover:bg-green-700 text-white shadow-md shadow-green-600/20 gap-2"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2"
                     >
                         {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                         {submitting ? 'Đang nộp...' : 'Nộp Bài'}
@@ -170,19 +170,19 @@ export function ExamDrillPage() {
             {/* Main Content */}
             <div className="flex-1 flex overflow-hidden">
                 {/* Left: Problem Statement & Chat */}
-                <div className="w-1/3 border-r border-gray-200 bg-gray-50/50 flex flex-col">
-                    <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-gray-200">
-                        <div className="prose prose-slate max-w-none prose-headings:text-gray-900 prose-p:text-gray-600 prose-code:text-pink-600 prose-code:bg-pink-50 prose-code:px-1 prose-code:rounded">
-                            <h2 className="text-arduino-teal border-b border-gray-200 pb-2 mb-4 font-bold flex items-center gap-2">
+                <div className="w-1/3 border-r border-border bg-muted/20 flex flex-col">
+                    <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-border">
+                        <div className="prose prose-slate dark:prose-invert max-w-none">
+                            <h2 className="text-foreground border-b border-border pb-2 mb-4 font-bold flex items-center gap-2">
                                 <Code className="w-5 h-5" /> Đề bài
                             </h2>
-                            <div dangerouslySetInnerHTML={{ __html: drill.content }} /> {/* In real app, render Markdown */}
+                            <div dangerouslySetInnerHTML={{ __html: drill.content }} />
 
-                            <div className="mt-8 bg-amber-50 border border-amber-200 p-4 rounded-xl">
-                                <h3 className="text-amber-700 font-bold flex items-center gap-2 text-sm mb-2">
+                            <div className="mt-8 bg-amber-500/10 border border-amber-500/20 p-4 rounded-md">
+                                <h3 className="text-amber-600 dark:text-amber-400 font-bold flex items-center gap-2 text-sm mb-2">
                                     <AlertTriangle className="w-4 h-4" /> Lưu ý quan trọng
                                 </h3>
-                                <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
+                                <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
                                     <li>Thời gian làm bài: <span className="font-semibold">{drill.timeLimit} phút</span>.</li>
                                     <li>Chỉ được nộp 1 lần duy nhất.</li>
                                     <li>Không chuyển tab (Hệ thống có log focus).</li>
@@ -206,15 +206,15 @@ export function ExamDrillPage() {
                         </div>
                     </div>
 
-                    {/* Simple Code Editor (Placeholder for Monaco) */}
+                    {/* Simple Code Editor */}
                     <div className="flex-1 flex flex-col">
                         <div className="bg-[#2d2d2d] px-4 py-2 border-b border-[#333] flex items-center gap-2 text-sm text-gray-300">
-                            <Code className="w-4 h-4 text-arduino-teal" />
+                            <Code className="w-4 h-4" />
                             <span>main.cpp</span>
                             <span className="text-xs text-gray-500 ml-auto">Arduino C++</span>
                         </div>
                         <textarea
-                            className="flex-1 bg-[#1e1e1e] text-gray-300 p-4 font-mono text-sm resize-none focus:outline-none leading-relaxed selection:bg-arduino-teal/30"
+                            className="flex-1 bg-[#1e1e1e] text-gray-300 p-4 font-mono text-sm resize-none focus:outline-none leading-relaxed"
                             value={code}
                             onChange={(e) => setCode(e.target.value)}
                             spellCheck={false}

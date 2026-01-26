@@ -16,7 +16,38 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 1-Wire = "Đường dây điện thoại chung cư"
+
+Nếu I2C cần 2 dây, SPI cần 4 dây, thì **1-Wire** bá đạo nhất: chỉ cần **1 dây duy nhất** để truyền dữ liệu (+ dây đất).
+Nó giống hệt đường dây điện thoại nội bộ trong chung cư cũ:
+- Tất cả các căn hộ (cảm biến DS18B20) đều nối chung vào 1 sợi dây đồng.
+- Mỗi căn hộ có một **số nhà duy nhất** (ROM Code 64-bit).
+- Bảo vệ muốn gọi căn nào thì bấm số căn đó. Chỉ căn đó nhấc máy trả lời.
+
+👉 **Ưu điểm**: Tiết kiệm dây tối đa. Kéo 1 sợi dây dài 100 mét, gắn 50 cái cảm biến vào cũng được.
+
+### 1.2 Kẻ ký sinh (Parasite Power)
+
+Bá đạo hơn nữa, cảm biến này có thể "ký sinh", hút năng lượng từ chính dây dữ liệu để sống.
+- Không cần dây nguồn VCC đỏ đỏ.
+- Chỉ cần dây Đen (GND) và dây Vàng (Data).
+
+Nhưng thôi, người mới thì cứ cắm đủ 3 dây cho lành, chế độ ký sinh hơi khó tính.
+
+### 1.3 Tại sao lại là 85°C?
+
+Khi bạn vừa bật cảm biến lên, nếu thấy nó báo **85°C**, đừng hoảng hốt.
+- Đó không phải nhiệt độ thật.
+- Đó là mã thông báo: "Tôi đang khởi động, chưa đo xong!".
+- Giống như màn hình Loading trong game vậy. Hãy đợi nó đo xong (khoảng 0.75 giây) rồi mới lấy kết quả.
+
+### 1.4 Điện trở kéo 4.7kΩ (Lại là cái lò xo)
+
+Giống I2C, dây Data của 1-Wire cũng lỏng lẻo.
+- Bắt buộc phải có 1 điện trở 4.7kΩ nối dây Data lên 5V.
+- Nếu không có? Arduino sẽ chẳng nghe thấy gì, hoặc nghe tiếng "xè xè" (nhiễu).
 
 ### 1.1 1-Wire là gì?
 
@@ -77,7 +108,61 @@ Cài đặt: Sketch > Include Library > Manage Libraries > Tìm "OneWire" và "D
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+**Cảm biến nhiệt độ DS18B20:**
+Đây là loại cảm biến "chân dài" giống như con sò 3 chân.
+- **Chân 1 (GND)**: Nối đất.
+- **Chân 2 (DQ/Data - Ở giữa)**: Nối vào **Pin 2**.
+- **Chân 3 (VCC)**: Nối 5V.
+
+> **QUAN TRỌNG**: Bạn phải nối thêm **1 điện trở 4.7kΩ** (Vàng-Tím-Đỏ) nằm vắt ngang giữa chân **DQ** và chân **VCC**. Nếu không có điện trở này, cảm biến sẽ không chạy!
+
+*(Mẹo: Nếu mua module có sẵn mạch in PCB thì họ đã hàn điện trở này rồi, cứ cắm 3 dây là chạy).*
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Điều tra dân số (Sensor Count)
+**Mục tiêu**: Xem có bao nhiêu cảm biến đang nối vào.
+
+```cpp
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+OneWire oneWire(2); // Nối chân Data vào pin 2
+DallasTemperature sensors(&oneWire);
+
+void setup() {
+    Serial.begin(9600);
+    sensors.begin();
+    
+    int soLuong = sensors.getDeviceCount();
+    Serial.print("Tim thay: ");
+    Serial.println(soLuong);
+}
+
+void loop() {}
+```
+
+### 2.2 Drill 2: Đọc nhiệt độ thô
+**Mục tiêu**: Đọc nhanh nhất có thể.
+
+```cpp
+// (Khai báo như trên...)
+
+void loop() {
+    sensors.requestTemperatures(); // Ra lệnh "đo đi!"
+    float t = sensors.getTempCByIndex(0); // Lấy kết quả con số 0
+    Serial.println(t);
+    delay(1000);
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 Đọc nhiệt độ cơ bản
 
@@ -346,7 +431,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp
+## ⚠️ Phần 4: Lỗi thường gặp
 
 | Lỗi | Nguyên nhân | Cách sửa |
 |-----|-------------|----------|
@@ -363,7 +448,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt
+## 🎓 Phần 5: Tóm tắt
 
 1. **1-Wire**: 1 dây data, nhiều thiết bị trên 1 bus
 2. **DS18B20**: Cảm biến nhiệt độ chính xác ±0.5°C
@@ -373,7 +458,7 @@ void loop() {
 
 ---
 
-## 📋 Phần 5: Quiz (5 câu)
+## 📋 Phần 6: Quiz (5 câu)
 
 ### Câu 1:
 1-Wire cần bao nhiêu dây data?

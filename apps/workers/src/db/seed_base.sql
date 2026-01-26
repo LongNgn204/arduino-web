@@ -1,5 +1,5 @@
 -- Generated Seed Data
--- Date: 2026-01-17T02:25:09.706Z
+-- Date: 2026-01-26T02:57:20.262Z
 
 -- USERS
 INSERT OR REPLACE INTO users (id, username, password_hash, role, display_name, created_at, updated_at) VALUES 

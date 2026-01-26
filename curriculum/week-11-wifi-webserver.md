@@ -16,7 +16,36 @@ Sau khi hoàn thành tuần này, bạn sẽ:
 
 ---
 
-## 📚 Phần 1: Lý thuyết cốt lõi
+## 📚 Phần 1: Lý thuyết dân dã (Dễ hiểu nhất)
+
+### 1.1 ESP8266/ESP32: "Arduino mọc thêm cánh"
+
+Arduino Uno giống như một chiếc xe đạp: rẻ, bền, dễ đi, nhưng không bay được (không có Internet).
+**ESP8266** và **ESP32** giống như xe đạp được lắp thêm **đôi cánh WiFi**.
+- Bạn vẫn code y hệt như Arduino (setup, loop, digitalWrite...).
+- Nhưng nó có thêm khả năng kết nối mạng để gửi tin nhắn, nhận lệnh từ xa.
+
+### 1.2 Hai chế độ WiFi (Ở nhờ vs Tự lập)
+
+- **Station Mode (STA - Ở nhờ)**: ESP đóng vai trò như cái điện thoại của bạn. Nó xin kết nối vào modem WiFi nhà bạn (phải biết tên WiFi và Pass).
+    - *Ưu điểm*: Truy cập được Internet toàn cầu.
+- **Access Point Mode (AP - Tự lập)**: ESP tự phát ra một sóng WiFi riêng (như "ESP_FREE_WIFI"). Bạn lấy điện thoại kết nối vào nó.
+    - *Ưu điểm*: Không cần modem mạng, mang ra giữa đồng hoang vẫn điều khiển được.
+
+### 1.3 Web Server (Người phục vụ bàn)
+
+Khi bạn lập trình ESP làm **Web Server**, nó biến thành một anh bồi bàn.
+1. Bạn (Khách hàng - Client) mở trình duyệt, gõ địa chỉ IP của nó (ví dụ 192.168.1.100).
+2. Bạn gọi món: "Cho tôi xem trang chủ" (`GET /`).
+3. Anh bồi bàn ESP chạy vào bếp, lấy tờ thực đơn (file HTML) mang ra cho bạn xem.
+4. Bạn bấm nút "Bật đèn" trên màn hình -> Trình duyệt gửi lệnh `GET /led/on`.
+5. Anh bồi bàn nhận lệnh -> Chạy đi bật đèn thật -> Quay lại báo "Xong rồi sếp!".
+
+### 1.4 IP Address (Số nhà)
+
+Trong mạng WiFi, mỗi thiết bị phải có một **số nhà riêng** (IP Address) để bưu điện biết đường giao thư.
+- Ví dụ: `192.168.1.5`.
+- Bạn phải biết số nhà này thì mới truy cập vào Website của ESP được. Code xong mở Serial Monitor lên xem nó in ra số mấy nhé.
 
 ### 1.1 Lưu ý phần cứng
 
@@ -113,7 +142,65 @@ classDiagram
 
 ---
 
-## 💻 Phần 2: Code mẫu hoàn chỉnh
+## 🔌 Chuẩn bị phần cứng (Hardware Setup)
+
+**Board ESP8266 (NodeMCU) hoặc ESP32:**
+Cắm dây micro-USB vào máy tính.
+
+**Đèn LED (Nếu không muốn dùng LED có sẵn trên mạch):**
+- **Chân Dương (+)** ── [Pin D1 (ESP8266) hoặc Pin 5 (ESP32)]
+- **Chân Âm (-)** ── [GND]
+*(Lưu ý: ESP chạy điện áp 3.3V, nhưng vẫn có thể làm sáng LED thường mà không cần trở, hoặc dùng trở 100Ω cho an toàn).*
+
+---
+
+## 🧱 Phần 2: Bài tập khởi động (Warm-up)
+
+### 2.1 Drill 1: Kết nối WiFi
+**Mục tiêu**: Bắt cho bằng được WiFi nhà bạn.
+
+```cpp
+#include <ESP8266WiFi.h> // Hoặc WiFi.h nếu dùng ESP32
+
+void setup() {
+    Serial.begin(115200);
+    WiFi.begin("TenWiFi", "MatKhau"); // Thay đổi ở đây
+    
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("\nDa ket noi!");
+    Serial.println(WiFi.localIP()); // In ra số nhà (IP)
+}
+
+void loop() {}
+```
+
+### 2.2 Drill 2: Web "Hello World"
+**Mục tiêu**: Vào trình duyệt thấy chữ Hello.
+
+```cpp
+#include <ESP8266WebServer.h>
+ESP8266WebServer server(80);
+
+void setup() {
+    // (Kết nối WiFi như bài trên...)
+    
+    server.on("/", []() {
+        server.send(200, "text/plain", "Hello from ESP!");
+    });
+    server.begin();
+}
+
+void loop() {
+    server.handleClient(); // Đừng quên dòng này!
+}
+```
+
+---
+
+## 💻 Phần 3: Code mẫu hoàn chỉnh
 
 ### 2.1 WebServer điều khiển 1 LED
 
@@ -455,7 +542,7 @@ void loop() {
 
 ---
 
-## ⚠️ Phần 3: Lỗi thường gặp
+## ⚠️ Phần 4: Lỗi thường gặp
 
 | Lỗi | Nguyên nhân | Cách sửa |
 |-----|-------------|----------|
@@ -472,7 +559,7 @@ void loop() {
 
 ---
 
-## 🎓 Phần 4: Tóm tắt
+## 🎓 Phần 5: Tóm tắt
 
 1. **ESP8266/ESP32**: Board WiFi thay thế Arduino cho IoT
 2. **WebServer**: Lắng nghe HTTP request, trả HTML
@@ -481,7 +568,7 @@ void loop() {
 
 ---
 
-## 📋 Phần 5: Quiz (5 câu)
+## 📋 Phần 6: Quiz (5 câu)
 
 ### Câu 1:
 Arduino Uno có WiFi tích hợp không?

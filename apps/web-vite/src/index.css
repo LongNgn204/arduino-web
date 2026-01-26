@@ -1,202 +1,91 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* ========================================
-   THEME CUSTOMIZATION - ArduinoHub Light Theme
-   ======================================== */
 @theme {
-  /* ===========================================
-     Soft Pastel Theme - Dễ nhìn, Warm & Friendly
-     =========================================== */
+  --color-border: hsl(214.3 31.8% 91.4%);
+  --color-input: hsl(214.3 31.8% 91.4%);
+  --color-ring: hsl(215 20.2% 65.1%);
+  --color-background: hsl(0 0% 100%);
+  --color-foreground: hsl(222.2 47.4% 11.2%);
 
-  /* Background Colors - Soft & Easy on Eyes */
-  --color-arduino-base: #FAFBFC;
-  /* Rất nhẹ, gần trắng nhưng không chói */
-  --color-arduino-surface: #FFFFFF;
-  /* Pure white cho cards */
-  --color-arduino-soft: #F1F5F9;
-  /* Slate-100: Cho sections, sidebars */
+  --color-primary: hsl(222.2 47.4% 11.2%);
+  --color-primary-foreground: hsl(210 40% 98%);
 
-  /* Brand Colors - Pastel & Inviting */
-  --color-arduino-teal: #14B8A6;
-  /* Teal-500: Softer than 600, more friendly */
-  --color-arduino-mint: #D1FAE5;
-  /* Emerald-100: Very soft mint */
-  --color-arduino-coral: #FEE2E2;
-  /* Rose-100: Gentle coral/pink */
-  --color-arduino-yellow: #FEF9C3;
-  /* Yellow-100: Warm cream yellow */
-  --color-arduino-sky: #E0F2FE;
-  /* Sky-100: Light airy blue */
-  --color-arduino-lavender: #EDE9FE;
-  /* Violet-100: Soft purple */
+  --color-secondary: hsl(210 40% 96.1%);
+  --color-secondary-foreground: hsl(222.2 47.4% 11.2%);
 
-  /* Text Colors - High Contrast but Comfortable */
-  --color-text-primary: #1F2937;
-  /* Gray-800: Đọc rõ, không quá đậm */
-  --color-text-secondary: #6B7280;
-  /* Gray-500: Body text, descriptions */
-  --color-text-muted: #9CA3AF;
-  /* Gray-400: Labels, hints */
+  --color-destructive: hsl(0 100% 50%);
+  --color-destructive-foreground: hsl(210 40% 98%);
 
-  /* Semantic Colors */
-  --color-success: #10B981;
-  /* Emerald-500 */
-  --color-warning: #F59E0B;
-  /* Amber-500 */
-  --color-danger: #EF4444;
-  /* Red-500 */
-  --color-info: #3B82F6;
-  /* Blue-500 */
+  --color-muted: hsl(210 40% 96.1%);
+  --color-muted-foreground: hsl(215.4 16.3% 46.9%);
 
-  /* Animations - Slightly faster for snappier feel */
-  --animate-fade-in: fadeIn 0.35s ease-out;
-  --animate-slide-up: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-pulse-soft: pulseSoft 3s ease-in-out infinite;
-  --animate-spin-slow: spin 15s linear infinite;
-}
+  --color-accent: hsl(210 40% 96.1%);
+  --color-accent-foreground: hsl(222.2 47.4% 11.2%);
 
-@layer utilities {
-  .text-arduino-light {
-    color: #F0FDFA;
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(222.2 47.4% 11.2%);
+
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(222.2 47.4% 11.2%);
+
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
   }
 }
 
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+
+  @media (width >=1400px) {
+    max-width: 1400px;
+  }
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to sure everything still looks the same.
+*/
+@layer base {
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
 
 @layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
   body {
-    @apply bg-arduino-base text-gray-600 font-sans antialiased;
+    @apply bg-background text-foreground;
   }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-sans font-bold text-gray-800;
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  0% {
-    transform: translateY(10px);
-    opacity: 0;
-  }
-
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes pulseSoft {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.7;
-  }
-}
-
-/* ========================================
-   UI COMPONENTS - NEW DESIGN SYSTEM
-   ======================================== */
-
-/* Card Styles */
-.card-base {
-  @apply bg-white rounded-2xl shadow-lg border border-gray-100 transition-all duration-300;
-}
-
-.card-hover {
-  @apply hover:shadow-xl hover:-translate-y-1;
-}
-
-/* Button Styles */
-.btn-primary {
-  @apply bg-arduino-teal text-white font-semibold py-2 px-6 rounded-xl shadow-lg shadow-arduino-teal/20 hover:shadow-xl hover:shadow-arduino-teal/30 hover:-translate-y-0.5 transition-all duration-200 active:translate-y-0;
-}
-
-.btn-secondary {
-  @apply bg-white text-arduino-teal font-semibold py-2 px-6 rounded-xl border-2 border-arduino-teal/10 hover:bg-arduino-mint/20 hover:border-arduino-teal/30 transition-all duration-200;
-}
-
-.btn-ghost {
-  @apply text-gray-600 hover:text-arduino-teal hover:bg-gray-100/50 py-2 px-4 rounded-lg transition-all;
-}
-
-/* Input Styles */
-.input-field {
-  @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-arduino-teal/20 focus:border-arduino-teal/50 transition-all;
-}
-
-/* Badge Styles */
-.badge {
-  @apply px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider;
-}
-
-.badge-teal {
-  @apply bg-arduino-mint text-arduino-teal;
-}
-
-.badge-coral {
-  @apply bg-arduino-coral/20 text-red-500;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
-}
-
-/* Auth Page Enhancements */
-.auth-gradient-bg {
-  @apply bg-gradient-to-br from-arduino-mint via-white to-arduino-yellow;
-}
-
-.auth-card {
-  @apply bg-white/80 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl p-8 md:p-10;
-}
-
-/* Utility Animations */
-.animate-fade-in {
-  animation: var(--animate-fade-in);
-}
-
-.animate-slide-up {
-  animation: var(--animate-slide-up);
 }
