@@ -74,7 +74,7 @@ export default function DashboardPage() {
         <div className="min-h-screen bg-background font-sans text-foreground">
             {/* Header - Mobile Only */}
             <header className="lg:hidden border-b border-border p-4 flex justify-between items-center">
-                <Link to="/" className="font-bold text-lg">KNTT STEM</Link>
+                <Link to="/" className="font-bold text-lg">HỌC ARDUINO</Link>
                 <button
                     onClick={handleLogout}
                     className="text-sm text-muted-foreground hover:text-foreground"
@@ -236,8 +236,8 @@ function CourseCard({ course, progress }: { course: Course; progress: number }) 
                                 key={week.id}
                                 to={`/weeks/${week.id}`}
                                 className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold border transition-colors ${isCompleted ? "bg-foreground text-background border-foreground" :
-                                        isCurrent ? "bg-background text-foreground border-foreground ring-1 ring-foreground" :
-                                            "bg-background text-muted-foreground border-border hover:border-muted-foreground"
+                                    isCurrent ? "bg-background text-foreground border-foreground ring-1 ring-foreground" :
+                                        "bg-background text-muted-foreground border-border hover:border-muted-foreground"
                                     }`}
                                 title={week.title}
                             >

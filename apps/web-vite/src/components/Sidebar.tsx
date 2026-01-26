@@ -71,7 +71,7 @@ export default function Sidebar({ children }: SidebarProps) {
                 <div className="flex items-center justify-between h-16 px-4 border-b border-border">
                     <Link to="/dashboard" className="flex items-center gap-2 font-bold text-lg tracking-tight">
                         {!collapsed ? (
-                            <span>KNTT STEM</span>
+                            <span>HỌC ARDUINO</span>
                         ) : (
                             <span>KS</span>
                         )}

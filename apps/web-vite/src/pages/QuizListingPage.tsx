@@ -5,7 +5,6 @@ import {
     ClipboardCheck,
     Clock,
     Trophy,
-    Loader2,
     Calendar,
     Play
 } from 'lucide-react';

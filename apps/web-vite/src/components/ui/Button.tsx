@@ -3,7 +3,7 @@ import React from 'react';
 import { cn } from './Card';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+    variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
     size?: 'sm' | 'md' | 'lg' | 'icon';
     isLoading?: boolean;
     leftIcon?: React.ReactNode;
@@ -25,6 +25,7 @@ export function Button({
         secondary: "bg-background text-foreground border border-input hover:bg-muted",
         ghost: "hover:bg-muted hover:text-foreground",
         danger: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
     };
 
     const sizes = {

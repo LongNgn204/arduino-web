@@ -178,7 +178,7 @@ export default function QuizPage() {
                                 style={{ width: `${percentage}%` }}
                             />
                         </div>
-                        <p className="text-xs text-muted-foreground mt-2">Điểm chuẩn: {quiz.passingScore}%</p>
+                        <p className="text-xs text-muted-foreground mt-2">Điểm chuẩn: {quiz?.passingScore}%</p>
                     </div>
 
                     <div className="flex gap-3">
@@ -195,7 +195,7 @@ export default function QuizPage() {
                                 setScore(null);
                                 setAnswers({});
                                 setCurrentIndex(0);
-                                if (quiz.timeLimit) setTimeLeft(quiz.timeLimit * 60);
+                                if (quiz?.timeLimit) setTimeLeft(quiz.timeLimit * 60);
                             }}
                             className="flex-1"
                         >
@@ -207,7 +207,7 @@ export default function QuizPage() {
                 {/* Detailed Review */}
                 <div className="max-w-3xl w-full mx-auto space-y-4">
                     <h3 className="text-lg font-bold text-center mb-6 text-muted-foreground">Chi tiết bài làm</h3>
-                    {quiz.questions.map((q, i) => {
+                    {quiz?.questions.map((q, i) => {
                         // Logic to determine correctness from local state or API result if available
                         // Since we don't have the full result object in state (only updated in handleSubmit but not passed to full scope properly in the previous snippet),
                         // we generally rely on the API response 'results' which I see was defined as `_results` state in original file.
@@ -268,6 +268,34 @@ export default function QuizPage() {
             </div>
         );
     }
+
+    // Loading state
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-10 h-10 text-muted-foreground animate-spin" />
+                    <p className="text-muted-foreground font-medium">Đang tải bài quiz...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Null quiz check
+    if (!quiz) {
+        return (
+            <div className="min-h-screen bg-background flex items-center justify-center font-sans">
+                <div className="text-center">
+                    <p className="text-muted-foreground mb-4">Không tìm thấy bài quiz.</p>
+                    <Button onClick={() => navigate('/dashboard')}>Về Dashboard</Button>
+                </div>
+            </div>
+        );
+    }
+
+    // Derived values for main quiz view
+    const currentQuestion = quiz.questions[currentIndex];
+    const progress = ((currentIndex + 1) / quiz.questions.length) * 100;
 
     return (
         <div className="min-h-screen bg-background flex flex-col font-sans text-foreground">
