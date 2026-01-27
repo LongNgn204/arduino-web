@@ -5,9 +5,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import MermaidDiagram from '../components/MermaidDiagram';
 
-const API_BASE = import.meta.env.PROD
-    ? 'https://arduino-workers.stu725114073.workers.dev'
-    : '';
+// API Base URL handling is moved inside the component to be dynamic
+// const API_BASE = ... (removed static definition)
 
 interface LessonDetail {
     id: string;
@@ -51,7 +50,13 @@ export default function LessonPage() {
         async function fetchLesson() {
             if (!lessonId) return;
             try {
-                const res = await fetch(`${API_BASE}/api/lessons/${lessonId}`, {
+                // Determine API URL based on environment
+                const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? '/api' // Use proxy in local dev
+                    : 'https://arduino-workers.stu725114073.workers.dev/api'; // Direct workers in prod
+
+                // Add timestamp to prevent caching
+                const res = await fetch(`${baseUrl}/lessons/${lessonId}?t=${Date.now()}`, {
                     credentials: 'include',
                 });
                 const data = await res.json();
@@ -92,7 +97,12 @@ export default function LessonPage() {
         async function fetchProgress() {
             if (!lessonId || !week?.id) return;
             try {
-                const res = await fetch(`${API_BASE}/api/progress/week/${week.id}`, {
+                // Same logic for base URL
+                const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? '/api'
+                    : 'https://arduino-workers.stu725114073.workers.dev/api';
+
+                const res = await fetch(`${baseUrl}/progress/week/${week.id}?t=${Date.now()}`, {
                     credentials: 'include',
                 });
                 if (res.ok) {
@@ -114,7 +124,11 @@ export default function LessonPage() {
         if (!lesson || completed) return;
 
         try {
-            const res = await fetch(`${API_BASE}/api/progress/mark`, {
+            const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? '/api'
+                : 'https://arduino-workers.stu725114073.workers.dev/api';
+
+            const res = await fetch(`${baseUrl}/progress/mark`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

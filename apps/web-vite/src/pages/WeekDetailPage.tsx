@@ -3,9 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import ReactMarkdown from 'react-markdown';
 
-const API_BASE = import.meta.env.PROD
-    ? 'https://arduino-workers.stu725114073.workers.dev'
-    : '';
+// API Base URL handling is moved inside the component to be dynamic
+// const API_BASE = ... (removed)
 
 interface Lesson {
     id: string;
@@ -62,7 +61,11 @@ export default function WeekDetailPage() {
         async function fetchWeek() {
             if (!weekId) return;
             try {
-                const res = await fetch(`${API_BASE}/api/weeks/${weekId}`, { credentials: 'include' });
+                const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? '/api'
+                    : 'https://arduino-workers.stu725114073.workers.dev/api';
+
+                const res = await fetch(`${baseUrl}/weeks/${weekId}?t=${Date.now()}`, { credentials: 'include' });
                 const data = await res.json();
                 setWeek(data.week);
             } catch (error) {

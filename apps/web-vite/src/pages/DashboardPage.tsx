@@ -3,9 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 
 // API Base URL
-const API_BASE = import.meta.env.PROD
-    ? 'https://arduino-workers.stu725114073.workers.dev'
-    : '';
+// API Base URL handling is moved inside the component to be dynamic
+// const API_BASE = ... (removed)
 
 interface Week {
     id: string;
@@ -45,13 +44,17 @@ export default function DashboardPage() {
         async function fetchData() {
             if (!isAuthenticated) return;
             try {
-                // Fetch courses
-                const coursesRes = await fetch(`${API_BASE}/api/courses`, { credentials: 'include' });
+                const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? '/api'
+                    : 'https://arduino-workers.stu725114073.workers.dev/api';
+
+                // Fetch courses with cache busting
+                const coursesRes = await fetch(`${baseUrl}/courses?t=${Date.now()}`, { credentials: 'include' });
                 const coursesData = await coursesRes.json();
                 setCourses(coursesData.courses || []);
 
-                // Fetch progress
-                const progressRes = await fetch(`${API_BASE}/api/progress`, { credentials: 'include' });
+                // Fetch progress with cache busting
+                const progressRes = await fetch(`${baseUrl}/progress?t=${Date.now()}`, { credentials: 'include' });
                 if (progressRes.ok) {
                     const progressData = await progressRes.json();
                     setProgress(progressData.progress || progress);
